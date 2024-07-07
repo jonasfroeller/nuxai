@@ -24,5 +24,25 @@ export default defineNuxtConfig({
     typeCheck: true
   },
 
-  modules: ["@nuxt/eslint"]
+  modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "shadcn-nuxt"],
+
+  css: ['~/assets/css/tailwind.css'],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
+
+  shadcn: {
+    /**
+     * Prefix for all the imported component
+     */
+    prefix: 'shadcn',
+    /**
+     * Directory that the component lives in.
+     * @default "./components/ui"
+     */
+    componentDir: './components/ui'
+  }
 })

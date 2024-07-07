@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import ShadcnButton from './components/ui/button/Button.vue';
+
   const main_layout = 'main'
   const error_layout = 'error'
 </script>
@@ -14,6 +16,10 @@
       </template>
   </NuxtErrorBoundary>
   <div> <!-- needed for transitions to work properly -->
+    <h1 class="text-3xl font-bold underline">
+      Hello world!
+      <ShadcnButton variant="outline">Button</ShadcnButton>
+    </h1>
     <NuxtLayout :name="main_layout">
       <NuxtLoadingIndicator />
       <NuxtPage />
