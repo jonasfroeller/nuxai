@@ -7,10 +7,15 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "check": "npx nuxi typecheck"
   },
   "dependencies": {
     "nuxt": "^3.12.3",
     "vue": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3",
+    "vue-tsc": "1"
   }
 }
