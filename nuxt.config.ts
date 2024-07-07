@@ -24,7 +24,7 @@ export default defineNuxtConfig({
     typeCheck: true
   },
 
-  modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "shadcn-nuxt"],
+  modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "shadcn-nuxt", "@nuxtjs/color-mode"],
 
   css: ['~/assets/css/tailwind.css'],
   postcss: {
@@ -32,6 +32,9 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {},
     },
+  },
+  colorMode: {
+    classSuffix: ''
   },
 
   shadcn: {

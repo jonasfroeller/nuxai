@@ -19,6 +19,7 @@
     <h1 class="text-3xl font-bold underline">
       Hello world!
       <ShadcnButton variant="outline">Button</ShadcnButton>
+      <ThemeToggle />
     </h1>
     <NuxtLayout :name="main_layout">
       <NuxtLoadingIndicator />
