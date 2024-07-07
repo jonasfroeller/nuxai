@@ -21,6 +21,7 @@
       <ShadcnButton variant="outline">Button</ShadcnButton>
       <ThemeToggle />
     </h1>
+    <Login />
     <NuxtLayout :name="main_layout">
       <NuxtLoadingIndicator />
       <NuxtPage />
