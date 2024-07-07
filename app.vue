@@ -22,6 +22,7 @@
       <ThemeToggle />
     </h1>
     <Login />
+    <SignUp />
     <NuxtLayout :name="main_layout">
       <NuxtLoadingIndicator />
       <NuxtPage />
