@@ -24,7 +24,13 @@ export default defineNuxtConfig({
     typeCheck: true
   },
 
-  modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "shadcn-nuxt", "@nuxtjs/color-mode"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxtjs/tailwindcss",
+    "shadcn-nuxt",
+    "@nuxtjs/color-mode",
+    "nuxt-posthog"
+  ],
 
   css: ['~/assets/css/tailwind.css'],
   postcss: {
@@ -47,5 +53,12 @@ export default defineNuxtConfig({
      * @default "./components/ui"
      */
     componentDir: './components/ui'
+  },
+
+  posthog: { /* https://nuxt-posthog.cmitjans.dev/configuration */
+    publicKey: process.env.POSTHOG_API_KEY,
+    host: process.env.POSTHOG_HOST,
+    capturePageViews: true,
+    disabled: process.env.POSTHOG_ACTIVE === 'false' /* process.dev (deprecated), import.meta.dev (unusable in config file) (https://nuxt.com/docs/api/advanced/import-meta#runtime-app-properties) */
   }
 })

@@ -3,6 +3,8 @@
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.  
 Uses [Next Generation Server Toolkit](https://nitro.unjs.io/), [Vite](https://vitejs.dev/) and [VueJs](https://vuejs.org/).
 
+* [Posthog](https://nuxt-posthog.cmitjans.dev/features)
+
 ## Setup
 
 Make sure to install the dependencies:
