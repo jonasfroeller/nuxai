@@ -11,11 +11,12 @@
     "check": "npx nuxi typecheck"
   },
   "dependencies": {
+    "@nuxt/eslint": "^0.3.13",
     "nuxt": "^3.12.3",
     "vue": "latest"
   },
   "devDependencies": {
     "typescript": "^5.5.3",
-    "vue-tsc": "1"
+    "vue-tsc": "^2.0.0"
   }
 }
