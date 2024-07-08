@@ -1,18 +1,21 @@
 import { defineStore } from 'pinia'
 
-export type User = {
-    email: string
-}
-
 export const useUserStore = defineStore('user', () => {
-    const user = ref<User | null>(null);
+    const signIn = async () => {
+        await $fetch('/api/auth/login', { method: 'POST' }).catch(() => null)
+    }
 
-    const set = async () => {
-        user.value = await $fetch('/api/user').catch(() => null);
+    const signUp = async () => {
+        await $fetch('/api/auth/sign-up', { method: 'POST' }).catch(() => null)
+    }
+
+    const signOut = async () => {
+        await $fetch('/api/auth/logout', { method: 'POST' }).catch(() => null);
     }
 
     return {
-        user,
-        set
+        signIn,
+        signUp,
+        signOut
     };
 })

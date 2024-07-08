@@ -34,7 +34,8 @@ export default defineNuxtConfig({
     "shadcn-nuxt",
     "@nuxtjs/color-mode",
     "nuxt-posthog",
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    "nuxt-auth-utils"
   ],
 
   pinia: {

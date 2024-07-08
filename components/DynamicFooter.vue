@@ -8,6 +8,8 @@
 
 <style scoped>
   footer {
-    padding: 0.25rem;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
   }
 </style>

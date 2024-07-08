@@ -2,7 +2,6 @@
 
 <template>
   <div>
-    Layout: error
     <slot />
   </div>
 </template>

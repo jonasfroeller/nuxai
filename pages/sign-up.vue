@@ -1,14 +1,13 @@
 <script setup lang="ts">
 definePageMeta({
-  name: "Dashboard",
-  middleware: ["protect"],
-  alias: ['/dashboard']
+  name: "Sign Up",
+  alias: ['/register']
 })
 </script>
 
 <template>
   <div>
-    Dashboard
+    <SignUp />
   </div>
 </template>
 
