@@ -1,5 +1,10 @@
 <script setup lang="ts">
-  import ShadcnButton from './components/ui/button/Button.vue';
+  import Button from './components/ui/button/Button.vue';
+
+  const userStore = useUserStore();
+  await userStore.set();
+  const { user } = storeToRefs(userStore);
+  const email = computed(() => user.value?.email);
 
   const main_layout = 'main'
   const error_layout = 'error'
@@ -16,15 +21,17 @@
       </template>
   </NuxtErrorBoundary>
   <div> <!-- needed for transitions to work properly -->
+    <NuxtLoadingIndicator />
     <h1 class="text-3xl font-bold underline">
       Hello world!
-      <ShadcnButton variant="outline">Button</ShadcnButton>
+      email: {{ email }}
+      <span v-if="!user">Not signed in!</span>
+      <Button variant="outline">Button</Button>
       <ThemeToggle />
     </h1>
     <Login />
     <SignUp />
     <NuxtLayout :name="main_layout">
-      <NuxtLoadingIndicator />
       <NuxtPage />
     </NuxtLayout>
   </div>

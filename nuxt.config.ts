@@ -4,6 +4,10 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   app: {
+    /* head: {
+      title: 'Nuxt Chat App',
+      titleTemplate: '%s - Nuxt Chat App'
+    }, */
     pageTransition: {
       name: 'page',
       mode: 'out-in' // default
@@ -29,8 +33,13 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
     "shadcn-nuxt",
     "@nuxtjs/color-mode",
-    "nuxt-posthog"
+    "nuxt-posthog",
+    '@pinia/nuxt'
   ],
+
+  pinia: {
+    storesDirs: ['./stores/**'],
+  },
 
   css: ['~/assets/css/tailwind.css'],
   postcss: {
