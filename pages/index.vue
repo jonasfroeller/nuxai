@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea'
 definePageMeta({
   name: "Dashboard",
   middleware: ["protect"],
-  alias: ['/dashboard']
+  alias: ['/dashboard', '/chat']
 })
 
 const date = Date.now();

@@ -21,8 +21,8 @@ const visibleRoutes = computed(() => {
 
 <template>
   <div>
-    <ul v-bind:class="{ 'chips': layout === 'chips' }">
-      <NuxtLink v-for="route in visibleRoutes" :to="route.path" :key="route.path">
+    <ul v-bind:class="{ 'navigation': layout === 'navigation' }">
+      <NuxtLink v-for="route in visibleRoutes" :to="route.path" :key="route.path" activeClass="active-link">
         <li :key="route.path">{{ route.name }}</li>
       </NuxtLink>
     </ul>
@@ -43,11 +43,13 @@ ul a:hover {
   text-decoration: underline;
 }
 
-ul.chips a {
-  color: hsl(var(--primary-foreground) / 0.9);
+ul.navigation a {
   text-decoration: none;
-  background-color: hsl(var(--primary) / 0.9);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
+}
+
+ul.navigation a.active-link {
+  text-decoration: underline;
 }
 </style>
