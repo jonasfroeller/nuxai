@@ -1,4 +1,8 @@
+import { insertMockData } from "~/server/database/mock";
+
 export default defineEventHandler(async (event) => {
+    await insertMockData();
+
     // TODO: validate user and then sign in afterwards
     const user = {
         id: "3543523234",
