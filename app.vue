@@ -1,10 +1,12 @@
 <script setup lang="ts">
-  const main_layout = 'main'
-  const error_layout = 'error'
+const main_layout = 'main'
+const error_layout = 'error'
 </script>
 
 <template>
-  <NuxtLoadingIndicator color="hsl(var(--primary) / 0.9)" errorColor="hsl(var(--destructive))" :height="3" :duration="2000" :throttle="200" /> <!-- when it shows: https://github.com/nuxt/nuxt/issues/18630, https://nuxt.com/docs/api/composables/use-loading-indicator -->
+  <NuxtLoadingIndicator color="hsl(var(--primary) / 0.9)" errorColor="hsl(var(--destructive))" :height="3"
+    :duration="2000" :throttle="200" />
+  <!-- when it shows: https://github.com/nuxt/nuxt/issues/18630, https://nuxt.com/docs/api/composables/use-loading-indicator -->
   <DynamicMeta :key="$route.path" /> <!-- key is needed, so that the component is rerendered without a prop change -->
   <NuxtRouteAnnouncer />
   <NuxtErrorBoundary>

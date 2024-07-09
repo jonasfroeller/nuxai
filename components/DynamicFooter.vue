@@ -1,15 +1,15 @@
 <script setup lang="ts"></script>
 
 <template>
-  <footer>
+  <footer class="border-t">
     <AppLinks />
   </footer>
 </template>
 
 <style scoped>
-  footer {
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-  }
+footer {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
 </style>

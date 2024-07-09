@@ -6,10 +6,11 @@ const { loggedIn, user, clear } = useUserSession()
 
 <template>
   <header>
-    <nav class="flex items-center justify-between gap-2 px-8 py-4">
+    <nav class="flex items-center justify-between gap-2 px-8 py-4 pl-[5rem]">
       <AppLinks layout="chips" />
       <div class="flex items-center gap-2">
-        <Button v-if="loggedIn" @click="clear().finally(async () => await navigateTo('/home'))">Sign Out {{ user?.email }}</Button>
+        <Button v-if="loggedIn" @click="clear().finally(async () => await navigateTo('/home'))">Sign Out {{ user?.email
+          }}</Button>
         <ThemeToggle />
       </div>
     </nav>
