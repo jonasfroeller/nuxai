@@ -5,7 +5,7 @@ const { loggedIn, user, clear } = useUserSession()
 </script>
 
 <template>
-  <header>
+  <header class="sticky top-0 left-0 border-b">
     <nav class="flex items-center justify-between gap-2 px-8 py-4 pl-[5rem]">
       <AppLinks layout="navigation" />
       <div class="flex items-center gap-2">

@@ -1,4 +1,8 @@
+import { insertRows } from "~/server/orm/mock";
+
 export default defineEventHandler(async (event) => {
+    await insertRows();
+
     // TODO: validate user and then sign in afterwards
     const user = {
         id: "3543523234",
