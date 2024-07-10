@@ -3,11 +3,24 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
 
+  runtimeConfig: {
+    openaiApiKey: process.env.OPENAI_API_KEY,
+    posthog: {
+      apiKey: process.env.POSTHOG_API_KEY,
+      apiHost: process.env.POSTHOG_API_HOST,
+      isActive: process.env.POSTHOG_ACTIVE
+    },
+    sessionPassword: process.env.NUXT_SESSION_PASSWORD,
+    cryptoSecret: process.env.CRYPTO_SECRET,
+    databaseConnectionString: process.env.DATABASE_CONNECTION_STRING
+  },
+
   app: {
-    /* head: {
-      title: 'Nuxt Chat App',
-      titleTemplate: '%s - Nuxt Chat App'
-    }, */
+    head: {
+      meta: [
+        { name: "description", content: "%s - Nuxt Chat App" }
+      ]
+    },
     pageTransition: {
       name: 'page',
       mode: 'out-in' // default

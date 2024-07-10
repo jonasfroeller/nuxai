@@ -12,6 +12,8 @@ interface UserToCreate extends Omit<NewUser, "id" | "hashed_password"> {
     password: string;
 };
 
+/* TODO: check if user has access to CRUD user */
+
 /**
  * Asynchronously creates a new user in the database with the provided user details.
  *
