@@ -144,7 +144,7 @@ const dateString = String(date);
             </legend>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <Label>Selected Version ({{ formattedDate }})</Label>
+                <Label>Version ({{ formattedDate }})</Label>
                 <Select :default-value="dateString">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />

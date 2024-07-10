@@ -3,11 +3,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { displaySignInResponseError } from '~/lib/feedback';
 
 function signUp() {
-  useUserStore().signUp().then(() => {
+  useUserStore().signUp()
+  .then(() => {
     reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" });
-  });
+  })
+  .catch((error) => {
+    console.log("error" + error);
+    displaySignInResponseError(error);
+  })
 }
 </script>
 
@@ -24,16 +30,6 @@ function signUp() {
       </CardHeader>
       <CardContent>
         <div class="grid gap-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div class="grid gap-2">
-              <Label for="first-name">First name</Label>
-              <Input id="first-name" placeholder="Max" required />
-            </div>
-            <div class="grid gap-2">
-              <Label for="last-name">Last name</Label>
-              <Input id="last-name" placeholder="Robinson" required />
-            </div>
-          </div>
           <div class="grid gap-2">
             <Label for="email">Email</Label>
             <Input id="email" type="email" placeholder="m@example.com" required />

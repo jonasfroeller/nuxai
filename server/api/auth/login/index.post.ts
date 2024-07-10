@@ -1,7 +1,5 @@
-import { insertMockData } from "~/server/database/mock";
-
 export default defineEventHandler(async (event) => {
-    await insertMockData();
+    /* return sendError(event, createError({ statusCode: 401, statusMessage: 'Unauthorized' })); */
 
     // TODO: validate user and then sign in afterwards
     const user = {

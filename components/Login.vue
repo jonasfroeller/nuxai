@@ -3,11 +3,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { displaySignInResponseError } from '~/lib/feedback';
 
 function signIn() {
-  useUserStore().signIn().then(() => {
+  useUserStore().signIn()
+  .then(() => {
     reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" });
-  });
+  })
+  .catch((error) => {
+    console.log("error" + error);
+    displaySignInResponseError(error);
+  })
 }
 </script>
 

@@ -1,12 +1,18 @@
 import { migrate } from "drizzle-orm/postgres-js/migrator";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import { connectionString } from "./db";
+import { migrationClient } from "./db";
 
-const migrationClient = postgres(connectionString, { max: 1 });
 async function migrateDatabase() {
-    const db = drizzle(migrationClient);
-    await migrate(db, { migrationsFolder: "server/database/migrations" });
+    const db = migrationClient();
+    if (!db) return;
+
+    await migrate(db, { migrationsFolder: "server/database/migrations" })
+        .then(() => {
+            console.log("Migrated database...");
+        })
+        .catch((e) => {
+            console.error("Failed to migrate database:", e);
+            throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'Failed to migrate database', fatal: true });
+        });
 }
 
 export default migrateDatabase;
