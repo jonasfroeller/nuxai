@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useChat } from '@ai-sdk/vue';
 
 const { messages, input, handleSubmit, isLoading } = useChat();
@@ -118,7 +119,7 @@ const dateString = String(date);
       </nav>
     </aside>
     <div class="flex flex-col">
-      <header class="sticky top-[4.8rem] z-10 flex h-[53px] items-center gap-1 border-b bg-background px-4 justify-between">
+      <header class="sticky top-[4.8rem] z-20 flex h-[53px] items-center gap-1 border-b bg-background px-4 justify-between">
         <div class="flex items-center gap-2">
           <h1 class="text-xl font-semibold">
             Configuration Generator
@@ -210,16 +211,33 @@ xxx
           </fieldset>
         </div>
         <div class="relative flex flex-col h-full min-h-[25vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 lg:col-span-2">
-          <Badge variant="outline" class="absolute right-3 top-3">
+          <Badge variant="outline" class="absolute z-10 right-3 top-3 bg-background">
             Chat
           </Badge>
-          <div class="flex flex-col flex-grow w-full min-h-0 mx-auto overflow-auto">
-            {{ input }}
+
+          <ScrollArea class="flex flex-col flex-grow w-full min-h-0 pt-8 pb-6 mx-auto">
             <div v-for="m in messages" :key="m.id" class="whitespace-pre-wrap">
-              {{ m.role === 'user' ? 'User: ' : 'AI: ' }}
-              {{ m.content }}
+              <div class="flex justify-start my-2" v-if="m.role === 'assistant'">
+                <ScrollArea class="bg-slate-100 max-w-[80%] w-fit px-4 py-2 rounded-lg whitespace-pre-wrap">
+                  <MDC :value="m.content" />
+                </ScrollArea>
+              </div>
+
+              <div class="flex justify-end my-2" v-if="m.role === 'user'">
+                <ScrollArea class="bg-slate-100 max-w-[80%] w-fit px-4 py-2 rounded-lg whitespace-pre-wrap">
+                  <MDC :value="m.content" />
+                </ScrollArea>
+              </div>
             </div>
-          </div>
+
+            <!-- Input draft -->
+            <div class="flex justify-end pt-8 max-h-96" v-if="input !== ''">
+              <ScrollArea class="bg-slate-100 max-w-[80%] w-fit px-4 py-2 rounded-lg whitespace-pre-wrap border border-orange-300">
+                {{ input }}
+              </ScrollArea>
+            </div>
+          </ScrollArea>
+          
           <form @submit="handleSubmit" class="relative flex-shrink-0 overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring">
             <Label for="message" class="sr-only">
               Message

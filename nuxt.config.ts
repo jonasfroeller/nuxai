@@ -49,8 +49,11 @@ export default defineNuxtConfig({
     "nuxt-posthog",
     '@pinia/nuxt',
     "nuxt-auth-utils",
-    /* "@hebilicious/form-actions-nuxt" */ /* "@hebilicious/form-actions-nuxt": "^0.3.0", */
+    "@nuxtjs/mdc",
+    "@nuxt/image"
   ],
+
+  /* "@hebilicious/form-actions-nuxt" */ /* "@hebilicious/form-actions-nuxt": "^0.3.0", */
 
   /* "@formkit/auto-animate": "^0.8.2",
   "@hebilicious/form-actions-nuxt": "^0.3.0", */

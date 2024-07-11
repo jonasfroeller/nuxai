@@ -1,5 +1,6 @@
 import { HuggingFaceStream, StreamingTextResponse } from 'ai';
 import { HfInference } from '@huggingface/inference';
+import { experimental_buildOpenAssistantPrompt } from 'ai/prompts';
 
 export default defineLazyEventHandler(async () => {
     const apiKey = useRuntimeConfig().huggingfaceApiKey;
@@ -10,21 +11,25 @@ export default defineLazyEventHandler(async () => {
     return defineEventHandler(async (event: any) => {
         const { messages } = await readBody(event); // complete chat history
 
-        console.log("AI conversation:", messages);
+        /* console.log("AI conversation:", messages);
         const parsedAiConversation = JSON.parse(JSON.stringify(messages));
         console.log("parsedAiConversation:", parsedAiConversation);
         const prompt = parsedAiConversation[parsedAiConversation.length - 1]?.content;
-        console.log("prompt:", prompt);
+        console.log("prompt:", prompt); */
+
+        const inputs = experimental_buildOpenAssistantPrompt(messages);
+        console.log("AI request:", inputs);
 
         try {
             const response = Hf.textGenerationStream({
+                /* https://huggingface.co/OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5 */
                 model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
-                inputs: `<|prompter|>${prompt}<|endoftext|><|assistant|>`,
+                inputs: inputs, // `<|prompter|>${prompt}<|endoftext|><|assistant|>`
                 parameters: {
-                    max_new_tokens: 200,
-                    typical_p: 0.2,
-                    repetition_penalty: 1,
-                    truncate: 1000,
+                    max_new_tokens: 500,
+                    typical_p: 0.2, /* higher means, more creative */
+                    repetition_penalty: 1.1, /* repetion is less likely because the model receives penalty */
+                    /* truncate: 1000, */
                     return_full_text: false
                 }
             });

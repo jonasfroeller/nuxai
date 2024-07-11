@@ -19,6 +19,8 @@
     "@ai-sdk/vue": "^0.0.13",
     "@huggingface/inference": "^2.7.0",
     "@nuxt/eslint": "^0.3.13",
+    "@nuxt/image": "^1.7.0",
+    "@nuxtjs/mdc": "^0.8.3",
     "@pinia/nuxt": "^0.5.1",
     "@radix-icons/vue": "^1.0.0",
     "@vueuse/core": "^10.11.0",
