@@ -58,6 +58,27 @@ export default defineNuxtConfig({
   /* "@formkit/auto-animate": "^0.8.2",
   "@hebilicious/form-actions-nuxt": "^0.3.0", */
 
+  mdc: {
+    /* remarkPlugins: {
+      plugins: {
+        // Register/Configure remark plugin to extend the parser
+      }
+    },
+    rehypePlugins: {
+      options: {
+        // Configure rehype options to extend the parser
+      },
+      plugins: {
+        // Register/Configure rehype plugin to extend the parser
+      }
+    },*/
+    highlight: {
+      highlighter: "shiki",
+      theme: "github-dark",
+      langs: ['js', 'jsx', 'json', 'toml', 'ts', 'tsx', 'vue', 'vue-html', 'svelte', 'css', 'html', 'xml', 'bash', 'shell', 'shellscript', 'bat', 'batch', 'cmd', 'powershell', 'md', 'mdc', 'yaml', 'yml', 'python', 'py', 'asciidoc', 'c', 'c#', 'cs', 'csharp', 'c++', 'dart', 'objective-c', 'objective-cpp', 'swift', 'docker', 'dockerfile', 'git-commit', 'git-rebase', 'go', 'java', 'kotlin', 'gql', 'http', 'json', 'latex', 'lua', 'sass', 'less', 'markdown', 'makefile', 'md', 'mdx', 'mdc', 'nginx', 'nix', 'php', 'scheme', 'plsql', 'sql', 'postcss', 'prisma', 'rust', 'rs', 'csv']
+    }
+  },
+
   pinia: {
     storesDirs: ['./stores/**'],
   },

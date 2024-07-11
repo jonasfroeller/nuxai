@@ -218,14 +218,18 @@ xxx
           <ScrollArea class="flex flex-col flex-grow w-full min-h-0 pt-8 pb-6 mx-auto">
             <div v-for="m in messages" :key="m.id" class="whitespace-pre-wrap">
               <div class="flex justify-start my-2" v-if="m.role === 'assistant'">
-                <ScrollArea class="bg-slate-100 max-w-[80%] w-fit px-4 py-2 rounded-lg whitespace-pre-wrap">
-                  <MDC :value="m.content" />
+                <ScrollArea class="bg-background border-slate-200 border max-w-[80%] w-fit px-4 py-2 rounded-lg whitespace-pre-wrap">
+                  <ClientOnly>
+                    <MDC :value="m.content" />
+                  </ClientOnly>
                 </ScrollArea>
               </div>
 
               <div class="flex justify-end my-2" v-if="m.role === 'user'">
-                <ScrollArea class="bg-slate-100 max-w-[80%] w-fit px-4 py-2 rounded-lg whitespace-pre-wrap">
-                  <MDC :value="m.content" />
+                <ScrollArea class="bg-background border-slate-200 border max-w-[80%] w-fit px-4 py-2 rounded-lg whitespace-pre-wrap">
+                  <ClientOnly>
+                    <MDC :value="m.content" />
+                  </ClientOnly>
                 </ScrollArea>
               </div>
             </div>

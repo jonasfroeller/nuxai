@@ -29,7 +29,7 @@ export default defineLazyEventHandler(async () => {
                     max_new_tokens: 500,
                     typical_p: 0.2, /* higher means, more creative */
                     repetition_penalty: 1.1, /* repetion is less likely because the model receives penalty */
-                    /* truncate: 1000, */
+                    truncate: 1546, /* max_new_tokens of this model is 2046 */
                     return_full_text: false
                 }
             });
