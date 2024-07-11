@@ -45,7 +45,7 @@ const createUser = async (user: UserToCreate): Promise<null | RowList<never[]>> 
         })
 }
 
-const readUser = async (id: number): Promise<null | ReadUser[]> => {
+const readUser = async (id: number): Promise<null | Omit<ReadUser, "created_at" | "updated_at">[]> => {
     const client = db();
     if (!client) return null;
 

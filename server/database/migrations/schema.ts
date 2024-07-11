@@ -1,4 +1,4 @@
-import { pgTable, unique, serial, text, foreignKey, integer, timestamp } from "drizzle-orm/pg-core"
+import { pgTable, unique, serial, text, timestamp, foreignKey, integer } from "drizzle-orm/pg-core"
   import { sql } from "drizzle-orm"
 
 
@@ -7,6 +7,8 @@ export const chat_user = pgTable("chat_user", {
 	id: serial("id").primaryKey().notNull(),
 	primary_email: text("primary_email").notNull(),
 	hashed_password: text("hashed_password").notNull(),
+	created_at: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 },
 (table) => {
 	return {
@@ -14,11 +16,20 @@ export const chat_user = pgTable("chat_user", {
 	}
 });
 
-export const chat_history = pgTable("chat_history", {
+export const chat_conversation_message = pgTable("chat_conversation_message", {
 	id: serial("id").primaryKey().notNull(),
-	chat_user_id: integer("chat_user_id").notNull().references(() => chat_user.id),
 	message: text("message").notNull(),
 	actor: text("actor").default('user').notNull(),
+	created_at: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+	chat_user_id: integer("chat_user_id").notNull().references(() => chat_user.id),
+	chat_conversation_id: integer("chat_conversation_id").notNull().references(() => chat_conversation.id),
+});
+
+export const chat_conversation = pgTable("chat_conversation", {
+	id: serial("id").primaryKey().notNull(),
+	name: text("name").notNull(),
+	model: text("model").notNull(),
 	created_at: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updated_at: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 });

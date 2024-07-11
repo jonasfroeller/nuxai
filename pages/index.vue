@@ -213,7 +213,7 @@ xxx
           <Badge variant="outline" class="absolute right-3 top-3">
             Chat
           </Badge>
-          <div class="flex flex-col flex-grow w-full min-h-0 mx-auto">
+          <div class="flex flex-col flex-grow w-full min-h-0 mx-auto overflow-auto">
             {{ input }}
             <div v-for="m in messages" :key="m.id" class="whitespace-pre-wrap">
               {{ m.role === 'user' ? 'User: ' : 'AI: ' }}

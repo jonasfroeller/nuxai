@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   runtimeConfig: {
-    openaiApiKey: process.env.OPENAI_API_KEY,
+    huggingfaceApiKey: process.env.HUGGING_FACE_API_KEY,
     posthog: {
       apiKey: process.env.POSTHOG_API_KEY,
       apiHost: process.env.POSTHOG_API_HOST,
@@ -48,8 +48,12 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "nuxt-posthog",
     '@pinia/nuxt',
-    "nuxt-auth-utils"
+    "nuxt-auth-utils",
+    /* "@hebilicious/form-actions-nuxt" */ /* "@hebilicious/form-actions-nuxt": "^0.3.0", */
   ],
+
+  /* "@formkit/auto-animate": "^0.8.2",
+  "@hebilicious/form-actions-nuxt": "^0.3.0", */
 
   pinia: {
     storesDirs: ['./stores/**'],
