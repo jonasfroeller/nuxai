@@ -51,8 +51,8 @@ importers:
         specifier: ^3.12.3
         version: 3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3))
       nuxt-auth-utils:
-        specifier: ^0.1.0
-        version: 0.1.0(magicast@0.3.4)(rollup@4.18.1)
+        specifier: ^0.2.0
+        version: 0.2.0(magicast@0.3.4)(rollup@4.18.1)
       nuxt-posthog:
         specifier: ^1.5.0
         version: 1.5.0(magicast@0.3.4)(rollup@4.18.1)
@@ -4001,8 +4001,8 @@ packages:
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
 
-  nuxt-auth-utils@0.1.0:
-    resolution: {integrity: sha512-FONe0CCM1NBZr8f92sOzlLAM76c0LtBwT2Xu/KBMRoMnJ2rmgKe5aSl5hlcEC7NpKmZgjm6DRcGl4XIbCikKrQ==}
+  nuxt-auth-utils@0.2.0:
+    resolution: {integrity: sha512-tfGqKAZmoD3Fs1t/+5QVkXZxPY6JU76zttOpyFmaKpNTUE8uFK/t2pyPHwPV4HGuh140c0Zi6HHnZ8tMeI4VwA==}
 
   nuxt-posthog@1.5.0:
     resolution: {integrity: sha512-myriRE+BnSqcSArYnsHCBWnzGRJBmUWpzoMOkgECwumd9po7XuhWwE+wpgBDwUBfLBfr0b3JQO7H/kR6GVeZJQ==}
@@ -9952,7 +9952,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  nuxt-auth-utils@0.1.0(magicast@0.3.4)(rollup@4.18.1):
+  nuxt-auth-utils@0.2.0(magicast@0.3.4)(rollup@4.18.1):
     dependencies:
       '@nuxt/kit': 3.12.3(magicast@0.3.4)(rollup@4.18.1)
       defu: 6.1.4
