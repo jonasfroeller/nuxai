@@ -5,6 +5,7 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, Dr
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { formatCurrentClientDate } from '~/lib/formatting'
 
 definePageMeta({
   name: "Dashboard",
@@ -16,23 +17,7 @@ onErrorCaptured((error) => {
   console.log("error in index component", error);
 })
 
-const date = new Date();
-let formattedDate = date.toString();
-if (window) {
-  const locale = navigator.language;
-  console.log(locale)
-  formattedDate = date.toLocaleDateString(locale, { 
-      weekday: 'short', 
-      year: 'numeric', 
-      month: 'numeric', 
-      day: 'numeric' 
-  });
-
-  console.log(formattedDate)
-}
-
-const dateString = String(date);
-
+const { formattedDate, fullDateString } = formatCurrentClientDate();
 const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
 </script>
 
@@ -168,13 +153,13 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <Label>Version ({{ formattedDate }})</Label>
-                <Select :default-value="dateString">
+                <Select :default-value="fullDateString">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem :value="dateString">
-                      {{ dateString }} (+200, -322)
+                    <SelectItem :value="fullDateString ?? undefined">
+                      {{ fullDateString }} (+200, -322)
                     </SelectItem>
                   </SelectContent>
                 </Select>

@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue';
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/server/api/ai/ai.models';
+import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
 const selectedModel = useSelectedAiModel()
 

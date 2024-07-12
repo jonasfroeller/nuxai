@@ -1,7 +1,7 @@
 import { HuggingFaceStream, StreamingTextResponse } from 'ai';
 import { HfInference } from '@huggingface/inference';
 import { experimental_buildOpenAssistantPrompt, experimental_buildLlama2Prompt } from 'ai/prompts';
-import { POSSIBLE_AI_MODELS, ALLOWED_AI_MODELS } from '~/server/api/ai/types';
+import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
 export default defineLazyEventHandler(async () => {
     const apiKey = useRuntimeConfig().huggingfaceApiKey;
@@ -22,13 +22,15 @@ export default defineLazyEventHandler(async () => {
             }
 
             let inputs = messages;
-
             if (model_publisher === "OpenAssistant") {
                 inputs = experimental_buildOpenAssistantPrompt(messages);
-                console.info("using custon prompt builder for OpenAssistant");
+                console.info("using custom prompt builder for OpenAssistant");
+            } else if (model_name === "mistralai" || model_name === "meta-llama") {
+                inputs = experimental_buildLlama2Prompt(messages);
+                console.info("using custom prompt builder for Llama2");
             } else {
                 console.warn(`Using default prompt builder (buildOpenAssistantPrompt) for: ${model_publisher}/${model_name}`);
-                inputs = experimental_buildOpenAssistantPrompt(messages); /* experimental_buildLlama2Prompt */
+                inputs = experimental_buildOpenAssistantPrompt(messages);
             }
 
             console.log("---");
@@ -43,10 +45,8 @@ export default defineLazyEventHandler(async () => {
                     configuration(inputs)
             );
 
-            // Convert the response into a friendly text-stream
-            const stream = HuggingFaceStream(response);
-            // Respond with the stream
-            return new StreamingTextResponse(stream);
+            const stream = HuggingFaceStream(response); // Convert the response into a friendly text-stream
+            return new StreamingTextResponse(stream); // Respond with the stream
         } catch (error) {
             console.error("AI request errored:", error);
             sendError(event, createError({ statusCode: 500, statusMessage: 'Internal Server Error' }));
