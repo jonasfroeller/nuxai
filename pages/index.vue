@@ -33,7 +33,7 @@ if (window) {
 
 const dateString = String(date);
 
-const selectedModelApiPath = useSelectedModelApiPath() // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
+const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
 </script>
 
 <template>

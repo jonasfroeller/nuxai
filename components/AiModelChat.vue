@@ -12,13 +12,12 @@
     } from "@/components/ui/tooltip"
     import { useChat } from '@ai-sdk/vue'
     import { Label } from "@/components/ui/label"
-    import { useSelectedModelApiPath } from '~/composables/useSelectedModel'
 
     /* const props = defineProps<{
         selectedModel?: AllowedModelPaths
     }>() */ /* maybe allow too in the future */
 
-    const selectedModelApiPath = useSelectedModelApiPath()
+    const selectedModelApiPath = useSelectedAiModelApiPath()
     
     const apiPath = ref(selectedModelApiPath.value);
     const config = reactive({
@@ -30,6 +29,10 @@
         }
     });
     let { messages, input, handleSubmit, reload, isLoading } = useChat(config); // reload: Function to reload the last AI chat response for the given chat history. If the last message isn't from the assistant, it will request the API to generate a new response.
+
+    onErrorCaptured((error) => {
+        console.log("error in AiModelChat component", error);
+    })
 
     watch(selectedModelApiPath, (newValue, oldValue) => {
         config.api = newValue;

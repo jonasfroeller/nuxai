@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { Bird, Rabbit, Dog } from 'lucide-vue-next'
+import { Icon } from '@iconify/vue';
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { useSelectedModel } from '~/composables/useSelectedModel';
+import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/server/api/ai/ai.models';
 
-const selectedModel = useSelectedModel()
+const selectedModel = useSelectedAiModel()
 
 function logSelectedModelInfo() {
-    console.log(selectedModel.value);
+    console.log(`Selected model: ${selectedModel.value}.`);
 }
-
-// TODO: selectItem options in configuration variable/file
 </script>
 
 <template>
@@ -27,60 +24,17 @@ function logSelectedModelInfo() {
                         <SelectValue placeholder="Select a model" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5">
+                        <SelectItem :value="model" v-for="model in ALLOWED_AI_MODELS">
                             <div class="flex items-start gap-3 text-muted-foreground">
-                                <Dog class="size-5" />
+                                <Icon :icon="POSSIBLE_AI_MODELS[model.split('/')[0]][model.split('/')[1]]['icon']" :ssr="true" width="20" height="20" />
                                 <div class="grid gap-0.5">
                                     <p>
-                                        OpenAssistant
+                                        {{ POSSIBLE_AI_MODELS[model.split('/')[0]][model.split('/')[1]]['publisher'] }}
                                         <span class="font-medium text-foreground">
-                                            oasst-sft-4-pythia-12b-epoch-3.5
+                                            {{ POSSIBLE_AI_MODELS[model.split('/')[0]][model.split('/')[1]]['name'] }}
                                         </span>
                                     </p>
-                                    <p class="text-xs" data-description>
-                                        <strong>OpenAssistant collected data from over 13'000 humans and released it to the public.</strong><br>
-                                        Data, models, and code are publicly available.<br>
-                                        (Apache-2.0 License)
-                                    </p>
-                                </div>
-                            </div>
-                        </SelectItem>
-                        <SelectItem value="01-ai/Yi-1.5-34B-Chat">
-                            <div class="flex items-start gap-3 text-muted-foreground">
-                                <Rabbit class="size-5" />
-                                <div class="grid gap-0.5">
-                                    <p>
-                                        01-ai
-                                        <span class="font-medium text-foreground">
-                                            Yi-1.5-34B-Chat
-                                        </span>
-                                    </p>
-                                    <p class="text-xs" data-description>
-                                        <strong>Our vision: Make AGI Accessible and Beneficial to Everyone.</strong><br>
-                                        01.AI vision: AI will effectively enhance human productivity, hence creating significant economic and societal values,
-                                        <br>realizing 01.AI's aspiration of "Human + AI" that technology empowers and amplifies our humankind.
-                                        <br>We hope to be able to contribute to this new AI 2.0 ecosystem.<br>
-                                        (Apache-2.0 License)
-                                    </p>
-                                </div>
-                            </div>
-                        </SelectItem>
-                        <SelectItem value="mistralai/Mistral-7B-Instruct-v0.2">
-                            <div class="flex items-start gap-3 text-muted-foreground">
-                                <Bird class="size-5" />
-                                <div class="grid gap-0.5">
-                                    <p>
-                                        mistralai
-                                        <span class="font-medium text-foreground">
-                                            Mistral-7B-Instruct-v0.2
-                                        </span>
-                                    </p>
-                                    <p class="text-xs" data-description>
-                                        <strong>Frontier AI in your hands</strong><br>
-                                        The open-weights models are highly efficient and available under a fully permissive Apache 2 license.<br>
-                                        They are ideal for customization, such as fine-tuning, due to their portability, control, and fast performance.<br>
-                                        (Apache-2.0 License)
-                                    </p>
+                                    <p class="text-xs" data-description v-html="POSSIBLE_AI_MODELS[model.split('/')[0]][model.split('/')[1]]['description']"></p>
                                 </div>
                             </div>
                         </SelectItem>
