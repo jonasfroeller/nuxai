@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Book, Bot, Code2, LifeBuoy, Settings, Settings2, Share, Import, SquareTerminal, SquareUser, Triangle } from 'lucide-vue-next'
+import { Book, LifeBuoy, Settings, Settings2, Share, Import, SquareTerminal, SquareUser, Home } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { Label } from '@/components/ui/label'
@@ -7,6 +7,16 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatCurrentClientDate } from '~/lib/formatting'
 import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 definePageMeta({
   name: "Dashboard",
@@ -26,8 +36,10 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
   <div class="grid h-screen w-full pl-[53px]">
     <aside class="fixed top-0 left-0 flex flex-col h-full border-t border-r inset-y bg-[hsl(var(--background))] z-50">
       <div class="p-2 border-b">
-        <Button variant="outline" size="icon" aria-label="Home">
-          <Triangle class="size-5 fill-foreground" />
+        <Button variant="outline" size="icon" aria-label="Home" as-child>
+          <NuxtLink to="/home">
+            <Home class="size-5 fill-foreground" />
+          </NuxtLink>
         </Button>
       </div>
       <nav class="grid gap-1 p-2">
@@ -49,18 +61,38 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" :side-offset="5">
-              Documentation <!-- waiting for https://github.com/scalar/scalar/issues/2431 -->
+              Documentation <!-- TODO: waiting for https://github.com/scalar/scalar/issues/2431 -->
             </TooltipContent>
           </Tooltip>
           <Tooltip>
-            <TooltipTrigger as-child>
-              <Button variant="ghost" size="icon" class="rounded-lg" aria-label="Settings">
-                <Settings2 class="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" :side-offset="5">
-              Settings
-            </TooltipContent>
+            <Dialog>
+              <DialogTrigger as-child>
+                  <TooltipTrigger as-child>
+                    <Button variant="ghost" size="icon" class="rounded-lg" aria-label="Settings">
+                      <Settings2 class="size-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" :side-offset="5">
+                    Settings
+                  </TooltipContent>
+              </DialogTrigger>
+              <DialogContent class="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Settings</DialogTitle>
+                  <DialogDescription>Theme Settings</DialogDescription>
+                </DialogHeader>
+                <div class="flex items-center space-x-2">
+                  <ThemeToggle />
+                </div>
+                <DialogFooter class="sm:justify-start">
+                  <DialogClose as-child>
+                    <Button type="button" variant="secondary">
+                      Close
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </Tooltip>
         </TooltipProvider>
       </nav>
@@ -68,8 +100,10 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button variant="ghost" size="icon" class="mt-auto rounded-lg" aria-label="Help">
-                <LifeBuoy class="size-5" />
+              <Button variant="ghost" size="icon" class="mt-auto rounded-lg" aria-label="Help" as-child>
+                <NuxtLink external to="https://github.com/jonasfroeller/nuxt-chat-app/issues/new" target="_blank">
+                  <LifeBuoy class="size-5" />
+                </NuxtLink>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" :side-offset="5">
@@ -78,8 +112,10 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
           </Tooltip>
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button variant="ghost" size="icon" class="mt-auto rounded-lg" aria-label="Account">
-                <SquareUser class="size-5" />
+              <Button variant="ghost" size="icon" class="mt-auto rounded-lg" aria-label="Account" as-child>
+                <NuxtLink to="/account">
+                  <SquareUser class="size-5" />
+                </NuxtLink>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" :side-offset="5">

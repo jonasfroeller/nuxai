@@ -50,7 +50,7 @@
 <template>
     <div class="relative flex flex-col h-full min-h-[25vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 lg:col-span-2">
         <Badge variant="outline" class="absolute z-10 right-3 top-3 bg-background">
-        Chat for <code class="pl-2">{{ selectedModelApiPath }}</code>
+            Chat for <code class="pl-2">{{ selectedModelApiPath }}</code>
         </Badge>
 
         <ScrollArea class="flex flex-col flex-grow w-full min-h-0 pt-8 pb-6 mx-auto">
@@ -140,7 +140,7 @@
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger as-child>
-                                <Button type="button" variant="outline" size="icon" @click="input = ''">
+                                <Button type="button" variant="outline" size="icon" @click="input = ''" :disabled="input === ''">
                                     <Delete class="w-4 h-4" />
                                 </Button>
                             </TooltipTrigger>
@@ -149,7 +149,7 @@
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                    <Button type="submit" size="sm" class="gap-1.5">
+                    <Button type="submit" size="sm" class="gap-1.5" :disabled="isLoading || messages.length === 0 || input === ''">
                         Send Message
                         <CornerDownLeft class="size-3.5" />
                     </Button>
