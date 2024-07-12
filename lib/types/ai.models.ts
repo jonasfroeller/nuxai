@@ -38,37 +38,7 @@ export const POSSIBLE_AI_MODELS: PossibleAiModels = {
                 return {
                     /* https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1 */
                     model: 'mistralai/Mistral-7B-Instruct-v0.1',
-                    inputs: inputs,
-                    parameters: {
-                        max_new_tokens: 500,
-                        typical_p: 0.2,
-                        repetition_penalty: 1.1,
-                        truncate: 8000 - 500, /* context length of this model is 7999 */
-                        return_full_text: false
-                    }
-                }
-            }
-        }
-    },
-    "meta-llama": {
-        "Meta-Llama-3-70B-Instruct": {
-            publisher: "meta-llama",
-            name: "Meta-Llama-3-70B-Instruct",
-            description: `Llama 3 is an auto-regressive language model that uses an optimized transformer architecture.<br>
-            The tuned versions use supervised fine-tuning (SFT) and reinforcement learning with human feedback (RLHF)<br>
-            to align with human preferences for helpfulness and safety.<br>
-            <hr class="my-2">
-            The Llama 3 instruction tuned models are optimized for dialogue use cases and<br>
-            outperform many of the available open source chat models on common industry benchmarks.<br>
-            Further, in developing these models, we took great care to optimize helpfulness and safety.<br>
-            (custom license, allows commercial use under specific terms)`,
-            icon: "mingcute:pig-fill",
-            type: "instruct",
-            configuration: (inputs: string) => {
-                return {
-                    /* https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct */
-                    model: 'meta-llama/Meta-Llama-3-70B-Instruct',
-                    inputs: inputs,
+                    inputs: inputs, /* [INST]${prompt}[/INST] */
                     parameters: {
                         max_new_tokens: 500,
                         typical_p: 0.2,
@@ -109,34 +79,6 @@ export const POSSIBLE_AI_MODELS: PossibleAiModels = {
     }
 } as const;
 
-/* 
-    "custom": {
-        "custom": {
-            configuration: (
-                inputs: string,
-                model: string,
-                max_new_tokens?: number,
-                typical_p?: number,
-                repetition_penalty?: number,
-                truncate?: number,
-                return_full_text?: boolean
-            ) => {
-                return {
-                    model: model,
-                    inputs: inputs,
-                    parameters: {
-                        max_new_tokens: 500,
-                        typical_p: 0.2,
-                        repetition_penalty: 1.1,
-                        truncate: 1546,
-                        return_full_text: false
-                    }
-                }
-            }
-        }
-    }
-*/
-
 /* TODO: make this work for the type AllowedModelPaths, so that everything is dynamic */
 export const ALLOWED_AI_MODELS = Object.keys(POSSIBLE_AI_MODELS).flatMap(publisher =>
     Object.keys(POSSIBLE_AI_MODELS[publisher]).map(model =>
@@ -153,28 +95,11 @@ type ModelConfiguration = {
     configuration: (inputs: string) => {
         inputs: string;
         model: string;
-        parameters: {
-            max_new_tokens: number;
-            typical_p: number;
-            repetition_penalty: number;
-            truncate: number;
-            return_full_text: boolean;
-        };
-    };
-};
-
-type CustomModelConfiguration = {
-    configuration: (
-        inputs: string,
-        model: string,
         max_new_tokens?: number,
         typical_p?: number,
         repetition_penalty?: number,
         truncate?: number,
         return_full_text?: boolean
-    ) => {
-        model: string;
-        inputs: string;
         parameters: {
             max_new_tokens: number;
             typical_p: number;
@@ -185,15 +110,12 @@ type CustomModelConfiguration = {
     };
 };
 
-// TODO: improve typing, allow custom models
-// TODO: allow custom parameters
 export type PossibleAiModels = {
     [key: string]: {
         [model: string]: ModelConfiguration
     };
 };
 
-/* TEMPORARY SOLUTION */
 const allowedModelsConst = [
     "OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5",
     "01-ai/Yi-1.5-34B-Chat",
@@ -202,4 +124,3 @@ const allowedModelsConst = [
 
 export type AllowedAiModels = `${typeof allowedModelsConst[number]}`;
 export type AllowedAiModelPaths = `/api/ai/huggingface/${typeof allowedModelsConst[number]}/chat`;
-/* TEMPORARY SOLUTION */

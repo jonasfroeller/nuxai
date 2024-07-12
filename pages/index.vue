@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatCurrentClientDate } from '~/lib/formatting'
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 definePageMeta({
   name: "Dashboard",
@@ -43,32 +44,12 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
           </Tooltip>
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button variant="ghost" size="icon" class="rounded-lg" aria-label="Models">
-                <Bot class="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" :side-offset="5">
-              Models
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button variant="ghost" size="icon" class="rounded-lg" aria-label="API">
-                <Code2 class="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" :side-offset="5">
-              API
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger as-child>
               <Button variant="ghost" size="icon" class="rounded-lg" aria-label="Documentation">
                 <Book class="size-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" :side-offset="5">
-              Documentation
+              Documentation <!-- waiting for https://github.com/scalar/scalar/issues/2431 -->
             </TooltipContent>
           </Tooltip>
           <Tooltip>
@@ -180,7 +161,8 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
             </div>
             <div class="grid gap-3">
               <Label for="content">Content of the selected version:</Label>
-              <pre id="content" class="min-h-[9.5rem] max-h-[21.7rem] overflow-auto border rounded-sm px-4 py-2">
+              <ScrollArea class="border rounded-sm">
+                <pre id="content" class="min-h-[9.5rem] max-h-[21.7rem] px-4 py-2">
 xxx
 xxx
 xxx
@@ -196,7 +178,8 @@ xxx
 xxx
 xxx
 xxx
-              </pre>
+                </pre>
+              </ScrollArea>
             </div>
           </fieldset>
         </div>

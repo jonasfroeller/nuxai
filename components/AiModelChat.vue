@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Mic, Paperclip, CornerDownLeft } from 'lucide-vue-next'
+    import { Mic, Paperclip, CornerDownLeft, RefreshCcw, Trash2, Delete } from 'lucide-vue-next'
     import { Button } from '@/components/ui/button'
     import { Badge } from "@/components/ui/badge"
     import { ScrollArea } from "@/components/ui/scroll-area"
@@ -28,7 +28,7 @@
             apiPath.value = value;
         }
     });
-    let { messages, input, handleSubmit, reload, isLoading } = useChat(config); // reload: Function to reload the last AI chat response for the given chat history. If the last message isn't from the assistant, it will request the API to generate a new response.
+    let { messages, input, handleSubmit, reload, isLoading } = useChat(config);
 
     onErrorCaptured((error) => {
         console.log("error in AiModelChat component", error);
@@ -91,33 +91,69 @@
             class="p-3 border-0 shadow-none resize-none min-h-12 focus-visible:ring-0" />
             <div class="flex items-center p-3 pt-0">
                 <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger as-child>
-                    <Button variant="ghost" size="icon">
-                        <Paperclip class="size-4" />
-                        <span class="sr-only">Attach file</span>
-                    </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top">
-                        Attach File
-                    </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger as-child>
-                    <Button variant="ghost" size="icon">
-                        <Mic class="size-4" />
-                        <span class="sr-only">Use Microphone</span>
-                    </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top">
-                        Use Microphone
-                    </TooltipContent>
-                </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger as-child>
+                            <Button variant="ghost" size="icon">
+                                <Paperclip class="size-4" />
+                                <span class="sr-only">Attach file</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            Attach File
+                        </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger as-child>
+                            <Button variant="ghost" size="icon">
+                                <Mic class="size-4" />
+                                <span class="sr-only">Use Microphone</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            Use Microphone
+                        </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger as-child>
+                            <Button variant="ghost" size="icon" @click="() => messages = []" :disabled="isLoading || messages.length === 0">
+                                <Trash2 class="size-4" />
+                                <span class="sr-only">Clear Chat</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            Clear
+                        </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger as-child>
+                            <Button variant="ghost" size="icon" @click="reload" :disabled="isLoading || messages.length === 0">
+                                <RefreshCcw class="size-4" />
+                                <span class="sr-only">Refresh Last Response</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            Refresh (needed if ai is stuck)
+                        </TooltipContent>
+                    </Tooltip>
                 </TooltipProvider>
-                    <Button type="submit" size="sm" class="ml-auto gap-1.5">
-                    Send Message
-                    <CornerDownLeft class="size-3.5" />
-                </Button>
+                <div class="flex items-center gap-1 ml-auto">
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger as-child>
+                                <Button type="button" variant="outline" size="icon" @click="input = ''">
+                                    <Delete class="w-4 h-4" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                                Clear Input
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                    <Button type="submit" size="sm" class="gap-1.5">
+                        Send Message
+                        <CornerDownLeft class="size-3.5" />
+                    </Button>
+                </div>
             </div>
         </form>
     </div>
