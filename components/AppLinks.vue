@@ -7,8 +7,9 @@ const { loggedIn } = useUserSession()
 const router = useRouter()
 const routes = router.options.routes
 
-const hiddenRoutesIfLoggedIn = ['/login', '/sign-up']
-const hiddenRoutesIfLoggedOut = ['/']
+const hiddenRoutes = ['/new-password']
+const hiddenRoutesIfLoggedIn = hiddenRoutes.concat(['/login', '/sign-up'])
+const hiddenRoutesIfLoggedOut = hiddenRoutes.concat(['/'])
 
 const visibleRoutes = computed(() => {
   if (loggedIn.value) {

@@ -42,16 +42,16 @@ function signUp() {
             Create an account
           </Button>
           <Button variant="outline" class="w-full" as-child>
-            <a href="/api/auth/github">
+            <NuxtLink to="/api/auth/github">
               Sign up with GitHub
-            </a>
+            </NuxtLink>
           </Button>
         </div>
         <div class="mt-4 text-sm text-center">
           Already have an account?
-          <a href="/login" class="underline">
+          <NuxtLink to="/login" class="underline">
             Sign in
-          </a>
+          </NuxtLink>
         </div>
       </CardContent>
     </Card>

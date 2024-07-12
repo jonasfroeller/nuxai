@@ -37,9 +37,9 @@ function signIn() {
           <div class="grid gap-2">
             <div class="flex items-center">
               <Label for="password">Password</Label>
-              <a href="/new-password" class="inline-block ml-auto text-sm underline">
+              <NuxtLink to="/new-password" class="inline-block ml-auto text-sm underline">
                 Forgot your password?
-              </a>
+              </NuxtLink>
             </div>
             <Input id="password" type="password" required />
           </div>
@@ -47,16 +47,16 @@ function signIn() {
             Login
           </Button>
           <Button variant="outline" class="w-full" as-child>
-            <a href="/api/auth/github">
+            <NuxtLink to="/api/auth/github">
               Login with Github
-            </a>
+            </NuxtLink>
           </Button>
         </div>
         <div class="mt-4 text-sm text-center">
           Don't have an account?
-          <a href="/sign-up" class="underline">
+          <NuxtLink to="/sign-up" class="underline">
             Sign up
-          </a>
+          </NuxtLink>
         </div>
       </CardContent>
     </Card>
