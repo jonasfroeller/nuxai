@@ -45,8 +45,8 @@ importers:
         specifier: ^0.32.0
         version: 0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1)
       lucide-vue-next:
-        specifier: ^0.403.0
-        version: 0.403.0(vue@3.4.31(typescript@5.5.3))
+        specifier: ^0.408.0
+        version: 0.408.0(vue@3.4.31(typescript@5.5.3))
       nuxt:
         specifier: ^3.12.3
         version: 3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3))
@@ -3619,8 +3619,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-vue-next@0.403.0:
-    resolution: {integrity: sha512-jmCABan/1sRnNEivFSyy+O47M5MSu7s2KSMsxxw9XlCtIyPiTNRAjj9gu7imUWTeNxkJ1LOKj+/xqjCkEMEL4g==}
+  lucide-vue-next@0.408.0:
+    resolution: {integrity: sha512-X2w4IDKs6O/R+vPdyMl5VvXS0mhuTqXtw6/NQOOIfCHvMz6vWa1Q2XvYT3oQGzyU94uVZw16jcdC1LwI5XbOdg==}
     peerDependencies:
       vue: '>=3.0.1'
 
@@ -9356,7 +9356,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-vue-next@0.403.0(vue@3.4.31(typescript@5.5.3)):
+  lucide-vue-next@0.408.0(vue@3.4.31(typescript@5.5.3)):
     dependencies:
       vue: 3.4.31(typescript@5.5.3)
 
