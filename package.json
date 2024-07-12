@@ -30,7 +30,7 @@
     "drizzle-orm": "^0.31.4",
     "lucide-vue-next": "^0.403.0",
     "nuxt": "^3.12.3",
-    "nuxt-auth-utils": "^0.1.0",
+    "nuxt-auth-utils": "^0.2.0",
     "nuxt-posthog": "^1.5.0",
     "pinia": "^2.1.7",
     "postgres": "^3.4.4",
