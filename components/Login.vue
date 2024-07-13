@@ -5,10 +5,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { displaySignInResponseError } from '~/lib/feedback';
 
+const { fetch } = useUserSession()
+
 function signIn() {
   useUserStore().signIn()
-  .then(() => {
-    reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" });
+  .then(async () => {
+    /* reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" }); */
+    await fetch();
+    navigateTo('/dashboard', {
+      redirectCode: 303
+    })
   })
   .catch((error) => {
     console.log("error" + error);
@@ -47,9 +53,9 @@ function signIn() {
             Login
           </Button>
           <Button variant="outline" class="w-full" as-child>
-            <NuxtLink to="/api/auth/github">
-              Login with Github
-            </NuxtLink>
+            <a href="/auth/github"> <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
+              Sign up with GitHub
+            </a>
           </Button>
         </div>
         <div class="mt-4 text-sm text-center">
