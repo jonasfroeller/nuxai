@@ -16,11 +16,7 @@ interface UserToCreate extends Omit<NewUser, "id" | "hashed_password"> {
 
 /**
  * Asynchronously creates a new user in the database with the provided user details.
- *
- * @param {NewUser} user - The user object containing primary email and hashed password.
- * @return {Promise<void>} A Promise that resolves after the user is inserted or rejects if there's an error.
  * 
- * @description
  * https://stackoverflow.com/questions/2647158/how-can-i-hash-passwords-in-postgresql
  * 
  * SELECT encode(encrypt('e.mail@example.com', 'secret', 'aes'), 'hex') AS encrypted_primary_email; --encrypt
@@ -29,30 +25,39 @@ interface UserToCreate extends Omit<NewUser, "id" | "hashed_password"> {
  * SELECT crypt('password', gen_salt('bf', 12)) AS hashed_password; --encrypt
  * SELECT crypt('password', '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC') LIKE '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC' AS password_is_correct; --check
  */
-const createUser = async (user: UserToCreate): Promise<null | RowList<never[]>> => {
+export const createUser = async (user: UserToCreate) => { /* TODO: fix me */
     const client = db();
     if (!client) return null;
 
-    return await client
+    /* decode(${chat_user.primary_email}, 'hex') instead of ('\x' || ${chat_user.primary_email}) instead of concat('\x', ${chat_user.primary_email}) */
+
+    const createdUser = await client
         .insert(chat_user)
         .values({
-            primary_email: sql<string>`encode(encrypt('${user.primary_email}', ${SECRET}, 'aes'), 'hex')`,
-            hashed_password: sql<string>`crypt('${user.password}', gen_salt('bf', 12))`
+            primary_email: sql<string>`encode(encrypt(${user.primary_email}, ${SECRET}, 'aes'), 'hex')`,
+            hashed_password: sql<string>`crypt(${user.password}, gen_salt('bf', 12))`
+        })
+        .returning({
+            id: chat_user.id,
+            primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
         })
         .catch((err) => {
             console.error('Failed to insert user into database', err);
             return null;
         })
+
+    if (!createdUser) return null;
+    return createdUser[0];
 }
 
-const readUser = async (id: number): Promise<null | Omit<ReadUser, "created_at" | "updated_at">[]> => {
+export const readUser = async (id: number): Promise<null | Omit<ReadUser, "created_at" | "updated_at">[]> => {
     const client = db();
     if (!client) return null;
 
     return await client
         .select({
             id: chat_user.id,
-            primary_email: chat_user.primary_email
+            primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
         }).from(chat_user)
         .where(
             and(
@@ -65,7 +70,31 @@ const readUser = async (id: number): Promise<null | Omit<ReadUser, "created_at" 
         })
 }
 
-const updateUser = async (id: number, primary_email: string | undefined, password: string | undefined): Promise<null | RowList<never[]>> => { /* TODO: check for old email and password */
+export const readUserUsingPrimaryEmail = async (email: string): Promise<null | Omit<ReadUser, "created_at" | "updated_at">> => { /* Improve, so that other emails are checked too */
+    const client = db();
+    if (!client) return null;
+
+    const fetchedUser = await client
+        .select({
+            id: chat_user.id,
+            primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
+        }).from(chat_user)
+        .where(
+            and(
+                like(chat_user.primary_email, sql<string>`encode(encrypt(${email}, ${SECRET}, 'aes'), 'hex')`)
+            )
+        )
+        .catch((err) => {
+            console.error('Failed to fetch user from database', err)
+            return null;
+        })
+
+    if (!fetchedUser) return null;
+
+    return fetchedUser[0]; // [][0] => undefined :)
+}
+
+export const updateUser = async (id: number, primary_email: string | undefined, password: string | undefined) => { /* TODO: check for old email and password */
     const client = db();
     if (!client) return null;
 
@@ -73,7 +102,7 @@ const updateUser = async (id: number, primary_email: string | undefined, passwor
         if (!primary_email) return null;
 
         return {
-            primary_email: sql<string>`encode(encrypt('${primary_email}', ${SECRET}, 'aes'), 'hex')`
+            primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
         }
     }
 
@@ -81,7 +110,7 @@ const updateUser = async (id: number, primary_email: string | undefined, passwor
         if (!password) return null;
 
         return {
-            hashed_password: sql<string>`crypt('${password}', gen_salt('bf', 12))`
+            updated_password: true
         }
     }
 
@@ -104,7 +133,7 @@ const updateUser = async (id: number, primary_email: string | undefined, passwor
         })
 }
 
-const deleteUser = async (id: number): Promise<null | RowList<never[]>> => {
+export const deleteUser = async (id: number): Promise<null | RowList<never[]>> => {
     const client = db();
     if (!client) return null;
 
@@ -122,24 +151,31 @@ const deleteUser = async (id: number): Promise<null | RowList<never[]>> => {
 }
 
 // sql<string>`decrypt(concat('\x', 'chat_user.primary_email')::bytea, 'secret', 'aes') LIKE '${primary_email}'`
-// sql<string>`crypt('${hashed_password}', 'chat_user.hashed_password') LIKE 'chat_user.hashed_password'`)
-const validateUserCredentials = async (email: string, password: string) => { /* TODO: allow more than one email */
+// sql<string>`crypt('${password}', 'chat_user.hashed_password') LIKE 'chat_user.hashed_password'`)
+export const validateUserCredentials = async (email: string, password: string) => { /* TODO: allow more than one email */
     const client = db();
     if (!client) return null;
 
-    return await client
-        .select({ id: chat_user.id })
+    const fetchedUser = await client
+        .select({
+            id: chat_user.id,
+            primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
+        })
         .from(chat_user)
         .where(
             and(
                 like(chat_user.primary_email, sql<string>`encode(encrypt(${email}, ${SECRET}, 'aes'), 'hex')`),
-                like(chat_user.hashed_password, sql<string>`crypt(${password}, gen_salt('bf', 12))`)
+                like(chat_user.hashed_password, sql<string>`crypt(${password}, ${chat_user.hashed_password})`), /* sql<boolean>`crypt(${password}, ${chat_user.hashed_password}) LIKE ${chat_user.hashed_password}` */
             )
         ).limit(1)
         .catch((err) => {
-            console.error('Failed to fetch user from database', err);
+            console.error('Failed to fetch user from database:', err);
             return null;
         })
+
+    if (!fetchedUser) return null;
+
+    return fetchedUser[0];
 }
 
 /* const { data, pending } = await useFetch("", {

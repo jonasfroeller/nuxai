@@ -1,25 +1,49 @@
+import { validateUserCredentials } from "~/server/database/repositories/users";
+
 export default defineEventHandler(async (event) => {
-    /* return sendError(event, createError({ statusCode: 401, statusMessage: 'Unauthorized' })); */
-
-    // TODO: validate user and then sign in afterwards
-    const user = {
-        id: "3543523234",
-        email: "some@email.com"
-    }
-
-    const loggedInAt = new Date();
+    /* 0. CHECK IF USER IS ALREADY LOGGED IN => UPDATE SESSION */
     const session = await getUserSession(event)
     console.log("current session", JSON.stringify(session));
 
     if (Object.keys(session).length !== 0) {
+        const loggedInAt = new Date();
         console.log("replacing session");
 
         return await replaceUserSession(event, {
-            user,
+            user: session.user,
             loggedInAt
         })
     }
 
+    /* 1. VALIDATE INPUT */
+    const body = await readBody(event);
+    console.info("body", body);
+
+    const { email, password } = body;
+
+    if (!email || !password) { /* TODO: improve with zod, also add feedback before on frontend using zod */
+        console.warn("missing email or password");
+        return sendError(event, createError({ statusCode: 400, statusMessage: 'Bad Request' }));
+    }
+
+    /* 2. CHECK IF USER IS VALID */
+
+    const userIsValid = await validateUserCredentials(email, password);
+    console.info("userIsValid:", userIsValid);
+
+    if (!userIsValid) {
+        console.warn("invalid credentials");
+        return sendError(event, createError({ statusCode: 401, statusMessage: 'Unauthorized' }));
+    }
+
+    /* 3. CREATE NEW SESSION */
+
+    const user = {
+        id: userIsValid.id,
+        primary_email: userIsValid.primary_email
+    }
+
+    const loggedInAt = new Date();
     console.log("setting new session");
 
     return await setUserSession(event, {

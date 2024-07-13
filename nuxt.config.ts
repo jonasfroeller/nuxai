@@ -12,7 +12,17 @@ export default defineNuxtConfig({
     },
     sessionPassword: process.env.NUXT_SESSION_PASSWORD,
     cryptoSecret: process.env.CRYPTO_SECRET,
-    databaseConnectionString: process.env.DATABASE_CONNECTION_STRING
+    databaseConnectionString: process.env.DATABASE_CONNECTION_STRING,
+    oauth: {
+      github: {
+        clientId: process.env.NUXT_OAUTH_GITHUB_CLIENT_ID,
+        clientSecret: process.env.NUXT_OAUTH_GITHUB_CLIENT_SECRET
+      },
+      google: {
+        clientId: process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID,
+        clientSecret: process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET
+      }
+    }
   },
 
   app: {
@@ -52,11 +62,6 @@ export default defineNuxtConfig({
     "@nuxtjs/mdc",
     "@nuxt/image"
   ],
-
-  /* "@hebilicious/form-actions-nuxt" */ /* "@hebilicious/form-actions-nuxt": "^0.3.0", */
-
-  /* "@formkit/auto-animate": "^0.8.2",
-  "@hebilicious/form-actions-nuxt": "^0.3.0", */
 
   mdc: {
     /* remarkPlugins: {

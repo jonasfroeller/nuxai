@@ -22,6 +22,20 @@
       "when": 1720653483545,
       "tag": "0002_fine_bruce_banner",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1720885140447,
+      "tag": "0003_rich_albert_cleary",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1720899060132,
+      "tag": "0004_cool_luminals",
+      "breakpoints": true
     }
   ]
 }

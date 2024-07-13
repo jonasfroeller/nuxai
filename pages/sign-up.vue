@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   name: "Sign Up",
-  alias: ['/register']
+  alias: ['/register', '/signup']
 })
 </script>
 

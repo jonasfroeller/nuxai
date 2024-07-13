@@ -38,7 +38,8 @@ export const db = () => {
             schema: {
                 ...schema,
                 ...relations
-            }
+            },
+            logger: true
         });
     } catch (e) {
         console.error("Failed to create drizzle instance:", e);

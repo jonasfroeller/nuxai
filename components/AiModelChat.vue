@@ -149,7 +149,7 @@
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                    <Button type="submit" size="sm" class="gap-1.5" :disabled="isLoading || messages.length === 0 || input === ''">
+                    <Button type="submit" size="sm" class="gap-1.5" :disabled="isLoading || input === ''">
                         Send Message
                         <CornerDownLeft class="size-3.5" />
                     </Button>

@@ -10,7 +10,7 @@ const { loggedIn, user, clear } = useUserSession()
       <AppLinks layout="navigation" />
       <div class="flex items-center gap-2">
         <Button variant="outline" v-if="loggedIn" @click="clear().finally(async () => await navigateTo('/home'))">
-          Sign Out {{ user?.email }}
+          Sign Out {{ user?.primary_email }}
         </Button>
         <ThemeToggle />
       </div>

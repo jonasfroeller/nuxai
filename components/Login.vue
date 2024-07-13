@@ -4,11 +4,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { displaySignInResponseError } from '~/lib/feedback';
+import { Icon } from '@iconify/vue'
+import Separator from './ui/separator/Separator.vue';
 
 const { fetch } = useUserSession()
+const email = ref('');
+const password = ref('');
 
 function signIn() {
-  useUserStore().signIn()
+  useUserStore().signIn(email.value, password.value)
   .then(async () => {
     /* reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" }); */
     await fetch();
@@ -38,7 +42,7 @@ function signIn() {
         <div class="grid gap-4">
           <div class="grid gap-2">
             <Label for="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required />
+            <Input id="email" type="email" name="email" v-model="email" placeholder="m@example.com" required />
           </div>
           <div class="grid gap-2">
             <div class="flex items-center">
@@ -47,16 +51,25 @@ function signIn() {
                 Forgot your password?
               </NuxtLink>
             </div>
-            <Input id="password" type="password" required />
+            <Input id="password" type="password" name="password" v-model="password" required />
           </div>
-          <Button class="w-full" @click="signIn()">
+          <Button type="button" class="w-full" @click="signIn()">
             Login
           </Button>
-          <Button variant="outline" class="w-full" as-child>
-            <a href="/auth/github"> <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
-              Sign up with GitHub
-            </a>
-          </Button>
+          <Separator label="or Oauth" class="my-2" />
+          <div class="flex flex-col gap-1">
+            <Button type="button" variant="outline" class="w-full" as-child>
+              <a href="/auth/google"> <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
+                Sign in with Google <Icon icon="devicon:google" class="h-[1.2rem] w-[1.2rem] ml-2" />
+              </a>
+            </Button>
+            <Button type="button" variant="outline" class="w-full" as-child>
+              <a href="/auth/github"> <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
+                Sign in with GitHub <Icon icon="ant-design:github-filled" class="h-[1.4rem] w-[1.4rem] ml-2" />
+              </a>
+            </Button>
+          </div>
+          <Separator />
         </div>
         <div class="mt-4 text-sm text-center">
           Don't have an account?
