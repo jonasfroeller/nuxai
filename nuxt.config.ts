@@ -22,6 +22,13 @@ export default defineNuxtConfig({
         clientId: process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID,
         clientSecret: process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET
       }
+    },
+    session: { /* session persists for 7 days */
+      name: 'nuxai-session',
+      password: process.env.NUXT_SESSION_PASSWORD,
+      cookie: {
+        sameSite: 'lax'
+      }
     }
   },
 

@@ -7,6 +7,7 @@
         "huggingface",
         "lucide",
         "mistralai",
+        "nuxai",
         "Nuxt",
         "nuxtjs",
         "oasst",
@@ -18,5 +19,6 @@
         "sonner",
         "tailwindcss",
         "vueuse"
-    ]
+    ],
+    "css.customData": [".vscode/tailwind.json"]
 }
