@@ -7,12 +7,13 @@ import { displaySignInResponseError } from '~/lib/feedback';
 import { Icon } from '@iconify/vue'
 import Separator from './ui/separator/Separator.vue';
 
+const userStore = useUserStore()
 const { fetch } = useUserSession()
 const email = ref('');
 const password = ref('');
 
 function signIn() {
-  useUserStore().signIn(email.value, password.value)
+  userStore.signIn(email.value, password.value)
   .then(async () => {
     /* reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" }); */
     await fetch();
