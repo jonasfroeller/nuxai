@@ -69,38 +69,34 @@
 </script>
 
 <template>
-    <div class="relative flex flex-col h-full min-h-[25vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 lg:col-span-2">
+    <div class="relative flex flex-col h-full min-h-[25vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 lg:col-span-2 w-full max-w-[100%-2rem]">
         <Badge variant="outline" class="absolute z-10 right-3 top-3 bg-background">
             Chat for <code class="pl-2">{{ selectedModelApiPath }}</code>
         </Badge>
 
-        <ScrollArea class="flex flex-col flex-grow w-full min-h-0 pt-8 pb-6 mx-auto">
-        <div v-for="m in messages" :key="m.id" class="whitespace-pre-wrap">
-            <div class="flex justify-start my-2" v-if="m.role === 'assistant'">
-            <ScrollArea class="bg-background border-slate-200 border w-fit px-4 py-2 rounded-lg whitespace-pre-wrap max-w-[50%]">
-                <ClientOnly>
-                    <MDC class="overflow-x-auto" :value="m.content" />
-                </ClientOnly>
-            </ScrollArea>
+        <ScrollArea class="flex flex-col flex-grow w-full max-w-full min-h-0 pt-8 pb-6">
+            <div v-for="m in messages" :key="m.id" class="flex my-2" v-bind:class="{ 'justify-start': m.role === 'assistant', 'justify-end': m.role === 'user' }">
+                <div v-if="m.role === 'assistant'" class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%]">
+                    <ClientOnly>
+                        <MDC class="overflow-x-auto break-words whitespace-pre-wrap" :value="m.content" />
+                    </ClientOnly>
+                </div>
+
+                <div v-if="m.role === 'user'" class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%]">
+                    <ClientOnly>
+                        <MDC class="overflow-x-auto break-words whitespace-pre-wrap" :value="m.content" />
+                    </ClientOnly>
+                </div>
             </div>
 
-            <div class="flex justify-end my-2" v-if="m.role === 'user'">
-            <ScrollArea class="bg-background border-slate-200 border max-w-[80%] w-fit px-4 py-2 rounded-lg whitespace-pre-wrap">
-                <ClientOnly>
-                <MDC :value="m.content" />
-                </ClientOnly>
-            </ScrollArea>
+            <!-- Input draft -->
+            <div class="flex justify-end pt-8 max-h-96" v-if="input !== ''">
+                <div class="bg-slate-100 max-w-[80%] px-4 py-2 rounded-lg whitespace-pre-wrap border border-orange-300 break-words">
+                    {{ input }}
+                </div>
             </div>
-        </div>
-
-        <!-- Input draft -->
-        <div class="flex justify-end pt-8 max-h-96" v-if="input !== ''">
-            <ScrollArea class="bg-slate-100 max-w-[80%] w-fit px-4 py-2 rounded-lg whitespace-pre-wrap border border-orange-300">
-            {{ input }}
-            </ScrollArea>
-        </div>
         </ScrollArea>
-        
+
         <form @submit="handleSubmit" class="relative flex-shrink-0 overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring">
             <Label for="message" class="sr-only">
                 Message

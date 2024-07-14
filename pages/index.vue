@@ -160,7 +160,7 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
           </Button>
         </div>
       </header>
-      <main class="grid flex-1 gap-4 p-4 overflow-auto md:grid-cols-2 lg:grid-cols-3">
+      <main class="grid flex-1 w-full max-w-full gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
         <div class="relative flex-col items-start hidden gap-8 md:flex">
           <AiModelConfiguration />
           <fieldset class="grid w-full gap-6 p-4 m-2 border rounded-lg">
