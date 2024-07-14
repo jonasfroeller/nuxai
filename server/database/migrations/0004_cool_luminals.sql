@@ -1,2 +1,0 @@
-ALTER TABLE "chat_user_oauth_account" DROP CONSTRAINT "chat_user_oauth_account_oauth_user_id_unique";--> statement-breakpoint
-ALTER TABLE "chat_user_oauth_account" ADD COLUMN "oauth_email" text NOT NULL;

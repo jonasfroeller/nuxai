@@ -2,6 +2,10 @@
 import { Toaster } from '@/components/ui/sonner';
 
 const main_layout = 'main'
+
+/* const { data, pending } = await useFetch("", {
+    lazy: true
+}) */
 </script>
 
 <template>

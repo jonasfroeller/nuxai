@@ -25,7 +25,7 @@ interface UserToCreate extends Omit<NewUser, "id" | "hashed_password"> {
  * SELECT crypt('password', gen_salt('bf', 12)) AS hashed_password; --encrypt
  * SELECT crypt('password', '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC') LIKE '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC' AS password_is_correct; --check
  */
-export const createUser = async (user: UserToCreate) => { /* TODO: fix me */
+export const createUser = async (user: UserToCreate) => {
     const client = db();
     if (!client) return null;
 
@@ -50,6 +50,39 @@ export const createUser = async (user: UserToCreate) => { /* TODO: fix me */
     return createdUser[0];
 }
 
+function generateUUID() {
+    let dt = new Date().getTime();
+    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
+}
+
+export const createEmptyUser = async () => { /* needed for Oauth, if no user exists yet */
+    const client = db();
+    if (!client) return null;
+
+    const createdUser = await client
+        .insert(chat_user)
+        .values({
+            primary_email: sql<string>`encode(encrypt(${"OauthAccount-" + generateUUID()}, ${SECRET}, 'aes'), 'hex')`, /* TODO: do not allow login with these if the values are set to that */
+            hashed_password: sql<string>`encode(encrypt(${"NONE"}, ${SECRET}, 'aes'), 'hex')`,
+        })
+        .returning({
+            id: chat_user.id,
+            primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
+        })
+        .catch((err) => {
+            console.error('Failed to insert user into database', err);
+            return null;
+        })
+
+    if (!createdUser) return null;
+    return createdUser[0];
+}
+
 export const readUser = async (id: number): Promise<null | Omit<ReadUser, "created_at" | "updated_at">[]> => {
     const client = db();
     if (!client) return null;
@@ -60,9 +93,7 @@ export const readUser = async (id: number): Promise<null | Omit<ReadUser, "creat
             primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
         }).from(chat_user)
         .where(
-            and(
-                eq(chat_user.id, id)
-            )
+            eq(chat_user.id, id)
         )
         .catch((err) => {
             console.error('Failed to fetch user from database', err)
@@ -80,9 +111,7 @@ export const readUserUsingPrimaryEmail = async (email: string): Promise<null | O
             primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
         }).from(chat_user)
         .where(
-            and(
-                like(chat_user.primary_email, sql<string>`encode(encrypt(${email}, ${SECRET}, 'aes'), 'hex')`)
-            )
+            like(chat_user.primary_email, sql<string>`encode(encrypt(${email}, ${SECRET}, 'aes'), 'hex')`)
         )
         .catch((err) => {
             console.error('Failed to fetch user from database', err)
@@ -123,9 +152,7 @@ export const updateUser = async (id: number, primary_email: string | undefined, 
         .update(chat_user)
         .set(updatedUserInformation)
         .where(
-            and(
-                eq(chat_user.id, id)
-            )
+            eq(chat_user.id, id)
         )
         .catch((err) => {
             console.error('Failed to update user in database', err);
@@ -140,9 +167,7 @@ export const deleteUser = async (id: number): Promise<null | RowList<never[]>> =
     return await client
         .delete(chat_user)
         .where(
-            and(
-                eq(chat_user.id, id)
-            )
+            eq(chat_user.id, id)
         )
         .catch((err) => {
             console.error('Failed to delete user from database', err);
@@ -177,17 +202,3 @@ export const validateUserCredentials = async (email: string, password: string) =
 
     return fetchedUser[0];
 }
-
-/* const { data, pending } = await useFetch("", {
-    lazy: true
-}) */
-
-/*
-   db.query.chat_user.findMany({
-        with: {
-            chat_user: {
-                email: true
-            }
-        }
-    })
-*/

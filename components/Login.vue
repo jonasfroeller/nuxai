@@ -60,12 +60,12 @@ function signIn() {
           <div class="flex flex-col gap-1">
             <Button type="button" variant="outline" class="w-full" as-child>
               <a href="/auth/google"> <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
-                Sign in with Google <Icon icon="devicon:google" class="h-[1.2rem] w-[1.2rem] ml-2" />
+                Sign in/up with Google <Icon icon="devicon:google" class="h-[1.2rem] w-[1.2rem] ml-2" />
               </a>
             </Button>
             <Button type="button" variant="outline" class="w-full" as-child>
               <a href="/auth/github"> <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
-                Sign in with GitHub <Icon icon="ant-design:github-filled" class="h-[1.4rem] w-[1.4rem] ml-2" />
+                Sign in/up with GitHub <Icon icon="ant-design:github-filled" class="h-[1.4rem] w-[1.4rem] ml-2" />
               </a>
             </Button>
           </div>

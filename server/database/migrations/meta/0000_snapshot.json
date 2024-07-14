@@ -1,9 +1,133 @@
 {
-  "id": "34957567-3952-4617-8690-fa461cc4a782",
+  "id": "3571b8b7-2337-4b16-bcde-e557567ebbb7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.chat_conversation": {
+      "name": "chat_conversation",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model": {
+          "name": "model",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.chat_conversation_message": {
+      "name": "chat_conversation_message",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actor": {
+          "name": "actor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "chat_user_id": {
+          "name": "chat_user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chat_conversation_id": {
+          "name": "chat_conversation_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "chat_conversation_message_chat_user_id_chat_user_id_fk": {
+          "name": "chat_conversation_message_chat_user_id_chat_user_id_fk",
+          "tableFrom": "chat_conversation_message",
+          "tableTo": "chat_user",
+          "columnsFrom": [
+            "chat_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "chat_conversation_message_chat_conversation_id_chat_conversation_id_fk": {
+          "name": "chat_conversation_message_chat_conversation_id_chat_conversation_id_fk",
+          "tableFrom": "chat_conversation_message",
+          "tableTo": "chat_conversation",
+          "columnsFrom": [
+            "chat_conversation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.chat_user": {
       "name": "chat_user",
       "schema": "",
@@ -24,7 +148,21 @@
           "name": "hashed_password",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -39,10 +177,89 @@
           ]
         }
       }
+    },
+    "public.chat_user_oauth_account": {
+      "name": "chat_user_oauth_account",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "provider": {
+          "name": "provider",
+          "type": "oauth_provider_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "oauth_user_id": {
+          "name": "oauth_user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "oauth_email": {
+          "name": "oauth_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "chat_user_id": {
+          "name": "chat_user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "chat_user_oauth_account_chat_user_id_chat_user_id_fk": {
+          "name": "chat_user_oauth_account_chat_user_id_chat_user_id_fk",
+          "tableFrom": "chat_user_oauth_account",
+          "tableTo": "chat_user",
+          "columnsFrom": [
+            "chat_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     }
   },
-  "enums": {},
+  "enums": {
+    "public.oauth_provider_enum": {
+      "name": "oauth_provider_enum",
+      "schema": "public",
+      "values": [
+        "github",
+        "google"
+      ]
+    }
+  },
   "schemas": {},
+  "sequences": {},
   "_meta": {
     "columns": {},
     "schemas": {},

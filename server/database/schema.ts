@@ -17,7 +17,7 @@ export const chat_user_oauth_account = pgTable("chat_user_oauth_account", {
 	created_at: timestamp("created_at").defaultNow(),
 	updated_at: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()),
 
-	chat_user_id: integer("chat_user_id").notNull().references(() => chat_user.id),
+	chat_user_id: integer("chat_user_id").notNull().references(() => chat_user.id, { onDelete: 'cascade' }),
 });
 
 export const chat_conversation = pgTable("chat_conversation", {
@@ -35,6 +35,6 @@ export const chat_conversation_message = pgTable("chat_conversation_message", {
 	created_at: timestamp("created_at").defaultNow(),
 	updated_at: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()),
 
-	chat_user_id: integer("chat_user_id").notNull().references(() => chat_user.id),
-	chat_conversation_id: integer("chat_conversation_id").notNull().references(() => chat_conversation.id),
+	chat_user_id: integer("chat_user_id").notNull().references(() => chat_user.id, { onDelete: 'cascade' }),
+	chat_conversation_id: integer("chat_conversation_id").notNull().references(() => chat_conversation.id, { onDelete: 'cascade' }),
 })
