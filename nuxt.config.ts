@@ -60,7 +60,8 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     "nuxt-auth-utils",
     "@nuxtjs/mdc",
-    "@nuxt/image"
+    "@nuxt/image",
+    '@vueuse/nuxt'
   ],
 
   mdc: {

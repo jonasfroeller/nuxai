@@ -13,6 +13,27 @@
     import { useChat } from '@ai-sdk/vue'
     import { Label } from "@/components/ui/label"
 
+    const lang = ref('en-US')
+
+    const {
+        isSupported,
+        isListening,
+        result,
+        start,
+        stop
+    } = useSpeechRecognition({
+        lang: lang.value,
+        interimResults: true,
+        continuous: true,
+    })
+
+    if (isSupported.value && window) {
+        watch(result, () => {
+            console.log('speech.result', result.value)
+            input.value = result.value
+        })
+    }
+
     /* const props = defineProps<{
         selectedModel?: AllowedModelPaths
     }>() */ /* maybe allow too in the future */
@@ -93,7 +114,7 @@
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger as-child>
-                            <Button variant="ghost" size="icon">
+                            <Button type="button" variant="ghost" size="icon" disabled>
                                 <Paperclip class="size-4" />
                                 <span class="sr-only">Attach file</span>
                             </Button>
@@ -102,9 +123,17 @@
                             Attach File
                         </TooltipContent>
                     </Tooltip>
-                    <Tooltip>
+                    <Tooltip v-if="isSupported">
                         <TooltipTrigger as-child>
-                            <Button variant="ghost" size="icon">
+                            <Button type="button" variant="ghost" size="icon" v-bind:class="{ 'animate-pulse outline-1 outline-destructive outline-dashed': isListening }" @click="() => {
+                                if (isListening) {
+                                    console.log('stopping listening');
+                                    stop();
+                                } else {
+                                    console.log('starting listening');
+                                    start();
+                                }
+                            }">
                                 <Mic class="size-4" />
                                 <span class="sr-only">Use Microphone</span>
                             </Button>
@@ -115,7 +144,7 @@
                     </Tooltip>
                     <Tooltip>
                         <TooltipTrigger as-child>
-                            <Button variant="ghost" size="icon" @click="() => messages = []" :disabled="isLoading || messages.length === 0">
+                            <Button type="button" variant="ghost" size="icon" @click="() => messages = []" :disabled="isLoading || messages.length === 0">
                                 <Trash2 class="size-4" />
                                 <span class="sr-only">Clear Chat</span>
                             </Button>
@@ -126,7 +155,7 @@
                     </Tooltip>
                     <Tooltip>
                         <TooltipTrigger as-child>
-                            <Button variant="ghost" size="icon" @click="reload" :disabled="isLoading || messages.length === 0">
+                            <Button type="button" variant="ghost" size="icon" @click="reload" :disabled="isLoading || messages.length === 0">
                                 <RefreshCcw class="size-4" />
                                 <span class="sr-only">Refresh Last Response</span>
                             </Button>

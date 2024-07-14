@@ -16,6 +16,7 @@
         "shadcn",
         "shiki",
         "sonner",
-        "tailwindcss"
+        "tailwindcss",
+        "vueuse"
     ]
 }
