@@ -69,9 +69,9 @@
 </script>
 
 <template>
-    <div class="relative flex flex-col h-full min-h-[25vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 lg:col-span-2 w-full max-w-[100%-2rem]">
+    <div class="relative flex flex-col h-full min-h-[25vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 w-[100%-2rem]">
         <Badge variant="outline" class="absolute z-10 right-3 top-3 bg-background">
-            Chat for <code class="pl-2">{{ selectedModelApiPath }}</code>
+            Chat
         </Badge>
 
         <ScrollArea class="flex flex-col flex-grow w-full max-w-full min-h-0 pt-8 pb-6">

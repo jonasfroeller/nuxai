@@ -12,7 +12,7 @@ function logSelectedModelInfo() {
 </script>
 
 <template>
-    <form class="grid items-start w-full gap-6 pl-2">
+    <form class="grid items-start w-full gap-6">
         <fieldset class="grid gap-6 p-4 border rounded-lg">
             <legend class="px-1 -ml-1 text-sm font-medium">
                 Settings
