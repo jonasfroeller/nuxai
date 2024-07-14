@@ -33,7 +33,7 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
 </script>
 
 <template>
-  <div class="grid h-screen w-full pl-[53px]">
+  <div class="grid min-h-screen w-full pl-[53px]">
     <aside class="fixed top-0 left-0 flex flex-col h-full border-t border-r inset-y bg-[hsl(var(--background))] z-50">
       <div class="p-2 border-b">
         <Button variant="outline" size="icon" aria-label="Home" as-child>
@@ -160,8 +160,8 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
           </Button>
         </div>
       </header>
-      <main class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 lg:grid-cols-2">
-        <div class="relative flex-col items-start hidden gap-8 md:flex">
+      <main class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 2xl:grid-cols-[33%,1fr]">
+        <div class="relative flex-col items-start order-2 hidden gap-8 md:flex 2xl:order-1">
           <AiModelConfiguration />
           <fieldset class="grid w-full gap-6 p-4 border rounded-lg">
             <legend class="px-1 -ml-1 text-sm font-medium">
