@@ -1,3 +1,5 @@
+import { IS_CLIENT } from "~/server/globals";
+
 export function titleCase(text: string) {
     return text
         .toLowerCase()
@@ -11,7 +13,7 @@ export function formatCurrentClientDate() {
     let newDate = new Date();
     let formattedDate = newDate.toString();
 
-    if (import.meta.client) {
+    if (IS_CLIENT) {
         const locale = navigator.language;
         console.log(locale)
         formattedDate = newDate.toLocaleDateString(locale, {

@@ -1,7 +1,6 @@
 import { chat_user } from "../schema";
 import { db } from "../db";
 import { and, eq, like, sql } from "drizzle-orm";
-import type { RowList } from "postgres";
 const SECRET = process.env.CRYPTO_SECRET ?? "secret";
 
 type NewUser = typeof chat_user.$inferInsert;
@@ -37,6 +36,7 @@ export const createUser = async (user: UserToCreate) => {
             primary_email: sql<string>`encode(encrypt(${user.primary_email}, ${SECRET}, 'aes'), 'hex')`,
             hashed_password: sql<string>`crypt(${user.password}, gen_salt('bf', 12))`
         })
+        // @ts-ignore (is allowed, just not properly typed)
         .returning({
             id: chat_user.id,
             primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
@@ -70,6 +70,7 @@ export const createEmptyUser = async () => { /* needed for Oauth, if no user exi
             primary_email: sql<string>`encode(encrypt(${"OauthAccount-" + generateUUID()}, ${SECRET}, 'aes'), 'hex')`, /* TODO: do not allow login with these if the values are set to that */
             hashed_password: sql<string>`encode(encrypt(${"NONE"}, ${SECRET}, 'aes'), 'hex')`,
         })
+        // @ts-ignore (is allowed, just not properly typed)
         .returning({
             id: chat_user.id,
             primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
@@ -160,7 +161,7 @@ export const updateUser = async (id: number, primary_email: string | undefined, 
         })
 }
 
-export const deleteUser = async (id: number): Promise<null | RowList<never[]>> => {
+export const deleteUser = async (id: number) => {
     const client = db();
     if (!client) return null;
 

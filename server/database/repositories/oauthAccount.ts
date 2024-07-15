@@ -68,6 +68,7 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
             oauth_email: sql<string>`encode(encrypt(${account.oauth_email}, ${SECRET}, 'aes'), 'hex')`, /* email from /auth/github or /auth/google */
             chat_user_id: createdUser.id
         })
+        // @ts-ignore (is allowed, just not properly typed)
         .returning({
             provider: chat_user_oauth_account.provider,
             oauth_user_id: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_user_id}, 'hex'), ${SECRET}, 'aes'), 'escape')`,

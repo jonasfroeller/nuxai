@@ -14,6 +14,9 @@ importers:
       '@huggingface/inference':
         specifier: ^2.7.0
         version: 2.7.0
+      '@neondatabase/serverless':
+        specifier: ^0.9.4
+        version: 0.9.4
       '@nuxt/eslint':
         specifier: ^0.3.13
         version: 0.3.13(eslint@8.57.0)(magicast@0.3.4)(rollup@4.18.1)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
@@ -40,13 +43,13 @@ importers:
         version: 2.1.1
       drizzle-orm:
         specifier: ^0.32.0
-        version: 0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1)
+        version: 0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1)
       lucide-vue-next:
         specifier: ^0.408.0
         version: 0.408.0(vue@3.4.31(typescript@5.5.3))
       nuxt:
         specifier: ^3.12.3
-        version: 3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3))
+        version: 3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3))
       nuxt-auth-utils:
         specifier: ^0.2.0
         version: 0.2.0(magicast@0.3.4)(rollup@4.18.1)
@@ -98,7 +101,7 @@ importers:
         version: 10.11.0(vue@3.4.31(typescript@5.5.3))
       '@vueuse/nuxt':
         specifier: ^10.11.0
-        version: 10.11.0(magicast@0.3.4)(nuxt@3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3)))(rollup@4.18.1)(vue@3.4.31(typescript@5.5.3))
+        version: 10.11.0(magicast@0.3.4)(nuxt@3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3)))(rollup@4.18.1)(vue@3.4.31(typescript@5.5.3))
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.39)
@@ -1230,6 +1233,9 @@ packages:
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
     hasBin: true
 
+  '@neondatabase/serverless@0.9.4':
+    resolution: {integrity: sha512-D0AXgJh6xkf+XTlsO7iwE2Q1w8981E1cLCPAALMU2YKtkF/1SF6BiAzYARZFYo175ON+b1RNIy9TdSFHm5nteg==}
+
   '@netlify/functions@2.8.1':
     resolution: {integrity: sha512-+6wtYdoz0yE06dSa9XkP47tw5zm6g13QMeCwM3MmHx1vn8hzwFa51JtmfraprdkL7amvb7gaNM+OOhQU1h6T8A==}
     engines: {node: '>=14.0.0'}
@@ -1682,6 +1688,9 @@ packages:
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
+
+  '@types/pg@8.11.6':
+    resolution: {integrity: sha512-/2WmmBXHLsfRqzfHW7BNZ8SbYzE8OSk7i3WjFYvfgRHj7S1xj+16Je5fUKv3lVdVzk/zn9TXOqf+avFCFIE0yQ==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -4040,6 +4049,9 @@ packages:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
     engines: {node: '>= 6'}
 
+  obuf@1.1.2:
+    resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
+
   ofetch@1.3.4:
     resolution: {integrity: sha512-KLIET85ik3vhEfS+3fDlc/BAZiAp+43QEC/yCo5zkNoY2YaKvNkOaFr/6wCFgFH1kuYQM5pMNi0Tg8koiIemtw==}
 
@@ -4196,6 +4208,21 @@ packages:
 
   periscopic@3.1.0:
     resolution: {integrity: sha512-vKiQ8RRtkl9P+r/+oefh25C3fhybptkHKCZSPlcXiJux2tJF55GnEj3BVn4A5gKfq9NWWXXrxkHBwVPUfH0opw==}
+
+  pg-int8@1.0.1:
+    resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
+    engines: {node: '>=4.0.0'}
+
+  pg-numeric@1.0.2:
+    resolution: {integrity: sha512-BM/Thnrw5jm2kKLE5uJkXqqExRUY/toLHda65XgFTBTFYZyopbKjBe29Ii3RbkvlsMoFwD+tHeGaCjjv0gHlyw==}
+    engines: {node: '>=4'}
+
+  pg-protocol@1.6.1:
+    resolution: {integrity: sha512-jPIlvgoD63hrEuihvIg+tJhoGjUsLPn6poJY9N5CnlPd91c2T18T/9zBtLxZSb1EhYxBRoZJtzScCaWlYLtktg==}
+
+  pg-types@4.0.2:
+    resolution: {integrity: sha512-cRL3JpS3lKMGsKaWndugWQoLOCoP+Cic8oseVcbr0qhPzYD5DWXK+RZ9LY9wxRf7RQia4SCwQlXk0q6FCPrVng==}
+    engines: {node: '>=10'}
 
   picocolors@1.0.1:
     resolution: {integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==}
@@ -4447,6 +4474,25 @@ packages:
   postcss@8.4.39:
     resolution: {integrity: sha512-0vzE+lAiG7hZl1/9I8yzKLx3aR9Xbof3fBHKunvMfOCYAtMhrsnccJY2iTURb9EZd5+pLuiNV9/c/GZJOHsgIw==}
     engines: {node: ^10 || ^12 || >=14}
+
+  postgres-array@3.0.2:
+    resolution: {integrity: sha512-6faShkdFugNQCLwucjPcY5ARoW1SlbnrZjmGl0IrrqewpvxvhSLHimCVzqeuULCbG0fQv7Dtk1yDbG3xv7Veog==}
+    engines: {node: '>=12'}
+
+  postgres-bytea@3.0.0:
+    resolution: {integrity: sha512-CNd4jim9RFPkObHSjVHlVrxoVQXz7quwNFpz7RY1okNNme49+sVyiTvTRobiLV548Hx/hb1BG+iE7h9493WzFw==}
+    engines: {node: '>= 6'}
+
+  postgres-date@2.1.0:
+    resolution: {integrity: sha512-K7Juri8gtgXVcDfZttFKVmhglp7epKb1K4pgrkLxehjqkrgPhfG6OO8LHLkfaqkbpjNRnra018XwAr1yQFWGcA==}
+    engines: {node: '>=12'}
+
+  postgres-interval@3.0.0:
+    resolution: {integrity: sha512-BSNDnbyZCXSxgA+1f5UU2GmwhoI0aU5yMxRGO8CdFEcY2BQF9xm/7MqKnYoM1nJDk8nONNWDk9WeSmePFhQdlw==}
+    engines: {node: '>=12'}
+
+  postgres-range@1.1.4:
+    resolution: {integrity: sha512-i/hbxIE9803Alj/6ytL7UHQxRvZkI9O4Sy+J3HGc4F4oo/2eQAjTSNJ0bfxyse3bH0nuVesCk+3IRLaMtG3H6w==}
 
   postgres@3.4.4:
     resolution: {integrity: sha512-IbyN+9KslkqcXa8AO9fxpk97PA4pzewvpi2B3Dwy9u4zpV32QicaEdgmF3eSQUzdRk7ttDHQejNgAEr4XoeH4A==}
@@ -6446,6 +6492,10 @@ snapshots:
       - encoding
       - supports-color
 
+  '@neondatabase/serverless@0.9.4':
+    dependencies:
+      '@types/pg': 8.11.6
+
   '@netlify/functions@2.8.1':
     dependencies:
       '@netlify/serverless-functions-api': 1.19.1
@@ -7148,6 +7198,12 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
+  '@types/pg@8.11.6':
+    dependencies:
+      '@types/node': 20.14.10
+      pg-protocol: 1.6.1
+      pg-types: 4.0.2
+
   '@types/resolve@1.20.2': {}
 
   '@types/unist@2.0.10': {}
@@ -7459,13 +7515,13 @@ snapshots:
 
   '@vueuse/metadata@10.11.0': {}
 
-  '@vueuse/nuxt@10.11.0(magicast@0.3.4)(nuxt@3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3)))(rollup@4.18.1)(vue@3.4.31(typescript@5.5.3))':
+  '@vueuse/nuxt@10.11.0(magicast@0.3.4)(nuxt@3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3)))(rollup@4.18.1)(vue@3.4.31(typescript@5.5.3))':
     dependencies:
       '@nuxt/kit': 3.12.3(magicast@0.3.4)(rollup@4.18.1)
       '@vueuse/core': 10.11.0(vue@3.4.31(typescript@5.5.3))
       '@vueuse/metadata': 10.11.0
       local-pkg: 0.5.0
-      nuxt: 3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3))
+      nuxt: 3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3))
       vue-demi: 0.14.8(vue@3.4.31(typescript@5.5.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -8068,9 +8124,9 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  db0@0.1.4(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1)):
+  db0@0.1.4(drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1)):
     optionalDependencies:
-      drizzle-orm: 0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1)
+      drizzle-orm: 0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1)
 
   de-indent@1.0.2: {}
 
@@ -8193,9 +8249,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1):
+  drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1):
     optionalDependencies:
+      '@neondatabase/serverless': 0.9.4
       '@opentelemetry/api': 1.9.0
+      '@types/pg': 8.11.6
       postgres: 3.4.4
       react: 18.3.1
 
@@ -9818,7 +9876,7 @@ snapshots:
 
   negotiator@0.6.3: {}
 
-  nitropack@2.9.7(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))(magicast@0.3.4):
+  nitropack@2.9.7(drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(magicast@0.3.4):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
       '@netlify/functions': 2.8.1
@@ -9841,7 +9899,7 @@ snapshots:
       cookie-es: 1.1.0
       croner: 8.1.0
       crossws: 0.2.4
-      db0: 0.1.4(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))
+      db0: 0.1.4(drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))
       defu: 6.1.4
       destr: 2.0.3
       dot-prop: 8.0.2
@@ -10000,7 +10058,7 @@ snapshots:
       - rollup
       - supports-color
 
-  nuxt@3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3)):
+  nuxt@3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.1)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))(vue-tsc@2.0.26(typescript@5.5.3)):
     dependencies:
       '@nuxt/devalue': 2.0.2
       '@nuxt/devtools': 1.3.9(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(terser@5.31.2))
@@ -10033,7 +10091,7 @@ snapshots:
       knitwork: 1.1.0
       magic-string: 0.30.10
       mlly: 1.7.1
-      nitropack: 2.9.7(drizzle-orm@0.32.0(@opentelemetry/api@1.9.0)(postgres@3.4.4)(react@18.3.1))(magicast@0.3.4)
+      nitropack: 2.9.7(drizzle-orm@0.32.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(magicast@0.3.4)
       nuxi: 3.12.0
       nypm: 0.3.9
       ofetch: 1.3.4
@@ -10116,6 +10174,8 @@ snapshots:
   object-assign@4.1.1: {}
 
   object-hash@3.0.0: {}
+
+  obuf@1.1.2: {}
 
   ofetch@1.3.4:
     dependencies:
@@ -10285,6 +10345,22 @@ snapshots:
       '@types/estree': 1.0.5
       estree-walker: 3.0.3
       is-reference: 3.0.2
+
+  pg-int8@1.0.1: {}
+
+  pg-numeric@1.0.2: {}
+
+  pg-protocol@1.6.1: {}
+
+  pg-types@4.0.2:
+    dependencies:
+      pg-int8: 1.0.1
+      pg-numeric: 1.0.2
+      postgres-array: 3.0.2
+      postgres-bytea: 3.0.0
+      postgres-date: 2.1.0
+      postgres-interval: 3.0.0
+      postgres-range: 1.1.4
 
   picocolors@1.0.1: {}
 
@@ -10512,6 +10588,18 @@ snapshots:
       nanoid: 3.3.7
       picocolors: 1.0.1
       source-map-js: 1.2.0
+
+  postgres-array@3.0.2: {}
+
+  postgres-bytea@3.0.0:
+    dependencies:
+      obuf: 1.1.2
+
+  postgres-date@2.1.0: {}
+
+  postgres-interval@3.0.0: {}
+
+  postgres-range@1.1.4: {}
 
   postgres@3.4.4: {}
 
