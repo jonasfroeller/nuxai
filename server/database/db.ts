@@ -9,7 +9,7 @@ import { IS_DEV } from '../globals';
 /* TODO: set the drivers as optional dependencies and only import the needed one dynamically (might be a worse idea, than leaving it like this) */
 
 export const connectionString = process.env.DATABASE_CONNECTION_STRING || "postgresql://postgres:postgres@localhost:5432/postgres";
-export const IS_SERVERLESS = process.env.DATABASE_CONNECTION_STRING?.includes("neon.tech") && !IS_DEV;
+export const IS_SERVERLESS = Boolean(process.env.IS_SERVERLESS) ?? false; /* process.env.DATABASE_CONNECTION_STRING?.includes("neon.tech") && !IS_DEV (serverless doesn't work in a serverless environment and times out :|) */
 export const databaseMap = {
     ...schema,
     ...relations
