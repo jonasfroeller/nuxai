@@ -1,4 +1,5 @@
 export default defineNitroPlugin(() => {
+    // update session, when fetched
     sessionHooks.hook('fetch', async (session, event) => {
         console.log("session fetched...");
 

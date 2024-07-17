@@ -52,6 +52,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: { lang: 'en' },
       meta: [
         { name: "description", content: "%s - Nuxt Chat App" }
       ]
@@ -142,5 +143,14 @@ export default defineNuxtConfig({
     host: process.env.POSTHOG_HOST,
     capturePageViews: true,
     disabled: process.env.POSTHOG_ACTIVE === 'false' /* process.dev (deprecated), import.meta.dev (unusable in config file) (https://nuxt.com/docs/api/advanced/import-meta#runtime-app-properties) */
+  },
+
+  eslint: {
+    config: {
+      stylistic: {
+        quotes: 'single',
+        commaDangle: 'never'
+      }
+    }
   }
 })

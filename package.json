@@ -9,6 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "check": "npx nuxi typecheck",
+    "lint": "eslint .",
     "ui": "npx shadcn-vue@latest add",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "db:pull": "drizzle-kit introspect --config drizzle.config.ts",

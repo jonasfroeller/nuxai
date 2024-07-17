@@ -6,6 +6,12 @@ const main_layout = 'main'
 /* const { data, pending } = await useFetch("", {
     lazy: true
 }) */
+
+/* useHead({
+}) */
+
+/* useSeoMeta({
+}) */
 </script>
 
 <template>
