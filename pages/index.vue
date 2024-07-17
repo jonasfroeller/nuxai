@@ -5,7 +5,6 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, Dr
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { formatCurrentClientDate } from '~/lib/formatting'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Dialog,
@@ -20,7 +19,7 @@ import {
 
 definePageMeta({
   name: "Dashboard",
-  middleware: ["protect"],
+  middleware: ["protected"],
   alias: ['/dashboard', '/chat']
 })
 

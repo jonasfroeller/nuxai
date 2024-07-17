@@ -1,5 +1,3 @@
-import { IS_CLIENT } from "~/server/globals";
-
 export function titleCase(text: string) {
     return text
         .toLowerCase()
@@ -32,3 +30,5 @@ export function formatCurrentClientDate() {
         formattedDate
     };
 }
+
+/* Intl.<someFormatter> */

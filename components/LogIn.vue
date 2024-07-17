@@ -3,11 +3,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { displaySignInResponseError } from '~/lib/feedback';
 import { Icon } from '@iconify/vue'
 import Separator from './ui/separator/Separator.vue';
 
-const userStore = useUserStore()
+const userStore = useAuthStore()
 const { fetch } = useUserSession()
 const email = ref('');
 const password = ref('');

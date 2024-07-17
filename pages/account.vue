@@ -14,7 +14,7 @@ const signOut = () => {
 
 definePageMeta({
   name: "Account",
-  middleware: ["protect"]
+  middleware: ["protected"]
 })
 </script>
 

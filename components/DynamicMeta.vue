@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { titleCase } from '~/lib/formatting';
-
   const router = useRouter()
   const currentRouteTitle = titleCase(router.currentRoute.value.name?.toString() ?? "");
 </script>

@@ -3,6 +3,24 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
 
+  routeRules: {
+    '/api/**': {
+      cors: true
+    }
+  },
+
+  nitro: {
+    imports: {
+      dirs: ['./server/utils']
+    },
+    /* storage: {
+      redis: {
+        driver: 'redis',
+        url: process.env.KV_CONNECTION_STRING
+      }
+    } */
+  },
+
   runtimeConfig: {
     huggingfaceApiKey: process.env.HUGGING_FACE_API_KEY,
     posthog: {
@@ -96,7 +114,7 @@ export default defineNuxtConfig({
     storesDirs: ['./stores/**'],
   },
 
-  css: ['~/assets/css/tailwind.css'],
+  css: ['~/assets/css/app.css'],
   postcss: {
     plugins: {
       tailwindcss: {},
