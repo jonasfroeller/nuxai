@@ -1,6 +1,6 @@
 const protectedRoutes = [
-    "^/api/user(/|$)",  // matches "/api/user" and "/api/user/**"
-    "/api/chat"
+    "^\/api\/users(\/.*)?$",
+    "^\/api\/ai(\/.*)?$"
 ];
 
 export default defineEventHandler(async (event) => {

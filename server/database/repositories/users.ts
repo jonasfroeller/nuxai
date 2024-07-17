@@ -1,4 +1,4 @@
-import { chat_user } from "../schema";
+import { chat_user, chat_user_oauth_account } from "../schema";
 import { db } from "../db";
 import { and, eq, like, sql } from "drizzle-orm";
 const SECRET = process.env.CRYPTO_SECRET ?? "secret";
@@ -202,4 +202,73 @@ export const validateUserCredentials = async (email: string, password: string) =
     if (!fetchedUser) return null;
 
     return fetchedUser[0];
+}
+
+type AccountType = "BasicAuth" | "oAuth" | "GoogleAuth" | "GithubAuth";
+type StatisticType = "count";
+
+export const statistics = async (accountType: AccountType, statisticType: StatisticType = "count") => {
+    const client = db();
+    if (!client) return null;
+
+    let statistic = null;
+    if (statisticType === "count") {
+        switch (accountType) {
+            case "BasicAuth": // counts all accounts
+                statistic = await client
+                    .select({
+                        count: sql<number>`count(${chat_user.id})`,
+                    })
+                    .from(chat_user)
+                    .catch((err) => {
+                        console.error('Failed to fetch user statistics from database:', err);
+                        return null;
+                    })
+                break;
+            case "oAuth":
+                statistic = await client
+                    .select({
+                        count: sql<number>`count(${chat_user_oauth_account.id})`,
+                    })
+                    .from(chat_user_oauth_account)
+                    .catch((err) => {
+                        console.error('Failed to fetch user statistics from database:', err);
+                        return null;
+                    })
+                break;
+            case "GoogleAuth":
+                statistic = await client
+                    .select({
+                        count: sql<number>`count(${chat_user_oauth_account.id})`,
+                    })
+                    .from(chat_user_oauth_account)
+                    .where(
+                        like(chat_user_oauth_account.provider, 'google')
+                    )
+                    .catch((err) => {
+                        console.error('Failed to fetch user statistics from database:', err);
+                        return null;
+                    })
+                break;
+            case "GithubAuth":
+                statistic = await client
+                    .select({
+                        count: sql<number>`count(${chat_user_oauth_account.id})`,
+                    })
+                    .from(chat_user_oauth_account)
+                    .where(
+                        like(chat_user_oauth_account.provider, 'github')
+                    )
+                    .catch((err) => {
+                        console.error('Failed to fetch user statistics from database:', err);
+                    })
+                break;
+            default:
+                break;
+        }
+    }
+
+    if (!statistic) return null;
+
+    return statistic[0];
 }
