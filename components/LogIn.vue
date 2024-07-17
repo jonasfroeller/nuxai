@@ -5,31 +5,47 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Icon } from '@iconify/vue'
 import Separator from './ui/separator/Separator.vue';
+import { validateEmailInput, validatePasswordInput } from '~/lib/types/input.validation'
 
 const userStore = useAuthStore()
 const { fetch } = useUserSession()
 const email = ref('');
 const password = ref('');
+const emailErrors = ref([]);
+const passwordErrors = ref([]);
 
-function signIn() {
-  userStore.signIn(email.value, password.value)
-  .then(async () => {
-    /* reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" }); */
-    await fetch();
-    navigateTo('/dashboard', {
-      redirectCode: 303
-    })
-  })
-  .catch((error) => {
-    console.log("error" + error);
-    displaySignInResponseError(error);
+watch(email, (newEmail) => {
+  emailErrors.value = validateEmailInput(newEmail);
+});
+
+watch(password, (newPassword) => {
+  passwordErrors.value = validatePasswordInput(newPassword);
+});
+
+async function signIn() {
+  const { /* data,  */error } = await userStore.signIn(email.value, password.value);
+
+  if (error.value) {
+    console.log("error:", error.value?.message, error.value.data);
+    emailErrors.value = error.value.data.data.issues.filter((issue: any) => issue.path[0] === 'email').map((issue: any) => issue.message);
+    passwordErrors.value = error.value.data.data.issues.filter((issue: any) => issue.path[0] === 'password').map((issue: any) => issue.message);
+
+    displaySignInResponseError(error.value);
+    return;
+  }
+
+  // console.log("data", data.value);
+
+  await fetch(); // reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" });
+  navigateTo('/dashboard', {
+    redirectCode: 303
   })
 }
 </script>
 
 <template>
   <div>
-    <Card class="max-w-sm mx-auto">
+    <Card class="mx-2 max-full">
       <CardHeader>
         <CardTitle class="text-2xl">
           Login
@@ -40,19 +56,36 @@ function signIn() {
       </CardHeader>
       <CardContent>
         <div class="grid gap-4">
-          <div class="grid gap-2">
-            <Label for="email">Email</Label>
-            <Input id="email" type="email" name="email" v-model="email" placeholder="m@example.com" required />
-          </div>
-          <div class="grid gap-2">
-            <div class="flex items-center">
-              <Label for="password">Password</Label>
-              <NuxtLink to="/new-password" class="inline-block ml-auto text-sm underline">
-                Forgot your password?
-              </NuxtLink>
+          <div>
+            <div class="grid gap-2 mb-1">
+              <Label for="email">Email</Label>
+              <Input @keydown.enter="signIn()" id="email" type="email" name="email" v-model="email" placeholder="m@example.com" required />
             </div>
-            <Input id="password" type="password" name="password" v-model="password" required />
+
+            <ul v-if="emailErrors.length > 0" class="pl-5 list-disc">
+              <li v-for="error in emailErrors" class="text-sm font-bold text-destructive">
+                {{ error }}<br>
+              </li>
+            </ul>
           </div>
+          <div>
+            <div class="grid gap-2 mb-1">
+              <div class="flex items-center">
+                <Label for="password">Password</Label>
+                <NuxtLink to="/new-password" class="inline-block ml-auto text-sm underline">
+                  Forgot your password?
+                </NuxtLink>
+              </div>
+              <Input @keydown.enter="signIn()" id="password" type="password" name="password" v-model="password" required />
+            </div>
+            
+            <ul v-if="passwordErrors.length > 0" class="pl-5 list-disc">
+              <li v-for="error in passwordErrors" class="text-sm font-bold text-destructive">
+                {{ error }}<br>
+              </li>
+            </ul>
+          </div>
+
           <Button type="button" class="w-full" @click="signIn()">
             Login
           </Button>

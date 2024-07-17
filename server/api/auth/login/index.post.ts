@@ -1,3 +1,4 @@
+import { UserLogInSchema } from "~/lib/types/input.validation";
 import { validateUserCredentials } from "~/server/database/repositories/users";
 
 export default defineEventHandler(async (event) => {
@@ -21,7 +22,14 @@ export default defineEventHandler(async (event) => {
     /* assertMethod(event, ['POST', 'GET']) */
 
     /* 1. VALIDATE INPUT */
-    const body = await readBody(event);
+    // const body = await readBody(event);
+    // const body = await readValidatedBody(event, UserLogInSchema.parse);
+    const result = await readValidatedBody(event, body => UserLogInSchema.safeParse(body))
+
+    console.info("result", JSON.stringify(result))
+    if (!result.success || !result.data) return sendError(event, createError({ statusCode: 400, statusMessage: 'Bad Request', data: result.error }));
+    const body = result.data!;
+
     console.info("body", body);
 
     const { email, password } = body;
