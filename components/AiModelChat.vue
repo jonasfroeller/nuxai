@@ -1,6 +1,7 @@
 <script setup lang="ts">
-    import { Mic, Paperclip, CornerDownLeft, RefreshCcw, Trash2, Delete } from 'lucide-vue-next'
+    import { Mic, Paperclip, Link, CornerDownLeft, RefreshCcw, Trash2, Delete } from 'lucide-vue-next'
     import { Button } from '@/components/ui/button'
+    import Input from './ui/input/Input.vue'
     import { Badge } from "@/components/ui/badge"
     import { ScrollArea } from "@/components/ui/scroll-area"
     import { Textarea } from '@/components/ui/textarea'
@@ -10,11 +11,27 @@
       TooltipProvider,
       TooltipTrigger,
     } from "@/components/ui/tooltip"
+    import {
+        Popover,
+        PopoverContent,
+        PopoverTrigger,
+    } from '@/components/ui/popover'
     import { useChat } from '@ai-sdk/vue'
     import { Label } from "@/components/ui/label"
+    import { toast } from 'vue-sonner'
 
+    /* const props = defineProps<{
+        selectedModel?: AllowedModelPaths
+    }>() */ /* TODO: maybe allow too in the future */
+
+    /* CHAT AI */
+        const selectedModelApiPath = useSelectedAiModelApiPath()
+    let { messages, input, handleSubmit, reload, isLoading } = useChat({
+        api: selectedModelApiPath.value
+    });
+
+    /* TEXT RECOGNITION */
     const lang = ref('en-US')
-
     const {
         isSupported,
         isListening,
@@ -29,43 +46,61 @@
 
     if (isSupported.value && window) {
         watch(result, () => {
-            console.log('speech.result', result.value)
+            // console.log('speech.result', result.value)
             input.value = result.value
         })
     }
 
-    /* const props = defineProps<{
-        selectedModel?: AllowedModelPaths
-    }>() */ /* maybe allow too in the future */
-
-    const selectedModelApiPath = useSelectedAiModelApiPath()
-    
-    const apiPath = ref(selectedModelApiPath.value);
-    const config = reactive({
-        get api() {
-            return apiPath.value;
-        },
-        set api(value) {
-            apiPath.value = value;
+    /* LOADING INDICATOR */
+    let toastIdAiIsResponding: string | number;
+    let toastIdAiIsNotResponding: string | number;
+    watch(isLoading, (newValue, oldValue) => {
+        if (!newValue) {
+            if (IS_CLIENT) {
+                toastIdAiIsNotResponding = toast.success("AI is done responding!");
+                toast.dismiss(toastIdAiIsResponding);
+            }
+        } else if (newValue) {
+            if (IS_CLIENT) {
+                toastIdAiIsResponding = toast.loading("AI is responding...");
+                toast.dismiss(toastIdAiIsNotResponding);
+            }
         }
     });
-    let { messages, input, handleSubmit, reload, isLoading } = useChat(config);
 
-    onErrorCaptured((error) => {
-        console.log("error in AiModelChat component", error);
-    })
+    /* CONVERT HTML TO MARKDOWN */
+    let urlToFetchHtmlFrom = ref("");
+    async function getMarkdownOfUrl(url: string) {
+        const endpoint = "/api/html-to-markdown/";
+        const encodedUrl = encodeURIComponent(url);
 
-    watch(selectedModelApiPath, (newValue, oldValue) => {
-        config.api = newValue;
-        messages.value = [];
-        input.value = '';
-        isLoading.value = false;
-        console.log(`selectedModelApiPath changed from ${oldValue} to ${newValue} (config: ${JSON.stringify(config)})`);
-    });
+        const fetchPromise = new Promise(async (resolve, reject) => {
+            await useFetch(`${endpoint}${encodedUrl}`, {
+                onRequest({ request, options }) {
+                    // console.info("onRequest", request, options)
+                },
+                onResponse({ request, response, options }) {
+                    // console.info("onResponse", request, response, options)
+                    resolve(response._data)
+                },
+                onResponseError({ request, response, options }) {
+                    // console.error("onResponseError", request, response, options)
+                    reject(response._data)
+                }
+            })
+        })
 
-    watch(isLoading, (newValue, oldValue) => {
-        console.log(`isLoading changed from ${oldValue} to ${newValue}`);
-    });
+        if (IS_CLIENT) {
+            toast.promise(fetchPromise, {
+                loading: 'Fetching url and converting it\'s HTML content to markdown...',
+                success: (data: any) => "Successfully fetched the url and converted it\'s HTML content to markdown!",
+                error: (data: any) => "Failed to fetch the url and convert it\'s HTML content to markdown!",
+            })
+        }
+
+        const markdownOfUrl = await fetchPromise;
+        input.value = input.value + markdownOfUrl;
+    }
 </script>
 
 <template>
@@ -90,7 +125,7 @@
             </div>
 
             <!-- Input draft -->
-            <div class="flex justify-end pt-8 max-h-96" v-if="input !== ''">
+            <div class="flex justify-end pt-8" v-if="input !== ''">
                 <div class="bg-slate-100 max-w-[80%] px-4 py-2 rounded-lg whitespace-pre-wrap border border-orange-300 break-words">
                     {{ input }}
                 </div>
@@ -105,7 +140,7 @@
             v-model="input"
             id="message" 
             placeholder="Type your message here..."
-            class="p-3 border-0 shadow-none resize-none min-h-12 focus-visible:ring-0" />
+            class="p-3 border-0 shadow-none resize-none max-h-28 focus-visible:ring-0" />
             <div class="flex items-center p-3 pt-0">
                 <TooltipProvider>
                     <Tooltip>
@@ -118,6 +153,28 @@
                         <TooltipContent side="top">
                             Attach File
                         </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                        <Popover>
+                            <PopoverTrigger as-child>
+                                <TooltipTrigger as-child>
+                                    <Button type="button" variant="ghost" size="icon">
+                                        <Link class="size-4" />
+                                        <span class="sr-only">URL context</span>
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                    URL context
+                                </TooltipContent>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <div class="grid gap-2 mb-1">
+                                    <Label for="url">URL</Label>
+                                    <Input id="url" type="url" name="url" v-model="urlToFetchHtmlFrom" placeholder="https://example.com" required />
+                                </div>
+                                <Button type="button" variant="outline" class="w-full" @click="getMarkdownOfUrl(urlToFetchHtmlFrom)">Add URL for further context</Button>
+                            </PopoverContent>
+                        </Popover>
                     </Tooltip>
                     <Tooltip v-if="isSupported">
                         <TooltipTrigger as-child>

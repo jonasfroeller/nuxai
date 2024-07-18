@@ -15,7 +15,7 @@ const main_layout = 'main'
 </script>
 
 <template>
-  <Toaster />
+  <Toaster closeButton />
   <NuxtLoadingIndicator color="hsl(var(--primary) / 0.9)" errorColor="hsl(var(--destructive))" :height="3"
     :duration="2000" :throttle="200" />
   <!-- when it shows: https://github.com/nuxt/nuxt/issues/18630, https://nuxt.com/docs/api/composables/use-loading-indicator -->

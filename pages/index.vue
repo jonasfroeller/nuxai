@@ -23,10 +23,6 @@ definePageMeta({
   alias: ['/dashboard', '/chat']
 })
 
-onErrorCaptured((error) => {
-  console.log("error in index component", error);
-})
-
 const { formattedDate, fullDateString } = formatCurrentClientDate();
 const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
 </script>

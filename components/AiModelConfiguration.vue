@@ -5,10 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
 const selectedModel = useSelectedAiModel()
-
-function logSelectedModelInfo() {
-    console.log(`Selected model: ${selectedModel.value}.`);
-}
 </script>
 
 <template>
@@ -19,7 +15,7 @@ function logSelectedModelInfo() {
             </legend>
             <div class="grid gap-3">
                 <Label for="model">Model</Label>
-                <Select v-model="selectedModel" @update:model-value="logSelectedModelInfo" default-value="OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5">
+                <Select v-model="selectedModel" default-value="OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5">
                     <SelectTrigger id="model" class="items-start [&_[data-description]]:hidden">
                         <SelectValue placeholder="Select a model" />
                     </SelectTrigger>
