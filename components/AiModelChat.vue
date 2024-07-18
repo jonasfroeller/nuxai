@@ -109,7 +109,7 @@
             Chat
         </Badge>
 
-        <ScrollArea class="flex flex-col flex-grow w-full max-w-full min-h-0 pt-8 pb-6">
+        <ScrollArea class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
             <div v-for="m in messages" :key="m.id" class="flex my-2" v-bind:class="{ 'justify-start': m.role === 'assistant', 'justify-end': m.role === 'user' }">
                 <div v-if="m.role === 'assistant'" class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%]">
                     <ClientOnly>
@@ -125,8 +125,8 @@
             </div>
 
             <!-- Input draft -->
-            <div class="flex justify-end pt-8" v-if="input !== ''">
-                <div class="bg-slate-100 max-w-[80%] px-4 py-2 rounded-lg whitespace-pre-wrap border border-orange-300 break-words">
+            <div class="flex justify-end mt-8 overflow-auto" v-if="input.trim() !== ''">
+                <div class="break-words whitespace-pre-wrap max-w-[80%] border border-orange-300 rounded-lg bg-background px-4 py-2">
                     {{ input }}
                 </div>
             </div>

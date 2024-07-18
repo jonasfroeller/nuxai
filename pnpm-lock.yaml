@@ -71,6 +71,9 @@ importers:
       rehype-remark:
         specifier: ^10.0.0
         version: 10.0.0
+      remark-gfm:
+        specifier: ^4.0.0
+        version: 4.0.0
       shadcn-nuxt:
         specifier: ^0.10.4
         version: 0.10.4(magicast@0.3.4)(rollup@4.18.1)

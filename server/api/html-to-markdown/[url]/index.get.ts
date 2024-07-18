@@ -1,10 +1,11 @@
-import rehypeParse from 'rehype-parse'
-import rehypeRemark from 'rehype-remark'
-import remarkStringify from 'remark-stringify'
+import rehypeParse from 'rehype-parse' // parse HTML
+import rehypeRemark from 'rehype-remark' // HTML => Markdown
+import remarkGfm from 'remark-gfm' // support for GitHub Flavored Markdown
+import remarkStringify from 'remark-stringify' // stringify Markdown
 import { fetch } from 'undici'
-import { unified } from 'unified'
+import { unified } from 'unified' // HTML and Markdown Utilities
 
-export default defineCachedEventHandler(async (event) => {
+export default defineEventHandler(async (event) => {
     const urlToFetch = getRouterParam(event, 'url'); // encodedURIComponent
 
     if (!urlToFetch) return sendError(event, createError({ statusCode: 400, statusMessage: 'Bad Request' }));
@@ -23,8 +24,9 @@ export default defineCachedEventHandler(async (event) => {
                 const file = await unified()
                     .use(rehypeParse, { emitParseErrors: false })
                     .use(rehypeRemark)
+                    .use(remarkGfm)
                     .use(remarkStringify)
-                    .process(html) // TODO: fix `ERROR  Cannot handle unknown node table`
+                    .process(html)
 
                 markdown = String(file);
             } catch (error: any) {
@@ -39,11 +41,7 @@ export default defineCachedEventHandler(async (event) => {
             return "FAILED";
         })
 
-    // console.info("Markdown:", markdown);
-
     if (markdown === "FAILED") return sendError(event, createError({ statusCode: 400, statusMessage: 'Bad Request', data: markdown }));
-
-    // console.info("FILE: ", String(markdown));
 
     return markdown;
 })
