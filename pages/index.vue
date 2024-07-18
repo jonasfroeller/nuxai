@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Book, LifeBuoy, Settings, Settings2, Share, Import, SquareTerminal, SquareUser, Home } from 'lucide-vue-next'
+import { Book, LifeBuoy, Settings, Settings2, Share, Import, SquareTerminal, SquareUser, Home, Check, ChevronsUpDown } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { Label } from '@/components/ui/label'
@@ -16,6 +16,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { cn } from '~/lib/utils'
 
 definePageMeta({
   name: "Dashboard",
@@ -25,6 +39,13 @@ definePageMeta({
 
 const { formattedDate, fullDateString } = formatCurrentClientDate();
 const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
+
+const filetypeSearchIsOpen = ref(false)
+const filetypeSearchSelectedValue = ref('')
+const filetypeSearchSelectableValues = ref([
+  { value: 'dockerfile', label: 'Dockerfile' },
+  { value: 'yaml', label: 'Yaml' }
+])
 </script>
 
 <template>
@@ -177,17 +198,53 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
                 </Select>
               </div>
               <div>
-                <Label>Filetype</Label>
-                <Select default-value="yaml">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yaml">
-                      yaml
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>Filetype</Label><br>
+                <Popover v-model:open="filetypeSearchIsOpen">
+                  <PopoverTrigger as-child>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      :aria-expanded="filetypeSearchIsOpen"
+                      class="justify-between w-full font-normal"
+                    >
+                        {{ 
+                          filetypeSearchSelectedValue
+                            ? filetypeSearchSelectableValues.find((option) => option.value === filetypeSearchSelectedValue)?.label
+                            : "Select filetype..." 
+                        }}
+                      <ChevronsUpDown class="w-3 h-3 ml-2 opacity-50 shrink-0" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent class="p-0 w-fit">
+                    <Command>
+                      <CommandInput class="h-9" placeholder="Search filetype..." />
+                      <CommandEmpty>Filetype not found.</CommandEmpty>
+                      <CommandList>
+                        <CommandGroup>
+                          <CommandItem
+                            v-for="option in filetypeSearchSelectableValues"
+                            :key="option.value"
+                            :value="option.value"
+                            @select="(ev) => {
+                              if (typeof ev.detail.value === 'string') {
+                                filetypeSearchSelectedValue = ev.detail.value
+                              }
+                              filetypeSearchIsOpen = false
+                            }"
+                          >
+                            {{ option.label }}
+                            <Check
+                              :class="cn(
+                                'ml-auto h-4 w-4',
+                                filetypeSearchSelectedValue === option.value ? 'opacity-100' : 'opacity-0',
+                              )"
+                            />
+                          </CommandItem>
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
             <div class="grid gap-3">
