@@ -6,16 +6,27 @@
     import { ScrollArea } from "@/components/ui/scroll-area"
     import { Textarea } from '@/components/ui/textarea'
     import {
-      Tooltip,
-      TooltipContent,
-      TooltipProvider,
-      TooltipTrigger,
+        Tooltip,
+        TooltipContent,
+        TooltipProvider,
+        TooltipTrigger,
     } from "@/components/ui/tooltip"
     import {
         Popover,
         PopoverContent,
         PopoverTrigger,
     } from '@/components/ui/popover'
+    import {
+        AlertDialog,
+        AlertDialogAction,
+        AlertDialogCancel,
+        AlertDialogContent,
+        AlertDialogDescription,
+        AlertDialogFooter,
+        AlertDialogHeader,
+        AlertDialogTitle,
+        AlertDialogTrigger,
+    } from '@/components/ui/alert-dialog'
     import { useChat } from '@ai-sdk/vue'
     import { Label } from "@/components/ui/label"
     import { toast } from 'vue-sonner'
@@ -32,7 +43,8 @@
         error: chatError, 
         handleSubmit: handleChatMessageSubmit, 
         reload: reloadLastChatMessage, 
-        isLoading: chatResponseIsLoading 
+        isLoading: chatResponseIsLoading, 
+        setMessages: setChatMessages
     } = useChat({
         api: selectedModelApiPath.value,
         keepLastMessageOnError: true
@@ -43,6 +55,10 @@
             toast.error(`Chat error! (${chatError.value.message})`);
         }
     })
+
+    /* function respondToMessage(id: string, context: string) {
+        // TODO
+    } */
 
     /* TEXT RECOGNITION */
     const {
@@ -81,6 +97,8 @@
                 toastIdAiIsNotResponding = toast.success("AI is done responding!");
                 toast.dismiss(toastIdAiIsResponding);
             }
+            
+            chatResponseIsLoading.value = false; // TODO: find out why this is needed
         } else if (newValue) {
             if (IS_CLIENT) {
                 toastIdAiIsResponding = toast.loading("AI is responding...");
@@ -92,6 +110,15 @@
     /* CONVERT HTML TO MARKDOWN */
     let urlToFetchHtmlFrom = ref("");
     async function getMarkdownOfUrl(url: string) {
+        if (url.trim() === "") return;
+
+        try {
+            new URL(url);
+        } catch (error) {
+            toast.error("Invalid URL!");
+            return;
+        }
+
         const endpoint = "/api/html-to-markdown/";
         const encodedUrl = encodeURIComponent(url);
 
@@ -132,13 +159,14 @@
 
         <ScrollArea class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
             <div v-for="m in chatMessages" :key="m.id" class="flex my-2" v-bind:class="{ 'justify-start': m.role === 'assistant', 'justify-end': m.role === 'user' }">
-                <div v-if="m.role === 'assistant'" class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%]">
+                <div v-if="m.role === 'assistant'" class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] relative dark:border-border" :id="`message-${m.id}`" :data-message-created-at="m.createdAt">
+                    <!-- <Button class="absolute bottom-[-70%] right-[-1rem] px-2 py-1 border rounded-md w-fit bg-background border-slate-200 dark:border-border" variant="ghost" size="icon" @click="respondToMessage(`message-${m.id}`)">respond</Button> -->
                     <ClientOnly>
                         <MDC class="overflow-x-auto break-words whitespace-pre-wrap" :value="m.content" />
                     </ClientOnly>
                 </div>
 
-                <div v-if="m.role === 'user'" class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%]">
+                <div v-if="m.role === 'user'" class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] dark:border-border" :id="`message-${m.id}`" :data-message-created-at="m.createdAt">
                     <ClientOnly>
                         <MDC class="overflow-x-auto break-words whitespace-pre-wrap" :value="m.content" />
                     </ClientOnly>
@@ -202,7 +230,7 @@
                                     <Label for="url">URL</Label>
                                     <Input id="url" type="url" name="url" v-model="urlToFetchHtmlFrom" placeholder="https://example.com" required />
                                 </div>
-                                <Button type="button" variant="outline" class="w-full" @click="getMarkdownOfUrl(urlToFetchHtmlFrom)">Add URL for further context</Button>
+                                <Button :disabled="urlToFetchHtmlFrom.trim() === ''" type="button" variant="outline" class="w-full" @click="getMarkdownOfUrl(urlToFetchHtmlFrom)">Add URL for further context</Button>
                             </PopoverContent>
                         </Popover>
                     </Tooltip>
@@ -226,15 +254,34 @@
                         </TooltipContent>
                     </Tooltip>
                     <Tooltip>
-                        <TooltipTrigger as-child>
-                            <Button type="button" variant="ghost" size="icon" @click="() => chatMessages = []" :disabled="chatResponseIsLoading || chatMessages.length === 0">
-                                <Trash2 class="size-4" />
-                                <span class="sr-only">Clear Chat</span>
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">
-                            Clear
-                        </TooltipContent>
+                        <AlertDialog>
+                            <AlertDialogTrigger as-child>
+                                <TooltipTrigger as-child>
+                                    <Button type="button" variant="ghost" size="icon" :disabled="chatResponseIsLoading || chatMessages.length === 0">
+                                        <Trash2 class="size-4" />
+                                        <span class="sr-only">Clear Chat</span>
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                    Clear
+                                </TooltipContent>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure, that you want to clear the chat?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Chat messages can not be recovered!
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction @click="() => {
+                                    chatMessages = []
+                                    setChatMessages(chatMessages)
+                                }">Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </Tooltip>
                     <Tooltip>
                         <TooltipTrigger as-child>
@@ -252,7 +299,7 @@
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger as-child>
-                                <Button type="button" variant="outline" size="icon" @click="currentChatMessage = ''" :disabled="currentChatMessage === ''">
+                                <Button type="button" variant="outline" size="icon" @click="currentChatMessage = ''" :disabled="currentChatMessage.trim() === ''">
                                     <Delete class="w-4 h-4" />
                                 </Button>
                             </TooltipTrigger>
@@ -261,7 +308,7 @@
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                    <Button type="submit" size="sm" class="gap-1.5" :disabled="chatResponseIsLoading || currentChatMessage === ''">
+                    <Button type="submit" size="sm" class="gap-1.5" :disabled="chatResponseIsLoading || currentChatMessage.trim() === ''">
                         Send Message
                         <CornerDownLeft class="size-3.5" />
                     </Button>
