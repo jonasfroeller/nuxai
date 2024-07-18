@@ -37,6 +37,8 @@
     "pinia": "^2.1.7",
     "postgres": "^3.4.4",
     "radix-vue": "^1.9.1",
+    "rehype-parse": "^9.0.0",
+    "rehype-remark": "^10.0.0",
     "shadcn-nuxt": "^0.10.4",
     "tailwind-merge": "^2.4.0",
     "vaul-vue": "^0.2.0",

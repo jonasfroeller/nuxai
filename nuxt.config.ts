@@ -95,15 +95,16 @@ export default defineNuxtConfig({
       plugins: {
         // Register/Configure remark plugin to extend the parser
       }
-    },
-    rehypePlugins: {
-      options: {
+    },*/
+    /* rehypePlugins: {
+      // "rehype-remark": {} // TODO: find out how to register a plugin here
+       options: {
         // Configure rehype options to extend the parser
       },
       plugins: {
         // Register/Configure rehype plugin to extend the parser
       }
-    },*/
+    }, */
     highlight: {
       highlighter: "shiki",
       theme: "github-dark",

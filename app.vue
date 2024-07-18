@@ -3,7 +3,7 @@ import { Toaster } from '@/components/ui/sonner';
 
 const main_layout = 'main'
 
-/* const { data, pending } = await useFetch("", {
+/* const { data } = await useFetch("", {
     lazy: true
 }) */
 
