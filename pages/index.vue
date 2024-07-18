@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { Book, LifeBuoy, Settings, Settings2, Share, Import, SquareTerminal, SquareUser, Home, Check, ChevronsUpDown } from 'lucide-vue-next'
+import { Book, LifeBuoy, Settings, Settings2, Share, Import, SquareTerminal, SquareUser, Home } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
-import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from '@/components/ui/tabs'
 import {
   Dialog,
   DialogClose,
@@ -16,20 +19,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { cn } from '~/lib/utils'
 
 definePageMeta({
   name: "Dashboard",
@@ -37,15 +26,7 @@ definePageMeta({
   alias: ['/dashboard', '/chat']
 })
 
-const { formattedDate, fullDateString } = formatCurrentClientDate();
 const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
-
-const filetypeSearchIsOpen = ref(false)
-const filetypeSearchSelectedValue = ref('')
-const filetypeSearchSelectableValues = ref([
-  { value: 'dockerfile', label: 'Dockerfile' },
-  { value: 'yaml', label: 'Yaml' }
-])
 </script>
 
 <template>
@@ -177,100 +158,22 @@ const filetypeSearchSelectableValues = ref([
         </div>
       </header>
       <main class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 2xl:grid-cols-[33%,1fr]">
-        <div class="relative flex-col items-start order-2 hidden gap-8 md:flex 2xl:order-1">
-          <AiModelConfiguration />
-          <fieldset class="grid w-full gap-6 p-4 border rounded-lg">
-            <legend class="px-1 -ml-1 text-sm font-medium">
-              Generated Configuration File
-            </legend>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <Label>Version ({{ formattedDate }})</Label>
-                <Select :default-value="fullDateString">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem :value="fullDateString ?? undefined">
-                      {{ fullDateString }} (+200, -322)
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Filetype</Label><br>
-                <Popover v-model:open="filetypeSearchIsOpen">
-                  <PopoverTrigger as-child>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      :aria-expanded="filetypeSearchIsOpen"
-                      class="justify-between w-full font-normal"
-                    >
-                        {{ 
-                          filetypeSearchSelectedValue
-                            ? filetypeSearchSelectableValues.find((option) => option.value === filetypeSearchSelectedValue)?.label
-                            : "Select filetype..." 
-                        }}
-                      <ChevronsUpDown class="w-3 h-3 ml-2 opacity-50 shrink-0" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent class="p-0 w-fit">
-                    <Command>
-                      <CommandInput class="h-9" placeholder="Search filetype..." />
-                      <CommandEmpty>Filetype not found.</CommandEmpty>
-                      <CommandList>
-                        <CommandGroup>
-                          <CommandItem
-                            v-for="option in filetypeSearchSelectableValues"
-                            :key="option.value"
-                            :value="option.value"
-                            @select="(ev) => {
-                              if (typeof ev.detail.value === 'string') {
-                                filetypeSearchSelectedValue = ev.detail.value
-                              }
-                              filetypeSearchIsOpen = false
-                            }"
-                          >
-                            {{ option.label }}
-                            <Check
-                              :class="cn(
-                                'ml-auto h-4 w-4',
-                                filetypeSearchSelectedValue === option.value ? 'opacity-100' : 'opacity-0',
-                              )"
-                            />
-                          </CommandItem>
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-            <div class="grid gap-3">
-              <Label for="content">Content of the selected version:</Label>
-              <ScrollArea class="border rounded-sm">
-                <pre id="content" class="min-h-[9.5rem] max-h-[21.7rem] px-4 py-2">
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-                </pre>
-              </ScrollArea>
-            </div>
-          </fieldset>
-        </div>
+        <Tabs default-value="chat" class="h-screen">
+          <TabsList class="flex justify-start w-full bg-muted/50">
+            <TabsTrigger value="chats">
+              All Chats
+            </TabsTrigger>
+            <TabsTrigger value="chat">
+              Active Chat Information
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="chats" class="h-full">
+            <AiChats />
+          </TabsContent>
+          <TabsContent value="chat">
+            <AiChatInformation />
+          </TabsContent>
+        </Tabs>
         <AiModelChat :key="selectedModelApiPath" />
       </main>
     </div>
