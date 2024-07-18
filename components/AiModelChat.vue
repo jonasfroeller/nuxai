@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Mic, Paperclip, Link, CornerDownLeft, RefreshCcw, Trash2, Delete } from 'lucide-vue-next'
+    import { Mic, Paperclip, Link, CornerDownLeft, RefreshCcw, Trash2, Delete, Loader2 } from 'lucide-vue-next'
     import { Button } from '@/components/ui/button'
     import Input from './ui/input/Input.vue'
     import { Badge } from "@/components/ui/badge"
@@ -26,9 +26,23 @@
 
     /* CHAT AI */
     const selectedModelApiPath = useSelectedAiModelApiPath()
-    let { messages, input, handleSubmit, reload, isLoading } = useChat({
-        api: selectedModelApiPath.value
+    let { 
+        messages: chatMessages, 
+        input: currentChatMessage, 
+        error: chatError, 
+        handleSubmit: handleChatMessageSubmit, 
+        reload: reloadLastChatMessage, 
+        isLoading: chatResponseIsLoading 
+    } = useChat({
+        api: selectedModelApiPath.value,
+        keepLastMessageOnError: true
     });
+
+    watch(chatError, () => {
+        if (chatError.value) {
+            toast.error(`Chat error! (${chatError.value.message})`);
+        }
+    })
 
     /* TEXT RECOGNITION */
     const {
@@ -54,14 +68,14 @@
 
     if (isSupported.value && IS_CLIENT) {
         watch(result, () => {
-            input.value = result.value
+            currentChatMessage.value = result.value
         })
     }
 
     /* LOADING INDICATOR */
     let toastIdAiIsResponding: string | number;
     let toastIdAiIsNotResponding: string | number;
-    watch(isLoading, (newValue, oldValue) => {
+    watch(chatResponseIsLoading, (newValue, oldValue) => {
         if (!newValue) {
             if (IS_CLIENT) {
                 toastIdAiIsNotResponding = toast.success("AI is done responding!");
@@ -106,7 +120,7 @@
         }
 
         const markdownOfUrl = await fetchPromise;
-        input.value = input.value + markdownOfUrl;
+        currentChatMessage.value = currentChatMessage.value + markdownOfUrl;
     }
 </script>
 
@@ -117,7 +131,7 @@
         </Badge>
 
         <ScrollArea class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
-            <div v-for="m in messages" :key="m.id" class="flex my-2" v-bind:class="{ 'justify-start': m.role === 'assistant', 'justify-end': m.role === 'user' }">
+            <div v-for="m in chatMessages" :key="m.id" class="flex my-2" v-bind:class="{ 'justify-start': m.role === 'assistant', 'justify-end': m.role === 'user' }">
                 <div v-if="m.role === 'assistant'" class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%]">
                     <ClientOnly>
                         <MDC class="overflow-x-auto break-words whitespace-pre-wrap" :value="m.content" />
@@ -132,19 +146,28 @@
             </div>
 
             <!-- Input draft -->
-            <div class="flex justify-end mt-8 overflow-auto" v-if="input.trim() !== ''">
+            <div class="flex justify-end mt-8 overflow-auto" v-if="currentChatMessage.trim() !== ''">
                 <div class="break-words whitespace-pre-wrap max-w-[80%] border border-orange-300 rounded-lg bg-background px-4 py-2">
-                    {{ input }}
+                    {{ currentChatMessage }}
                 </div>
+            </div>
+
+            <div v-if="chatResponseIsLoading" class="flex flex-wrap items-center gap-2 px-4 py-2 border border-blue-200 rounded-lg bg-background">
+                <Loader2 class="w-4 h-4 mr-2 text-blue-500 animate-spin" /><p class="flex-grow">Waiting for response...</p>
+            </div>
+
+            <div v-if="chatError" class="flex flex-wrap items-center w-full p-4 mt-8 font-black uppercase border-2 rounded-md text-ellipsis border-destructive">
+                <p class="flex-grow">Something went wrong!</p>
+                <Button variant="outline" @click="reloadLastChatMessage">Try again</Button>
             </div>
         </ScrollArea>
 
-        <form @submit="handleSubmit" class="relative flex-shrink-0 overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring">
+        <form @submit="handleChatMessageSubmit" class="relative flex-shrink-0 overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring">
             <Label for="message" class="sr-only">
                 Message
             </Label>
-            <Textarea 
-            v-model="input"
+            <Textarea
+            v-model="currentChatMessage"
             id="message" 
             placeholder="Type your message here..."
             class="p-3 border-0 shadow-none resize-none max-h-28 focus-visible:ring-0" />
@@ -185,20 +208,18 @@
                     </Tooltip>
                     <Tooltip v-if="isSupported">
                         <TooltipTrigger as-child>
-                            <ClientOnly>
-                                <Button type="button" variant="ghost" size="icon" v-bind:class="{ 'animate-pulse outline-1 outline-destructive outline-dashed': isListening }" @click="() => {
-                                        if (isListening) {
-                                            console.log('stopping listening');
-                                            stop();
-                                        } else {
-                                            console.log('starting listening');
-                                            start();
-                                        }
-                                    }">
-                                    <Mic class="size-4" />
-                                    <span class="sr-only">Use Microphone</span>
-                                </Button>
-                            </ClientOnly>
+                            <Button type="button" variant="ghost" size="icon" v-bind:class="{ 'animate-pulse outline-1 outline-destructive outline-dashed': isListening }" @click="() => {
+                                    if (isListening) {
+                                        console.log('stopping listening');
+                                        stop();
+                                    } else {
+                                        console.log('starting listening');
+                                        start();
+                                    }
+                                }">
+                                <Mic class="size-4" />
+                                <span class="sr-only">Use Microphone</span>
+                            </Button>
                         </TooltipTrigger>
                         <TooltipContent side="top">
                             Use Microphone
@@ -206,7 +227,7 @@
                     </Tooltip>
                     <Tooltip>
                         <TooltipTrigger as-child>
-                            <Button type="button" variant="ghost" size="icon" @click="() => messages = []" :disabled="isLoading || messages.length === 0">
+                            <Button type="button" variant="ghost" size="icon" @click="() => chatMessages = []" :disabled="chatResponseIsLoading || chatMessages.length === 0">
                                 <Trash2 class="size-4" />
                                 <span class="sr-only">Clear Chat</span>
                             </Button>
@@ -217,7 +238,7 @@
                     </Tooltip>
                     <Tooltip>
                         <TooltipTrigger as-child>
-                            <Button type="button" variant="ghost" size="icon" @click="reload" :disabled="isLoading || messages.length === 0">
+                            <Button type="button" variant="ghost" size="icon" @click="reloadLastChatMessage" :disabled="chatResponseIsLoading || chatMessages.length === 0">
                                 <RefreshCcw class="size-4" />
                                 <span class="sr-only">Refresh Last Response</span>
                             </Button>
@@ -231,7 +252,7 @@
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger as-child>
-                                <Button type="button" variant="outline" size="icon" @click="input = ''" :disabled="input === ''">
+                                <Button type="button" variant="outline" size="icon" @click="currentChatMessage = ''" :disabled="currentChatMessage === ''">
                                     <Delete class="w-4 h-4" />
                                 </Button>
                             </TooltipTrigger>
@@ -240,7 +261,7 @@
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                    <Button type="submit" size="sm" class="gap-1.5" :disabled="isLoading || input === ''">
+                    <Button type="submit" size="sm" class="gap-1.5" :disabled="chatResponseIsLoading || currentChatMessage === ''">
                         Send Message
                         <CornerDownLeft class="size-3.5" />
                     </Button>
