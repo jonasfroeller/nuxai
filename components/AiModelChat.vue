@@ -25,28 +25,35 @@
     }>() */ /* TODO: maybe allow too in the future */
 
     /* CHAT AI */
-        const selectedModelApiPath = useSelectedAiModelApiPath()
+    const selectedModelApiPath = useSelectedAiModelApiPath()
     let { messages, input, handleSubmit, reload, isLoading } = useChat({
         api: selectedModelApiPath.value
     });
 
     /* TEXT RECOGNITION */
-    const lang = ref('en-US')
     const {
         isSupported,
         isListening,
         result,
         start,
-        stop
+        stop,
+        error
     } = useSpeechRecognition({
-        lang: lang.value,
+        lang: 'en-US',
         interimResults: true,
         continuous: true,
     })
 
-    if (isSupported.value && window) {
+    watch(error, async () => {
+        if (error.value?.error === "not-allowed") {
+            toast.error("Speech recognition was disabled for this page!\nPlease allow it, to use the feature!");
+        } else {
+            toast.error(`Speech recognition error! (${error.value?.error})`);
+        }
+    })
+
+    if (isSupported.value && IS_CLIENT) {
         watch(result, () => {
-            // console.log('speech.result', result.value)
             input.value = result.value
         })
     }
@@ -178,18 +185,20 @@
                     </Tooltip>
                     <Tooltip v-if="isSupported">
                         <TooltipTrigger as-child>
-                            <Button type="button" variant="ghost" size="icon" v-bind:class="{ 'animate-pulse outline-1 outline-destructive outline-dashed': isListening }" @click="() => {
-                                if (isListening) {
-                                    console.log('stopping listening');
-                                    stop();
-                                } else {
-                                    console.log('starting listening');
-                                    start();
-                                }
-                            }">
-                                <Mic class="size-4" />
-                                <span class="sr-only">Use Microphone</span>
-                            </Button>
+                            <ClientOnly>
+                                <Button type="button" variant="ghost" size="icon" v-bind:class="{ 'animate-pulse outline-1 outline-destructive outline-dashed': isListening }" @click="() => {
+                                        if (isListening) {
+                                            console.log('stopping listening');
+                                            stop();
+                                        } else {
+                                            console.log('starting listening');
+                                            start();
+                                        }
+                                    }">
+                                    <Mic class="size-4" />
+                                    <span class="sr-only">Use Microphone</span>
+                                </Button>
+                            </ClientOnly>
                         </TooltipTrigger>
                         <TooltipContent side="top">
                             Use Microphone
