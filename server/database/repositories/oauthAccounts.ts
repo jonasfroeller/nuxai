@@ -2,7 +2,7 @@ import { chat_user, chat_user_oauth_account } from "../schema";
 import { db } from "../db";
 import { and, eq, sql } from "drizzle-orm";
 import { createEmptyUser } from "./users";
-const SECRET = process.env.CRYPTO_SECRET ?? "secret";
+import { ENCRYPTION_SECRET } from "~/server/utils/globals";
 
 type NewOauthAccount = typeof chat_user_oauth_account.$inferInsert;
 type GetOauthAccount = typeof chat_user_oauth_account.$inferSelect;
@@ -23,8 +23,8 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
     const existingOauthUser = await client.query.chat_user_oauth_account.findFirst({
         where: and(
             eq(chat_user_oauth_account.provider, account.provider), /* check if oauth account with that provider exists for existing user */
-            eq(chat_user_oauth_account.oauth_user_id, sql<string>`encode(encrypt(${account.oauth_user_id}, ${SECRET}, 'aes'), 'hex')`), /* has the same id */
-            /* eq(chat_user_oauth_account.oauth_email, sql<string>`encode(encrypt(${account.oauth_email}, ${SECRET}, 'aes'), 'hex')`), */ /* has the same email (TODO: not needed, could have been changed => update email instead, in that instance) */
+            eq(chat_user_oauth_account.oauth_user_id, sql<string>`encode(encrypt(${account.oauth_user_id}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`), /* has the same id */
+            /* eq(chat_user_oauth_account.oauth_email, sql<string>`encode(encrypt(${account.oauth_email}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`), */ /* has the same email (TODO: not needed, could have been changed => update email instead, in that instance) */
         ),
         with: {
             chat_user: {
@@ -32,7 +32,7 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
                     id: true
                 },
                 extras: { /* custom fields */
-                    primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`.as("primary_email"),
+                    primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`.as("primary_email"),
                 }
             },
         },
@@ -40,8 +40,8 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
             provider: true
         },
         extras: {
-            oauth_user_id: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_user_id}, 'hex'), ${SECRET}, 'aes'), 'escape')`.as("oauth_user_id"),
-            oauth_email: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`.as("oauth_email"),
+            oauth_user_id: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_user_id}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`.as("oauth_user_id"),
+            oauth_email: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`.as("oauth_email"),
         }
     })
 
@@ -64,15 +64,15 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
         .insert(chat_user_oauth_account)
         .values({
             provider: account.provider, /* github, google */
-            oauth_user_id: sql<string>`encode(encrypt(${account.oauth_user_id}, ${SECRET}, 'aes'), 'hex')`, /* id from /auth/github or /auth/google */
-            oauth_email: sql<string>`encode(encrypt(${account.oauth_email}, ${SECRET}, 'aes'), 'hex')`, /* email from /auth/github or /auth/google */
+            oauth_user_id: sql<string>`encode(encrypt(${account.oauth_user_id}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`, /* id from /auth/github or /auth/google */
+            oauth_email: sql<string>`encode(encrypt(${account.oauth_email}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`, /* email from /auth/github or /auth/google */
             chat_user_id: createdUser.id
         })
         // @ts-ignore (is allowed, just not properly typed)
         .returning({
             provider: chat_user_oauth_account.provider,
-            oauth_user_id: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_user_id}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
-            oauth_email: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_email}, 'hex'), ${SECRET}, 'aes'), 'escape')`,
+            oauth_user_id: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_user_id}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
+            oauth_email: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
         })
         .catch((err) => {
             console.error("Failed to insert oauth account into database", err);

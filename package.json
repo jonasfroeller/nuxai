@@ -14,6 +14,7 @@
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "db:pull": "drizzle-kit introspect --config drizzle.config.ts",
     "db:generate": "drizzle-kit generate --dialect postgresql --schema ./server/database/schema.ts --out=./server/database/migrations",
+    "db:migrate": "bun run ./server/database/migrate.ts",
     "db:studio": "drizzle-kit studio --config drizzle.config.ts --host 127.0.0.1"
   },
   "dependencies": {
@@ -30,7 +31,6 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.32.0",
     "lucide-vue-next": "^0.408.0",
-    "magic-regexp": "^0.8.0",
     "nuxt": "^3.12.3",
     "nuxt-auth-utils": "^0.2.0",
     "nuxt-posthog": "^1.5.0",

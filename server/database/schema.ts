@@ -26,6 +26,8 @@ export const chat_conversation = pgTable("chat_conversation", {
 	model: text("model").notNull(),
 	created_at: timestamp("created_at").defaultNow(),
 	updated_at: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()),
+
+	chat_user_id: integer("chat_user_id").notNull().references(() => chat_user.id, { onDelete: 'cascade' }),
 })
 
 export const chat_conversation_message = pgTable("chat_conversation_message", {

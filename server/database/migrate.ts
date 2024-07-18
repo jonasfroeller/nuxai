@@ -14,13 +14,17 @@ async function migrateDatabase() {
             schema: databaseMap
         });
 
-        await neonMigrate(drizzleClient, { migrationsFolder: "server/database/migrations" })
+        return await neonMigrate(drizzleClient, { migrationsFolder: "server/database/migrations" })
             .then(() => {
                 console.log("Migrated database...");
+                return true;
             })
             .catch((e) => {
                 console.error("Failed to migrate database:", e);
                 throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'Failed to migrate database', fatal: true });
+            }).finally(async () => {
+                console.log("Closing database connection...");
+                await migrationClient.end();
             });
     }
 
@@ -30,14 +34,22 @@ async function migrateDatabase() {
         schema: databaseMap
     });
 
-    await migrate(drizzleClient, { migrationsFolder: "server/database/migrations" })
+    return await migrate(drizzleClient, { migrationsFolder: "server/database/migrations" })
         .then(() => {
             console.log("Migrated database...");
+            return true;
         })
         .catch((e) => {
             console.error("Failed to migrate database:", e);
             throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'Failed to migrate database', fatal: true });
+        }).finally(async () => {
+            console.log("Closing database connection...");
+            await migrationClient.end();
         });
 }
 
 export default migrateDatabase;
+
+(async () => { // for package.json script
+    await migrateDatabase();
+})();

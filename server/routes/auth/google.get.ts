@@ -1,4 +1,4 @@
-import { createOauthAccount } from "~/server/database/repositories/oauthAccount";
+import { createOauthAccount } from "~/server/database/repositories/oauthAccounts";
 
 export default oauth.googleEventHandler({
     config: {

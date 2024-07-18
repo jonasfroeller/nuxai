@@ -6,10 +6,12 @@
         "formkit",
         "hebilicious",
         "huggingface",
+        "iconify",
         "lucide",
         "mistralai",
         "neondatabase",
         "nuxai",
+        "nuxi",
         "Nuxt",
         "nuxtjs",
         "oasst",
@@ -20,7 +22,10 @@
         "shiki",
         "sonner",
         "tailwindcss",
-        "vueuse"
+        "typecheck",
+        "vaul",
+        "vueuse",
+        "yxxx"
     ],
     "css.customData": [".vscode/tailwind.json"]
 }

@@ -87,8 +87,7 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "@nuxtjs/mdc",
     "@nuxt/image",
-    '@vueuse/nuxt',
-    'magic-regexp/nuxt'
+    '@vueuse/nuxt'
   ],
 
   mdc: {
