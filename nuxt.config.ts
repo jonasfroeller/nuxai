@@ -21,6 +21,13 @@ export default defineNuxtConfig({
     } */
   },
 
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false, // disables components/base/Button.vue => <BaseButton /> for auto imports
+    },
+  ],
+
   runtimeConfig: {
     huggingfaceApiKey: process.env.HUGGING_FACE_API_KEY,
     posthog: {
