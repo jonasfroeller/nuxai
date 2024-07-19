@@ -5,11 +5,46 @@ import Button from './ui/button/Button.vue';
 import Input from './ui/input/Input.vue';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
+import { toast } from 'vue-sonner';
 
-const selectedModel = useSelectedAiModel()
-const randomId = useId();
-const chatName = ref(`chat-${randomId}`);
-let isPlayground = ref(true);
+const selectedChat = useSelectedAiChat();
+const selectedModel = useSelectedAiModel(); // TODO: think about me
+let isPlayground = computed(() => selectedChat.value.id === -1);
+
+async function persistChatHistory() {
+    const fetchPromise = new Promise(async (resolve, reject) => {
+            await useFetch(`/api/users/${2}/chats`, {
+                method: "POST",
+                lazy: true,
+                body: {
+                    model: selectedChat.value.model,
+                    name: selectedChat.value.name
+                },
+                pick: ["chat"],
+                onRequest({ request, options }) {
+                    // console.info("onRequest", request, options)
+                },
+                onResponse({ request, response, options }) {
+                    // console.info("onResponse", request, response, options)
+                    resolve(response._data)
+                },
+                onResponseError({ request, response, options }) {
+                    // console.error("onResponseError", request, response, options)
+                    reject(response._data)
+                }
+            })
+        }
+    )
+
+    toast.promise(fetchPromise, {
+        loading: 'Persisting chat history...',
+        success: (data: any) => "Chat history persisted!",
+        error: (data: any) => "Failed to persist chat history!",
+    })
+
+    const response = await fetchPromise.then((data: any) => data)
+    selectedChat.value.id = response.chat.id
+}
 </script>
 
 <template>
@@ -21,7 +56,7 @@ let isPlayground = ref(true);
             <div class="grid gap-3">
                 <Label for="model">Model</Label>
                 <Select v-model="selectedModel" default-value="OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5">
-                    <SelectTrigger id="model" class="items-start [&_[data-description]]:hidden">
+                    <SelectTrigger :disabled="!isPlayground" id="model" class="items-start [&_[data-description]]:hidden">
                         <SelectValue placeholder="Select a model" />
                     </SelectTrigger>
                     <SelectContent>
@@ -42,9 +77,14 @@ let isPlayground = ref(true);
                     </SelectContent>
                 </Select>
                 <div class="grid grid-cols-[1fr_auto] gap-1">
-                    <Input id="chat-name" type="text" v-model="chatName" placeholder="Name of the chat... (optional)" />
-                    <Button type="button" variant="secondary" :disabled="!isPlayground">Persist Chat History</Button>
+                    <Input :disabled="!isPlayground" id="chat-name" type="text" v-model="selectedChat.name" placeholder="Name of the chat... (optional)" />
+                    <Button :disabled="!isPlayground" type="button" variant="secondary" @click="async () => await persistChatHistory()">Persist Chat History</Button>
                 </div>
+                <Button :disabled="isPlayground" type="button" variant="secondary" @click="() => {
+                    selectedChat.id = -1;
+                    selectedChat.name = `chat-${Date.now()}`
+                    selectedChat.model = 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5';
+                }">New Playground Chat</Button>
             </div>
         </fieldset>
     </form>

@@ -3,10 +3,6 @@ import { Toaster } from '@/components/ui/sonner';
 
 const main_layout = 'main'
 
-/* const { data } = await useFetch("", {
-    lazy: true
-}) */
-
 /* useHead({
 }) */
 

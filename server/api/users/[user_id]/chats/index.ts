@@ -1,4 +1,5 @@
-import { readChatConversation } from "~/server/database/repositories/chatConversations";
+import { type ChatConversationToCreate, createChatConversation, readAllChatConversationsOfUser } from "~/server/database/repositories/chatConversations";
+import { ChatConversationToCreateSchema } from "~/server/utils/validators";
 
 export default defineEventHandler(async (event) => {
     assertMethod(event, ['POST', 'GET']);
@@ -26,16 +27,34 @@ export default defineEventHandler(async (event) => {
     if (method === "POST") { // Create new Chat conversation
         console.log("creating new chat...");
 
+        const result = await readValidatedBody(event, body => ChatConversationToCreateSchema.safeParse(body))
+
+        console.info("result", JSON.stringify(result))
+        if (!result.success || !result.data) return sendError(event, createError({ statusCode: 400, statusMessage: 'Bad Request', data: result.error }));
+        const body = result.data!;
+
+        console.info("body", body);
+
+        const { model, name } = body;
+
+        const chatToCreate: ChatConversationToCreate = {
+            chat_user_id: user_id,
+            model,
+            name
+        }
+
+        const createdChatConversation = await createChatConversation(chatToCreate);
+
         return {
-            user_id
+            chat: createdChatConversation
         }
     } else { // Read all chat conversations of user
         console.log("fetching chat information...");
 
-        const fetchedChatConversation = await readChatConversation(user_id);
+        const fetchedChatConversations = await readAllChatConversationsOfUser(user_id);
 
         return {
-            fetchedChatConversation
+            chats: fetchedChatConversations
         }
     }
 })

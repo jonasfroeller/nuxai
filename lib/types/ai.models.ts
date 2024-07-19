@@ -122,5 +122,11 @@ const allowedModelsConst = [
     "mistralai/Mistral-7B-Instruct-v0.1"
 ] as const;
 
+export enum AllowedAiModelsEnum {
+    OpenAssistant = "OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5",
+    Yi15 = "01-ai/Yi-1.5-34B-Chat",
+    Mistral = "mistralai/Mistral-7B-Instruct-v0.1"
+}
+
 export type AllowedAiModels = `${typeof allowedModelsConst[number]}`;
 export type AllowedAiModelPaths = `/api/ai/huggingface/${typeof allowedModelsConst[number]}/chat`;

@@ -5,7 +5,7 @@ type NewChatConversation = typeof chat_conversation.$inferInsert;
 type GetChatConversation = typeof chat_conversation.$inferSelect;
 
 type ReadChatConversation = GetChatConversation;
-interface ChatConversationToCreate extends Omit<NewChatConversation, "id" | "created_at" | "updated_at"> { };
+export interface ChatConversationToCreate extends Omit<NewChatConversation, "id" | "created_at" | "updated_at"> { };
 
 export async function createChatConversation(conversation: ChatConversationToCreate) {
     const createdChatConversation = await db
