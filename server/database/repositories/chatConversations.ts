@@ -7,7 +7,7 @@ export type GetChatConversation = typeof chat_conversation.$inferSelect;
 
 // type ReadChatConversation = GetChatConversation;
 export interface ChatConversationToCreate
-  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> {}
+  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> { }
 
 export async function createChatConversation(
   conversation: ChatConversationToCreate,
@@ -58,7 +58,7 @@ export async function readAllChatConversationsOfUser(user_id: GetUser['id']) {
 
 export async function updateChatConversation(
   id: GetChatConversation['id'],
-  fields: { name: GetChatConversation['name'] },
+  fields: Partial<Omit<GetChatConversation, 'id' | 'model' | 'created_at' | 'updated_at' | 'chat_user_id'>>,
 ) {
   const updatedChatConversation = await db
     .update(chat_conversation)

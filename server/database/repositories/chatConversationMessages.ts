@@ -11,7 +11,7 @@ interface ChatConversationMessageToCreate
   extends Omit<
     NewChatConversationMessage,
     'id' | 'created_at' | 'updated_at'
-  > {}
+  > { }
 
 export const createChatConversationMessage = async (
   message: ChatConversationMessageToCreate,
@@ -78,7 +78,7 @@ export const readChatConversationMessages = async (
 // TODO: only allow to update/edit latest message => triggers regeneration of AI message
 export const updateChatConversationMessage = async (
   id: GetChatConversationMessage['id'],
-  fields: { message: GetChatConversationMessage['message'] },
+  fields: Partial<Omit<GetChatConversationMessage, 'id' | 'actor' | 'created_at' | 'updated_at' | 'chat_user_id' | 'chat_conversation_id'>>,
 ) => {
   const updatedChatConversationMessage = await db
     .update(chat_conversation_message)
