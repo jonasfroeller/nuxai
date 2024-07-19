@@ -14,7 +14,7 @@
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "db:pull": "drizzle-kit introspect --config drizzle.config.ts",
     "db:generate": "drizzle-kit generate --dialect postgresql --schema ./server/database/schema.ts --out=./server/database/migrations",
-    "db:migrate": "bun run ./server/database/migrate.ts",
+    "db:migrate": "bun run ./server/utils/migrate.ts",
     "db:studio": "drizzle-kit studio --config drizzle.config.ts --host 127.0.0.1"
   },
   "dependencies": {

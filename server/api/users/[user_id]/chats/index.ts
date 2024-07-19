@@ -1,0 +1,45 @@
+import { readChatConversation } from "~/server/database/repositories/chatConversations";
+
+export default defineEventHandler(async (event) => {
+    assertMethod(event, ['POST', 'GET']);
+
+    const method = event.node.req.method;
+    const has_user_id = getRouterParam(event, 'user_id');
+
+    if (!has_user_id) return sendError(event, createError({ statusCode: 400, statusMessage: 'Bad Request', data: "Missing user_id" }));
+
+    const paramValidationResults = await getValidatedRouterParams(event, params => {
+        // @ts-ignore
+        const user_id = Number(params?.user_id); // => NaN if not a number
+
+        return UserIdSchema.safeParse({ // check if user_id is a valid user_id
+            user_id
+        });
+    })
+
+    if (!paramValidationResults.success || !paramValidationResults.data) return sendError(event, createError({ statusCode: 400, statusMessage: 'Bad Request', data: paramValidationResults.error }));
+    const user_id = paramValidationResults.data!.user_id;
+
+    const session = await requireUserSession(event);
+    if (session.user.id !== user_id) return sendError(event, createError({ statusCode: 401, statusMessage: 'Unauthorized' }));
+
+    if (method === "POST") { // Create new Chat conversation
+        console.log("creating new chat...");
+
+        return {
+            user_id
+        }
+    } else { // Read all chat conversations of user
+        console.log("fetching chat information...");
+
+        const fetchedChatConversation = await readChatConversation(user_id);
+
+        return {
+            fetchedChatConversation
+        }
+    }
+})
+
+/* $fetch("/api/users/:user_id/chats/:chat_id") => DOESN'T EVEN MAKE A REQUEST, IF USED ON THE SERVER, IT JUST EXECUTES THE FUNCTION. Nuxt is so sick */
+/* defineCachedEventHandler serves the old response and the evaluates the new one */
+/* null as response => No Content. BRILLIANT! */

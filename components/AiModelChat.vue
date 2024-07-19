@@ -154,7 +154,7 @@
 <template>
     <div class="relative flex flex-col h-full min-h-[60vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 w-[100%-2rem] order-1 2xl:order-2">
         <Badge variant="outline" class="absolute z-10 right-3 top-3 bg-background">
-            Chat
+            Chat: {{ "chatName" }}
         </Badge>
 
         <ScrollArea class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">

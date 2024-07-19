@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import { Label } from '@/components/ui/label'
+import Button from './ui/button/Button.vue';
+import Input from './ui/input/Input.vue';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
 const selectedModel = useSelectedAiModel()
+const randomId = useId();
+const chatName = ref(`chat-${randomId}`);
+let isPlayground = ref(true);
 </script>
 
 <template>
@@ -36,6 +41,10 @@ const selectedModel = useSelectedAiModel()
                         </SelectItem>
                     </SelectContent>
                 </Select>
+                <div class="grid grid-cols-[1fr_auto] gap-1">
+                    <Input id="chat-name" type="text" v-model="chatName" placeholder="Name of the chat... (optional)" />
+                    <Button type="button" variant="secondary" :disabled="!isPlayground">Persist Chat History</Button>
+                </div>
             </div>
         </fieldset>
     </form>

@@ -1,5 +1,4 @@
 import { chat_user, chat_user_oauth_account } from "../schema";
-import { db } from "../db";
 import { and, eq, like, sql } from "drizzle-orm";
 import { ENCRYPTION_SECRET } from "~/server/utils/globals";
 
@@ -15,10 +14,7 @@ interface UserToCreate extends Omit<NewUser, "id" | "hashed_password"> {
 /* TODO: check if user has access to CRUD operations (make sure everything here is LGTM) */
 
 export const createUser = async (user: UserToCreate) => { /* TODO: only allow, if email is verified via email code => needs extended login flow */
-    const client = db();
-    if (!client) return null;
-
-    const createdUser = await client
+    const createdUser = await db
         .insert(chat_user)
         .values({
             primary_email: sql<string>`encode(encrypt(${user.primary_email}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`, // SELECT encode(encrypt('e.mail@example.com', 'secret', 'aes'), 'hex') AS encrypted_primary_email; --encrypt
@@ -50,10 +46,7 @@ function generateUUID() {
 
 // Needed for Oauth, if no user exists yet.
 export const createEmptyUser = async () => {
-    const client = db();
-    if (!client) return null;
-
-    const createdUser = await client
+    const createdUser = await db
         .insert(chat_user)
         .values({
             primary_email: sql<string>`encode(encrypt(${"OauthAccount-" + generateUUID()}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`, /* TODO: do not allow login with email and password, if email and password are placeholders */
@@ -74,10 +67,7 @@ export const createEmptyUser = async () => {
 }
 
 export const readUser = async (id: number): Promise<null | Omit<ReadUser, "created_at" | "updated_at">[]> => {
-    const client = db();
-    if (!client) return null;
-
-    return await client
+    return await db
         .select({
             id: chat_user.id,
             primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
@@ -92,10 +82,7 @@ export const readUser = async (id: number): Promise<null | Omit<ReadUser, "creat
 }
 
 export const readUserUsingPrimaryEmail = async (email: string): Promise<null | Omit<ReadUser, "created_at" | "updated_at">> => { /* TODO: Improve, so that other emails are checked too */
-    const client = db();
-    if (!client) return null;
-
-    const fetchedUser = await client
+    const fetchedUser = await db
         .select({
             id: chat_user.id,
             primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
@@ -114,9 +101,6 @@ export const readUserUsingPrimaryEmail = async (email: string): Promise<null | O
 }
 
 export const updateUser = async (id: number, primary_email: string | undefined, password: string | undefined) => { /* TODO: check for old password, before allowing update, only allow email, if verified via email code */
-    const client = db();
-    if (!client) return null;
-
     const updated_primary_email = () => {
         if (!primary_email) return null;
 
@@ -138,7 +122,7 @@ export const updateUser = async (id: number, primary_email: string | undefined, 
         ...updated_password()
     }
 
-    return await client
+    return await db
         .update(chat_user)
         .set(updatedUserInformation)
         .where(
@@ -151,10 +135,7 @@ export const updateUser = async (id: number, primary_email: string | undefined, 
 }
 
 export const deleteUser = async (id: number) => {
-    const client = db();
-    if (!client) return null;
-
-    return await client
+    return await db
         .delete(chat_user)
         .where(
             eq(chat_user.id, id)
@@ -166,10 +147,7 @@ export const deleteUser = async (id: number) => {
 }
 
 export const validateUserCredentials = async (email: string, password: string) => { /* TODO: allow more than one email */
-    const client = db();
-    if (!client) return null;
-
-    const fetchedUser = await client
+    const fetchedUser = await db
         .select({
             id: chat_user.id,
             primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
@@ -195,14 +173,11 @@ type AccountType = "BasicAuth" | "oAuth" | "GoogleAuth" | "GithubAuth";
 type StatisticType = "count";
 
 export const accountStatistics = async (accountType: AccountType, statisticType: StatisticType = "count") => {
-    const client = db();
-    if (!client) return null;
-
     let statistic = null;
     if (statisticType === "count") {
         switch (accountType) {
             case "BasicAuth": // counts all accounts
-                statistic = await client
+                statistic = await db
                     .select({
                         count: sql<number>`count(${chat_user.id})`,
                     })
@@ -213,7 +188,7 @@ export const accountStatistics = async (accountType: AccountType, statisticType:
                     })
                 break;
             case "oAuth":
-                statistic = await client
+                statistic = await db
                     .select({
                         count: sql<number>`count(${chat_user_oauth_account.id})`,
                     })
@@ -224,7 +199,7 @@ export const accountStatistics = async (accountType: AccountType, statisticType:
                     })
                 break;
             case "GoogleAuth":
-                statistic = await client
+                statistic = await db
                     .select({
                         count: sql<number>`count(${chat_user_oauth_account.id})`,
                     })
@@ -238,7 +213,7 @@ export const accountStatistics = async (accountType: AccountType, statisticType:
                     })
                 break;
             case "GithubAuth":
-                statistic = await client
+                statistic = await db
                     .select({
                         count: sql<number>`count(${chat_user_oauth_account.id})`,
                     })

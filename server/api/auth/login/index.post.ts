@@ -16,11 +16,6 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    /* $fetch("/api/users/:user_id/chats/:chat_id") => DOESN'T EVEN MAKE A REQUEST, IF USED ON THE SERVER, IT JUST EXECUTES THE FUNCTION. Nuxt is so sick */
-    /* defineCachedEventHandler serves the old response and the evaluates the new one */
-    /* null as response => No Content. BRILLIANT! */
-    /* assertMethod(event, ['POST', 'GET']) */
-
     /* 1. VALIDATE INPUT */
     // const body = await readBody(event);
     // const body = await readValidatedBody(event, UserLogInSchema.parse);

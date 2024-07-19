@@ -1,5 +1,4 @@
 import { chat_conversation_message } from "../schema";
-import { db } from "../db";
 import { eq } from "drizzle-orm";
 // import { ENCRYPTION_SECRET } from "~/server/utils/globals"; // TODO: encrypt chat conversations
 
@@ -10,9 +9,7 @@ type ReadChatConversationMessage = GetChatConversationMessage;
 interface ChatConversationMessageToCreate extends Omit<NewChatConversationMessage, "id" | "created_at" | "updated_at"> { };
 
 export const createChatConversationMessage = async (message: ChatConversationMessageToCreate) => {
-    const client = db();
-
-    const createdChatConversationMessage = await client
+    const createdChatConversationMessage = await db
         .insert(chat_conversation_message)
         .values(message)
         .returning()
@@ -27,9 +24,7 @@ export const createChatConversationMessage = async (message: ChatConversationMes
 }
 
 export const readChatConversationMessage = async (id: number) => {
-    const client = db();
-
-    const chatConversationMessage = await client
+    const chatConversationMessage = await db
         .select()
         .from(chat_conversation_message)
         .where(eq(chat_conversation_message.id, id))
@@ -44,9 +39,7 @@ export const readChatConversationMessage = async (id: number) => {
 }
 
 export const readChatConversationMessages = async (chatConversationId: number) => {
-    const client = db();
-
-    const chatConversationMessages = await client
+    const chatConversationMessages = await db
         .select()
         .from(chat_conversation_message)
         .where(eq(chat_conversation_message.chat_conversation_id, chatConversationId))
@@ -62,9 +55,7 @@ export const readChatConversationMessages = async (chatConversationId: number) =
 
 // TODO: only allow to update/edit latest message => triggers regeneration of AI message
 export const updateChatConversationMessage = async (id: number, fields: { message: string }) => {
-    const client = db();
-
-    const updatedChatConversationMessage = await client
+    const updatedChatConversationMessage = await db
         .update(chat_conversation_message)
         .set(fields)
         .where(eq(chat_conversation_message.id, id))
@@ -81,9 +72,7 @@ export const updateChatConversationMessage = async (id: number, fields: { messag
 
 // TODO: delete AI response to that message (TODO: maybe store a reference to the message before and after the message)
 export const deleteChatConversationMessage = async (id: number) => {
-    const client = db();
-
-    const deletedChatConversationMessage = await client
+    const deletedChatConversationMessage = await db
         .delete(chat_conversation_message)
         .where(eq(chat_conversation_message.id, id))
         .returning()

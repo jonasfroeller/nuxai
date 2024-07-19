@@ -16,6 +16,7 @@
         "Nuxt",
         "nuxtjs",
         "oasst",
+        "pgcrypto",
         "pinia",
         "POSTHOG",
         "rehype",

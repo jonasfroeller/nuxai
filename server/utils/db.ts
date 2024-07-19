@@ -1,9 +1,10 @@
-import * as schema from './schema';
-import * as relations from './relations';
+import * as schema from '../database/schema';
+import * as relations from '../database/relations';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { Client as NeonPostgres } from '@neondatabase/serverless';
 import { drizzle as neonDrizzle } from 'drizzle-orm/neon-serverless';
+import { IS_DEV } from './globals'; // needed, if run as package.json script
 
 /* TODO: set the drivers as optional dependencies and only import the needed one dynamically (might be a worse idea, than leaving it like this) */
 
@@ -14,7 +15,15 @@ export const databaseMap = {
     ...relations
 }
 
-export const db = () => {
+export const db = IS_SERVERLESS ? neonDrizzle(new NeonPostgres(connectionString), {
+    schema: databaseMap,
+    logger: IS_DEV
+}) : drizzle(postgres(connectionString), {
+    schema: databaseMap,
+    logger: IS_DEV
+});
+
+/* export const db = () => {
     try {
         const getCorrectClient = () => {
             if (IS_SERVERLESS) {
@@ -37,4 +46,4 @@ export const db = () => {
         console.error("Failed to create drizzle instance:", e);
         throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'Failed to create drizzle instance' });
     }
-}
+} */

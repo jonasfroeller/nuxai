@@ -1,5 +1,4 @@
 import { chat_conversation } from "../schema";
-import { db } from "../db";
 import { eq } from "drizzle-orm";
 
 type NewChatConversation = typeof chat_conversation.$inferInsert;
@@ -9,9 +8,7 @@ type ReadChatConversation = GetChatConversation;
 interface ChatConversationToCreate extends Omit<NewChatConversation, "id" | "created_at" | "updated_at"> { };
 
 export async function createChatConversation(conversation: ChatConversationToCreate) {
-    const client = db();
-
-    const createdChatConversation = await client
+    const createdChatConversation = await db
         .insert(chat_conversation)
         .values(conversation)
         .returning()
@@ -26,9 +23,7 @@ export async function createChatConversation(conversation: ChatConversationToCre
 }
 
 export async function readChatConversation(id: number) {
-    const client = db();
-
-    const fetchedChatConversation = await client
+    const fetchedChatConversation = await db
         .select()
         .from(chat_conversation)
         .where(eq(chat_conversation.id, id))
@@ -43,9 +38,7 @@ export async function readChatConversation(id: number) {
 }
 
 export async function readAllChatConversationsOfUser(user_id: number) {
-    const client = db();
-
-    const fetchedChatConversations = await client
+    const fetchedChatConversations = await db
         .select()
         .from(chat_conversation)
         .where(eq(chat_conversation.chat_user_id, user_id))
@@ -60,9 +53,7 @@ export async function readAllChatConversationsOfUser(user_id: number) {
 }
 
 export async function updateChatConversation(id: number, fields: { name: string }) {
-    const client = db();
-
-    const updatedChatConversation = await client
+    const updatedChatConversation = await db
         .update(chat_conversation)
         .set(fields)
         .where(eq(chat_conversation.id, id))
@@ -78,9 +69,7 @@ export async function updateChatConversation(id: number, fields: { name: string 
 }
 
 export async function deleteChatConversation(id: number) {
-    const client = db();
-
-    const deletedChatConversation = await client
+    const deletedChatConversation = await db
         .delete(chat_conversation)
         .where(eq(chat_conversation.id, id))
         .returning()

@@ -1,10 +1,9 @@
-import { db } from "./db";
-import { chat_user, chat_user_oauth_account, chat_conversation, chat_conversation_message/* , POSSIBLE_OAUTH_PROVIDERS */ } from "./schema";
+import { chat_user, chat_user_oauth_account, chat_conversation, chat_conversation_message/* , POSSIBLE_OAUTH_PROVIDERS */ } from "../database/schema";
 
 // const enums = [POSSIBLE_OAUTH_PROVIDERS]
 const tables = [chat_user, chat_user_oauth_account, chat_conversation, chat_conversation_message];
 async function seedDatabase() {
-    const instance = db();
+    const instance = db;
     if (!instance) return;
 
     console.log("Deleting tables...");
@@ -32,3 +31,7 @@ async function seedDatabase() {
 }
 
 export default seedDatabase;
+
+(async () => { // for package.json script
+    await seedDatabase();
+})();

@@ -1,5 +1,4 @@
 import { chat_user, chat_user_oauth_account } from "../schema";
-import { db } from "../db";
 import { and, eq, sql } from "drizzle-orm";
 import { createEmptyUser } from "./users";
 import { ENCRYPTION_SECRET } from "~/server/utils/globals";
@@ -13,14 +12,11 @@ interface OauthAccountToCreate extends Omit<NewOauthAccount, "id" | "created_at"
 }
 
 export const createOauthAccount = async (account: OauthAccountToCreate) => {
-    const client = db();
-    if (!client) return null;
-
     /* TODO: if chat_user_id user exists, link account to user (use chat_user_id?) */
 
     /* CHECK IF OAUTH ACCOUNT ALREADY EXISTS */
 
-    const existingOauthUser = await client.query.chat_user_oauth_account.findFirst({
+    const existingOauthUser = await db.query.chat_user_oauth_account.findFirst({
         where: and(
             eq(chat_user_oauth_account.provider, account.provider), /* check if oauth account with that provider exists for existing user */
             eq(chat_user_oauth_account.oauth_user_id, sql<string>`encode(encrypt(${account.oauth_user_id}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`), /* has the same id */
@@ -60,7 +56,7 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
 
     if (!createdUser) return null;
 
-    const createdOauthAccount = await client
+    const createdOauthAccount = await db
         .insert(chat_user_oauth_account)
         .values({
             provider: account.provider, /* github, google */
