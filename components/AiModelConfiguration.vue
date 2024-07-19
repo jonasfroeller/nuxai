@@ -11,45 +11,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
-import { toast } from 'vue-sonner';
 
+const { user } = useUserSession();
 const selectedChat = useSelectedAiChat();
-const selectedModel = useSelectedAiModel(); // TODO: think about me
+const selectedModel = useSelectedAiModel();
 let isPlayground = computed(() => selectedChat.value.id === -1);
-
-async function persistChatHistory() {
-  const fetchPromise = new Promise(async (resolve, reject) => {
-    await useFetch(`/api/users/${2}/chats`, {
-      method: 'POST',
-      lazy: true,
-      body: {
-        model: selectedChat.value.model,
-        name: selectedChat.value.name,
-      },
-      pick: ['chat'],
-      onRequest({ request, options }) {
-        // console.info("onRequest", request, options)
-      },
-      onResponse({ request, response, options }) {
-        // console.info("onResponse", request, response, options)
-        resolve(response._data);
-      },
-      onResponseError({ request, response, options }) {
-        // console.error("onResponseError", request, response, options)
-        reject(response._data);
-      },
-    });
-  });
-
-  toast.promise(fetchPromise, {
-    loading: 'Persisting chat history...',
-    success: (data: any) => 'Chat history persisted!',
-    error: (data: any) => 'Failed to persist chat history!',
-  });
-
-  const response = await fetchPromise.then((data: any) => data);
-  selectedChat.value.id = response.chat.id;
-}
 </script>
 
 <template>
@@ -123,7 +89,9 @@ async function persistChatHistory() {
             :disabled="!isPlayground"
             type="button"
             variant="secondary"
-            @click="async () => await persistChatHistory()"
+            @click="async () => {
+              selectedChat.id = await persistChatConversation(user?.id ?? -1, selectedChat.name, selectedChat.model);
+            }"
             >Persist Chat History</Button
           >
         </div>

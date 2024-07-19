@@ -40,10 +40,6 @@ import { useChat } from '@ai-sdk/vue';
 import { Label } from '@/components/ui/label';
 import { toast } from 'vue-sonner';
 
-/* const props = defineProps<{
-        selectedModel?: AllowedModelPaths
-    }>() */ /* TODO: maybe allow too in the future */
-
 /* CHAT AI */
 const selectedChat = useSelectedAiChat();
 const selectedModelApiPath = useSelectedAiModelApiPath();
@@ -66,38 +62,41 @@ watch(chatError, () => {
   }
 });
 
-/* function respondToMessage(id: string, context: string) {
-        // TODO
-    } */
-
-/* TEXT RECOGNITION */
-const { isSupported, isListening, result, start, stop, error } =
+/* SPEECH RECOGNITION */
+const { 
+  isSupported: isSpeechRecognitionSupported, 
+  isListening: isListeningToSpeech, 
+  result: speechRecognitionResult, 
+  start: startSpeechRecognition, 
+  stop: stopSpeechRecognition, 
+  error: speechRecognitionError 
+} =
   useSpeechRecognition({
     lang: 'en-US',
     interimResults: true,
     continuous: true,
   });
 
-watch(error, async () => {
-  if (error.value?.error === 'not-allowed') {
+watch(speechRecognitionError, async () => {
+  if (speechRecognitionError.value?.error === 'not-allowed') {
     toast.error(
       'Speech recognition was disabled for this page!\nPlease allow it, to use the feature!',
     );
   } else {
-    toast.error(`Speech recognition error! (${error.value?.error})`);
+    toast.error(`Speech recognition error! (${speechRecognitionError.value?.error})`);
   }
 });
 
-if (isSupported.value && IS_CLIENT) {
-  watch(result, () => {
-    currentChatMessage.value = result.value;
+if (isSpeechRecognitionSupported.value && IS_CLIENT) {
+  watch(speechRecognitionResult, () => {
+    currentChatMessage.value = speechRecognitionResult.value;
   });
 }
 
 /* LOADING INDICATOR */
 let toastIdAiIsResponding: string | number;
 let toastIdAiIsNotResponding: string | number;
-watch(chatResponseIsLoading, (newValue, oldValue) => {
+watch(chatResponseIsLoading, (newValue) => {
   if (!newValue) {
     if (IS_CLIENT) {
       toastIdAiIsNotResponding = toast.success('AI is done responding!');
@@ -115,48 +114,6 @@ watch(chatResponseIsLoading, (newValue, oldValue) => {
 
 /* CONVERT HTML TO MARKDOWN */
 let urlToFetchHtmlFrom = ref('');
-async function getMarkdownOfUrl(url: string) {
-  if (url.trim() === '') return;
-
-  try {
-    new URL(url);
-  } catch (error) {
-    toast.error('Invalid URL!');
-    return;
-  }
-
-  const endpoint = '/api/html-to-markdown/';
-  const encodedUrl = encodeURIComponent(url);
-
-  const fetchPromise = new Promise(async (resolve, reject) => {
-    await useFetch(`${endpoint}${encodedUrl}`, {
-      onRequest({ request, options }) {
-        // console.info("onRequest", request, options)
-      },
-      onResponse({ request, response, options }) {
-        // console.info("onResponse", request, response, options)
-        resolve(response._data);
-      },
-      onResponseError({ request, response, options }) {
-        // console.error("onResponseError", request, response, options)
-        reject(response._data);
-      },
-    });
-  });
-
-  if (IS_CLIENT) {
-    toast.promise(fetchPromise, {
-      loading: "Fetching url and converting it's HTML content to markdown...",
-      success: (data: any) =>
-        "Successfully fetched the url and converted it's HTML content to markdown!",
-      error: (data: any) =>
-        "Failed to fetch the url and convert it's HTML content to markdown!",
-    });
-  }
-
-  const markdownOfUrl = await fetchPromise;
-  currentChatMessage.value = currentChatMessage.value + markdownOfUrl;
-}
 </script>
 
 <template>
@@ -220,7 +177,7 @@ async function getMarkdownOfUrl(url: string) {
       </div>
 
       <div
-        v-if="chatResponseIsLoading"
+        v-show="chatResponseIsLoading"
         class="flex flex-wrap items-center gap-2 px-4 py-2 border border-blue-200 rounded-lg bg-background"
       >
         <Loader2 class="w-4 h-4 mr-2 text-blue-500 animate-spin" />
@@ -288,13 +245,17 @@ async function getMarkdownOfUrl(url: string) {
                   type="button"
                   variant="outline"
                   class="w-full"
-                  @click="getMarkdownOfUrl(urlToFetchHtmlFrom)"
-                  >Add URL for further context</Button
-                >
+                  @click="async () => {
+                    const updatedCurrentChatMessage = await generateMarkdownFromUrl(urlToFetchHtmlFrom, currentChatMessage)
+                    if (updatedCurrentChatMessage) currentChatMessage = updatedCurrentChatMessage
+                  }"
+                  >
+                  Add URL for further context
+                </Button>
               </PopoverContent>
             </Popover>
           </Tooltip>
-          <Tooltip v-if="isSupported">
+          <Tooltip v-if="isSpeechRecognitionSupported">
             <TooltipTrigger as-child>
               <Button
                 type="button"
@@ -302,16 +263,16 @@ async function getMarkdownOfUrl(url: string) {
                 size="icon"
                 v-bind:class="{
                   'animate-pulse outline-1 outline-destructive outline-dashed':
-                    isListening,
+                    isListeningToSpeech,
                 }"
                 @click="
                   () => {
-                    if (isListening) {
+                    if (isListeningToSpeech) {
                       console.log('stopping listening');
-                      stop();
+                      stopSpeechRecognition();
                     } else {
                       console.log('starting listening');
-                      start();
+                      startSpeechRecognition();
                     }
                   }
                 "

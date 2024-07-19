@@ -3,7 +3,6 @@ import { RefreshCcw, Pen, Trash2 } from 'lucide-vue-next';
 import { Search } from 'lucide-vue-next';
 import Input from './ui/input/Input.vue';
 import Button from './ui/button/Button.vue';
-import { toast } from 'vue-sonner';
 import type { AllowedAiModels } from '~/lib/types/ai.models';
 import type { Chat, ChatExtended } from '~/lib/types/chat';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -17,42 +16,6 @@ const chatToEdit = ref<Chat>({
   name: `chat-${Date.now()}`,
   model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
 });
-const editChat = (id: number, name: string) => {
-  chatToEdit.value.id = id;
-  chatToEdit.value.name = name;
-};
-const saveEdit = async (id: number) => {
-  const { data } = await useFetch(`/api/users/${user.value?.id}/chats/${id}`, {
-    method: 'PATCH',
-    body: {
-      name: chatToEdit.value?.name,
-    },
-    lazy: true,
-    onRequest({ request, options }) {
-      // console.info("onRequest", request, options)
-    },
-    onResponse({ request, response, options }) {
-      // console.info("onResponse", request, response, options)
-    },
-    onResponseError({ request, response, options }) {
-      // console.error("onResponseError", request, response, options)
-    },
-  });
-
-  if (data.value !== null && data.value.chat?.name) {
-    const { name: chatName } = data.value.chat;
-    setSelectedChat(
-      chatToEdit.value.id,
-      chatName,
-      chatToEdit.value.model,
-      true,
-    );
-    chatToEdit.value.id = -1;
-    chatToEdit.value.name = `chat-${Date.now()}`;
-  }
-
-  refresh();
-};
 
 function setSelectedChat(
   id: number,
@@ -62,7 +25,7 @@ function setSelectedChat(
 ) {
   if (selectedChat.value.id === id && force === false) {
     selectedChat.value.id = -1;
-    selectedChat.value.name = `chat-${Date.now()}`;
+    selectedChat.value.name = `chat-${Date.now()}`; selectedChat
   } else {
     selectedChat.value.id = id;
     selectedChat.value.name = name;
@@ -72,8 +35,54 @@ function setSelectedChat(
   console.info('setSelectedChat', selectedChat.value);
 }
 
-const { data, status, error, refresh } = await useFetch(
-  `/api/users/${2}/chats`,
+const editChat = (id: number, name: string) => {
+  chatToEdit.value.id = id;
+  chatToEdit.value.name = name;
+};
+
+const saveEdit = async (id: number) => {
+  const data = await persistChatConversationEdit(user?.value?.id ?? -1, id, chatToEdit.value?.name);
+
+  console.log("DATA", data);
+
+  if (data && data.chat?.name) {
+    const { name: chatName } = data.chat;
+
+    setSelectedChat(
+        chatToEdit.value.id,
+        chatName,
+        chatToEdit.value.model,
+        true,
+    );
+    
+    chatToEdit.value.id = -1;
+    chatToEdit.value.name = `chat-${Date.now()}`;
+  }
+
+  fetchedChatsRefresh();
+};
+
+const deleteChat = async (id: number) => {
+  await persistChatConversationDelete(user?.value?.id ?? -1, id);
+
+  if (selectedChat.value.id === id) {
+    setSelectedChat(
+        -1,
+        `chat-${Date.now()}`,
+        'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
+    );
+  }
+
+  fetchedChatsRefresh();
+};
+
+const { 
+  data: fetchedChats, 
+  status: fetchedChatsStatus, 
+  error: fetchedChatsError, 
+  refresh: fetchedChatsRefresh 
+} = await useFetch(
+  `/api/users/${user.value?.id}/chats`,
   {
     method: 'GET',
     lazy: true,
@@ -81,47 +90,11 @@ const { data, status, error, refresh } = await useFetch(
   },
 );
 
-const deleteChat = async (chatId: number) => {
-  const fetchPromise = new Promise(async (resolve, reject) => {
-    await useFetch(`/api/users/${2}/chats/${chatId}`, {
-      method: 'DELETE',
-      lazy: true,
-      onRequest({ request, options }) {
-        // console.info("onRequest", request, options)
-      },
-      onResponse({ request, response, options }) {
-        // console.info("onResponse", request, response, options)
-        resolve(response._data);
-      },
-      onResponseError({ request, response, options }) {
-        // console.error("onResponseError", request, response, options)
-        reject(response._data);
-      },
-    });
-  });
-
-  if (selectedChat.value.id === chatId) {
-    setSelectedChat(
-      -1,
-      `chat-${Date.now()}`,
-      'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
-    );
-  }
-
-  toast.promise(fetchPromise, {
-    loading: 'Deleting chat...',
-    success: (data: any) => 'Chat deleted!',
-    error: (data: any) => 'Failed to delete chat!',
-  });
-
-  refresh();
-};
-
 const searchQuery = ref('');
 let filteredChats = computed(() => {
-  if (!data.value?.chats) return [];
+  if (!fetchedChats.value?.chats) return [];
 
-  const chats: ChatExtended[] = data.value.chats as ChatExtended[];
+  const chats: ChatExtended[] = fetchedChats.value.chats as ChatExtended[];
   return chats.filter((chat: ChatExtended) =>
     chat.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
   );
@@ -148,9 +121,9 @@ let filteredChats = computed(() => {
         </span>
       </div>
       <Button
-        :disabled="status === 'pending'"
+        :disabled="fetchedChatsStatus === 'pending'"
         variant="outline"
-        @click="refresh"
+        @click="fetchedChatsRefresh"
         class="[&>*]:hover:animate-spin"
       >
         <RefreshCcw class="w-4 h-4" />
@@ -233,11 +206,11 @@ let filteredChats = computed(() => {
         </div>
       </ScrollArea>
       <div class="pt-2 text-center" v-else>
-        <p v-if="Array.isArray(data?.chats) && data?.chats?.length === 0">
-          No Chats yet... ({{ status }})
+        <p v-if="Array.isArray(fetchedChats?.chats) && fetchedChats?.chats?.length === 0">
+          No Chats yet... ({{ fetchedChatsStatus }})
         </p>
-        <p v-else>No search results... ({{ status }})</p>
-        <p v-if="error">{{ error.message }} ({{ error.data.data }})</p>
+        <p v-else>No search results... ({{ fetchedChatsStatus }})</p>
+        <p v-if="fetchedChatsError">{{ fetchedChatsError.message }} ({{ fetchedChatsError.data.data }})</p>
       </div>
     </div>
   </div>

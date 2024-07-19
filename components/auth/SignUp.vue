@@ -15,6 +15,7 @@ import {
   validateEmailInput,
   validatePasswordInput,
 } from '~/lib/types/input.validation';
+import { toast } from 'vue-sonner';
 
 const userStore = useAuthStore();
 const { fetch } = useUserSession();
@@ -32,7 +33,7 @@ watch(password, (newPassword) => {
 });
 
 async function signUp() {
-  const { /* data,  */ error } = await userStore.signUp(
+  const { error } = await userStore.signUp(
     email.value,
     password.value,
   );
@@ -46,11 +47,9 @@ async function signUp() {
       .filter((issue: any) => issue.path[0] === 'password')
       .map((issue: any) => issue.message);
 
-    displaySignInResponseError(error.value);
+    toast.error(error.value.message);
     return;
   }
-
-  // console.log("data", data.value);
 
   await fetch(); // reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" });
   navigateTo('/dashboard', {
