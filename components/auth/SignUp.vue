@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Icon } from '@iconify/vue';
-import Separator from './ui/separator/Separator.vue';
+import Separator from '@/components/ui/separator/Separator.vue';
 import {
   validateEmailInput,
   validatePasswordInput,
@@ -31,8 +31,8 @@ watch(password, (newPassword) => {
   passwordErrors.value = validatePasswordInput(newPassword);
 });
 
-async function signIn() {
-  const { /* data,  */ error } = await userStore.signIn(
+async function signUp() {
+  const { /* data,  */ error } = await userStore.signUp(
     email.value,
     password.value,
   );
@@ -61,11 +61,11 @@ async function signIn() {
 
 <template>
   <div>
-    <Card class="mx-2 max-full">
+    <Card class="max-w-full mx-2">
       <CardHeader>
-        <CardTitle class="text-2xl"> Login </CardTitle>
+        <CardTitle class="text-xl"> Sign Up </CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          Enter your information to create an account
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -74,7 +74,6 @@ async function signIn() {
             <div class="grid gap-2 mb-1">
               <Label for="email">Email</Label>
               <Input
-                @keydown.enter="signIn()"
                 id="email"
                 type="email"
                 name="email"
@@ -95,23 +94,14 @@ async function signIn() {
           </div>
           <div>
             <div class="grid gap-2 mb-1">
-              <div class="flex items-center">
-                <Label for="password">Password</Label>
-                <NuxtLink
-                  to="/new-password"
-                  class="inline-block ml-auto text-sm underline"
-                >
-                  Forgot your password?
-                </NuxtLink>
-              </div>
               <Input
-                @keydown.enter="signIn()"
                 id="password"
                 type="password"
                 name="password"
                 v-model="password"
                 required
               />
+              <Label for="password">Password</Label>
             </div>
 
             <ul v-if="passwordErrors.length > 0" class="pl-5 list-disc">
@@ -123,9 +113,8 @@ async function signIn() {
               </li>
             </ul>
           </div>
-
-          <Button type="button" class="w-full" @click="signIn()">
-            Login
+          <Button type="button" class="w-full" @click="signUp()">
+            Create an account
           </Button>
           <Separator label="or Oauth" class="my-2" />
           <div class="flex flex-col gap-1">
@@ -150,11 +139,10 @@ async function signIn() {
               </a>
             </Button>
           </div>
-          <Separator />
         </div>
         <div class="mt-4 text-sm text-center">
-          Don't have an account?
-          <NuxtLink to="/sign-up" class="underline"> Sign up </NuxtLink>
+          Already have an account?
+          <NuxtLink to="/login" class="underline"> Sign in </NuxtLink>
         </div>
       </CardContent>
     </Card>
