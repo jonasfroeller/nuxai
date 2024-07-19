@@ -4,9 +4,9 @@ import { createEmptyUser } from "./users";
 import { ENCRYPTION_SECRET } from "~/server/utils/globals";
 
 type NewOauthAccount = typeof chat_user_oauth_account.$inferInsert;
-type GetOauthAccount = typeof chat_user_oauth_account.$inferSelect;
+// type GetOauthAccount = typeof chat_user_oauth_account.$inferSelect;
 
-type ReadOauthAccount = Omit<GetOauthAccount, /* "id" | "chat_user_id" | */ "provider" | "created_at" | "updated_at">;
+// type ReadOauthAccount = Omit<GetOauthAccount, /* "id" | "chat_user_id" | */ "provider" | "created_at" | "updated_at">;
 interface OauthAccountToCreate extends Omit<NewOauthAccount, "id" | "created_at" | "updated_at" | "chat_user_id"> {
     chat_user_id?: number /* so that a oauth account can be linked to an existing user */
 }

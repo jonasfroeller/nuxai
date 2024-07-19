@@ -158,23 +158,25 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
         </div>
       </header>
       <main class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 2xl:grid-cols-[33%,1fr]">
-        <Tabs default-value="chat" class="h-screen">
-          <TabsList class="flex justify-start w-full bg-muted/50">
-            <TabsTrigger value="chats">
-              All Chats
-            </TabsTrigger>
-            <TabsTrigger value="chat">
-              Active Chat Information
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="chats" class="h-full">
-            <AiChats />
-          </TabsContent>
-          <TabsContent value="chat">
-            <AiChatInformation />
-          </TabsContent>
-        </Tabs>
-        <AiModelChat :key="selectedModelApiPath" />
+        <!-- <ClientOnly> --> <!-- TODO: fix tab hydration warning -->
+          <Tabs default-value="chat" class="h-screen">
+            <TabsList class="flex justify-start w-full bg-muted/50">
+              <TabsTrigger value="chats">
+                All Chats
+              </TabsTrigger>
+              <TabsTrigger value="chat">
+                Active Chat Information
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="chats" class="h-full">
+              <AiChats />
+            </TabsContent>
+            <TabsContent value="chat">
+              <AiChatInformation />
+            </TabsContent>
+          </Tabs>
+          <AiModelChat :key="selectedModelApiPath" />
+        <!-- </ClientOnly> -->
       </main>
     </div>
   </div>

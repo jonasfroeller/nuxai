@@ -1,10 +1,11 @@
 import { chat_conversation } from "../schema";
 import { eq } from "drizzle-orm";
+import type { GetUser } from "./users";
 
 type NewChatConversation = typeof chat_conversation.$inferInsert;
-type GetChatConversation = typeof chat_conversation.$inferSelect;
+export type GetChatConversation = typeof chat_conversation.$inferSelect;
 
-type ReadChatConversation = GetChatConversation;
+// type ReadChatConversation = GetChatConversation;
 export interface ChatConversationToCreate extends Omit<NewChatConversation, "id" | "created_at" | "updated_at"> { };
 
 export async function createChatConversation(conversation: ChatConversationToCreate) {
@@ -22,7 +23,7 @@ export async function createChatConversation(conversation: ChatConversationToCre
     return createdChatConversation[0];
 }
 
-export async function readChatConversation(id: number) {
+export async function readChatConversation(id: GetChatConversation["id"]) {
     const fetchedChatConversation = await db
         .select()
         .from(chat_conversation)
@@ -37,7 +38,7 @@ export async function readChatConversation(id: number) {
     return fetchedChatConversation[0];
 }
 
-export async function readAllChatConversationsOfUser(user_id: number) {
+export async function readAllChatConversationsOfUser(user_id: GetUser["id"]) {
     const fetchedChatConversations = await db
         .select()
         .from(chat_conversation)
@@ -52,7 +53,7 @@ export async function readAllChatConversationsOfUser(user_id: number) {
     return fetchedChatConversations;
 }
 
-export async function updateChatConversation(id: number, fields: { name: string }) {
+export async function updateChatConversation(id: GetChatConversation["id"], fields: { name: GetChatConversation["name"] }) {
     const updatedChatConversation = await db
         .update(chat_conversation)
         .set(fields)
@@ -68,7 +69,7 @@ export async function updateChatConversation(id: number, fields: { name: string 
     return updatedChatConversation[0];
 }
 
-export async function deleteChatConversation(id: number) {
+export async function deleteChatConversation(id: GetChatConversation["id"]) {
     const deletedChatConversation = await db
         .delete(chat_conversation)
         .where(eq(chat_conversation.id, id))

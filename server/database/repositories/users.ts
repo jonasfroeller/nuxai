@@ -3,9 +3,9 @@ import { and, eq, like, sql } from "drizzle-orm";
 import { ENCRYPTION_SECRET } from "~/server/utils/globals";
 
 type NewUser = typeof chat_user.$inferInsert;
-type GetUser = typeof chat_user.$inferSelect;
+export type GetUser = typeof chat_user.$inferSelect;
 
-type ReadUser = Omit<GetUser, "hashed_password">;
+// type ReadUser = Omit<GetUser, "hashed_password">;
 interface UserToCreate extends Omit<NewUser, "id" | "hashed_password"> {
     password: string;
 };
@@ -66,7 +66,7 @@ export const createEmptyUser = async () => {
     return createdUser[0];
 }
 
-export const readUser = async (id: number): Promise<null | Omit<ReadUser, "created_at" | "updated_at">[]> => {
+export const readUser = async (id: GetUser["id"]) => {
     return await db
         .select({
             id: chat_user.id,
@@ -81,7 +81,7 @@ export const readUser = async (id: number): Promise<null | Omit<ReadUser, "creat
         })
 }
 
-export const readUserUsingPrimaryEmail = async (email: string): Promise<null | Omit<ReadUser, "created_at" | "updated_at">> => { /* TODO: Improve, so that other emails are checked too */
+export const readUserUsingPrimaryEmail = async (email: GetUser["primary_email"]) => { /* TODO: Improve, so that other emails are checked too */
     const fetchedUser = await db
         .select({
             id: chat_user.id,
@@ -100,7 +100,7 @@ export const readUserUsingPrimaryEmail = async (email: string): Promise<null | O
     return fetchedUser[0]; // [][0] => undefined :)
 }
 
-export const updateUser = async (id: number, primary_email: string | undefined, password: string | undefined) => { /* TODO: check for old password, before allowing update, only allow email, if verified via email code */
+export const updateUser = async (id: GetUser["id"], primary_email: GetUser["primary_email"] | undefined, password: GetUser["hashed_password"] | undefined) => { /* TODO: check for old password, before allowing update, only allow email, if verified via email code */
     const updated_primary_email = () => {
         if (!primary_email) return null;
 
@@ -134,7 +134,7 @@ export const updateUser = async (id: number, primary_email: string | undefined, 
         })
 }
 
-export const deleteUser = async (id: number) => {
+export const deleteUser = async (id: GetUser["id"]) => {
     return await db
         .delete(chat_user)
         .where(
@@ -146,7 +146,7 @@ export const deleteUser = async (id: number) => {
         })
 }
 
-export const validateUserCredentials = async (email: string, password: string) => { /* TODO: allow more than one email */
+export const validateUserCredentials = async (email: GetUser["primary_email"], password: GetUser["hashed_password"]) => { /* TODO: allow more than one email */
     const fetchedUser = await db
         .select({
             id: chat_user.id,

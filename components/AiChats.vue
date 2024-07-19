@@ -8,6 +8,9 @@
   import type { Chat, ChatExtended } from '~/lib/types/chat';
   import { ScrollArea } from "@/components/ui/scroll-area"
 
+  // TODO: make helper functions for the toasts and other functions that can be used multiple times
+
+  const { user } = useUserSession()
   const selectedChat = useSelectedAiChat();
   const chatToEdit = ref<Chat>({
         id: -1,
@@ -19,7 +22,7 @@
     chatToEdit.value.name = name;
   };
   const saveEdit = async (id: number) => {
-    const { data } = await useFetch(`/api/users/${2}/chats/${id}`, {
+    const { data } = await useFetch(`/api/users/${user.value?.id}/chats/${id}`, {
             method: "PATCH",
             body: {
               name: chatToEdit.value?.name

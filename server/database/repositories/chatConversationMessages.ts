@@ -1,11 +1,12 @@
 import { chat_conversation_message } from "../schema";
 import { eq } from "drizzle-orm";
-// import { ENCRYPTION_SECRET } from "~/server/utils/globals"; // TODO: encrypt chat conversations
+import type { GetChatConversation } from "./chatConversations";
+// import { ENCRYPTION_SECRET } from "~/server/utils/globals"; // TODO: maybe encrypt chat conversations
 
 type NewChatConversationMessage = typeof chat_conversation_message.$inferInsert;
 type GetChatConversationMessage = typeof chat_conversation_message.$inferSelect;
 
-type ReadChatConversationMessage = GetChatConversationMessage;
+// type ReadChatConversationMessage = GetChatConversationMessage;
 interface ChatConversationMessageToCreate extends Omit<NewChatConversationMessage, "id" | "created_at" | "updated_at"> { };
 
 export const createChatConversationMessage = async (message: ChatConversationMessageToCreate) => {
@@ -23,7 +24,7 @@ export const createChatConversationMessage = async (message: ChatConversationMes
     return createdChatConversationMessage[0];
 }
 
-export const readChatConversationMessage = async (id: number) => {
+export const readChatConversationMessage = async (id: GetChatConversationMessage["id"]) => {
     const chatConversationMessage = await db
         .select()
         .from(chat_conversation_message)
@@ -38,11 +39,11 @@ export const readChatConversationMessage = async (id: number) => {
     return chatConversationMessage[0];
 }
 
-export const readChatConversationMessages = async (chatConversationId: number) => {
+export const readChatConversationMessages = async (chat_conversation_id: GetChatConversation["id"]) => {
     const chatConversationMessages = await db
         .select()
         .from(chat_conversation_message)
-        .where(eq(chat_conversation_message.chat_conversation_id, chatConversationId))
+        .where(eq(chat_conversation_message.chat_conversation_id, chat_conversation_id))
         .catch((err) => {
             console.error("Failed to read chat conversation messages from database", err);
             return null;
@@ -54,7 +55,7 @@ export const readChatConversationMessages = async (chatConversationId: number) =
 }
 
 // TODO: only allow to update/edit latest message => triggers regeneration of AI message
-export const updateChatConversationMessage = async (id: number, fields: { message: string }) => {
+export const updateChatConversationMessage = async (id: GetChatConversationMessage["id"], fields: { message: GetChatConversationMessage["message"] }) => {
     const updatedChatConversationMessage = await db
         .update(chat_conversation_message)
         .set(fields)
@@ -71,7 +72,7 @@ export const updateChatConversationMessage = async (id: number, fields: { messag
 }
 
 // TODO: delete AI response to that message (TODO: maybe store a reference to the message before and after the message)
-export const deleteChatConversationMessage = async (id: number) => {
+export const deleteChatConversationMessage = async (id: GetChatConversationMessage["id"]) => {
     const deletedChatConversationMessage = await db
         .delete(chat_conversation_message)
         .where(eq(chat_conversation_message.id, id))
