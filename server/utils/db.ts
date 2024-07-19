@@ -8,20 +8,26 @@ import { IS_DEV } from './globals'; // needed, if run as package.json script
 
 /* TODO: set the drivers as optional dependencies and only import the needed one dynamically (might be a worse idea, than leaving it like this) */
 
-export const connectionString = process.env.DATABASE_CONNECTION_STRING || "postgresql://postgres:postgres@localhost:5432/postgres";
-export const IS_SERVERLESS = Boolean(process.env.IS_SERVERLESS) ?? false; /* process.env.DATABASE_CONNECTION_STRING?.includes("neon.tech") && !IS_DEV (serverless doesn't work in a serverless environment and times out :|) */
+export const connectionString =
+  process.env.DATABASE_CONNECTION_STRING ||
+  'postgresql://postgres:postgres@localhost:5432/postgres';
+export const IS_SERVERLESS =
+  Boolean(process.env.IS_SERVERLESS) ??
+  false; /* process.env.DATABASE_CONNECTION_STRING?.includes("neon.tech") && !IS_DEV (serverless doesn't work in a serverless environment and times out :|) */
 export const databaseMap = {
-    ...schema,
-    ...relations
-}
+  ...schema,
+  ...relations,
+};
 
-export const db = IS_SERVERLESS ? neonDrizzle(new NeonPostgres(connectionString), {
-    schema: databaseMap,
-    logger: IS_DEV
-}) : drizzle(postgres(connectionString), {
-    schema: databaseMap,
-    logger: IS_DEV
-});
+export const db = IS_SERVERLESS
+  ? neonDrizzle(new NeonPostgres(connectionString), {
+      schema: databaseMap,
+      logger: IS_DEV,
+    })
+  : drizzle(postgres(connectionString), {
+      schema: databaseMap,
+      logger: IS_DEV,
+    });
 
 /* export const db = () => {
     try {

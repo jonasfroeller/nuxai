@@ -1,7 +1,7 @@
-import { toast } from "vue-sonner"
+import { toast } from 'vue-sonner';
 
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.vueApp.config.errorHandler = (error, instance, info) => {
-        toast.error("Unknown error");
-    }
-})
+  nuxtApp.vueApp.config.errorHandler = (error, instance, info) => {
+    toast.error('Unknown error');
+  };
+});

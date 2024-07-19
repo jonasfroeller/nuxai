@@ -1,29 +1,38 @@
 <script setup lang="ts">
 defineProps({
-  layout: String
-})
+  layout: String,
+});
 
-const { loggedIn } = useUserSession()
-const router = useRouter()
-const routes = router.options.routes
+const { loggedIn } = useUserSession();
+const router = useRouter();
+const routes = router.options.routes;
 
-const hiddenRoutes = ['/new-password']
-const hiddenRoutesIfLoggedIn = hiddenRoutes.concat(['/log-in', '/sign-up'])
-const hiddenRoutesIfLoggedOut = hiddenRoutes.concat(['/', '/account'])
+const hiddenRoutes = ['/new-password'];
+const hiddenRoutesIfLoggedIn = hiddenRoutes.concat(['/log-in', '/sign-up']);
+const hiddenRoutesIfLoggedOut = hiddenRoutes.concat(['/', '/account']);
 
 const visibleRoutes = computed(() => {
   if (loggedIn.value) {
-    return routes.filter(route => !hiddenRoutesIfLoggedIn.includes(route.path))
+    return routes.filter(
+      (route) => !hiddenRoutesIfLoggedIn.includes(route.path),
+    );
   } else {
-    return routes.filter(route => !hiddenRoutesIfLoggedOut.includes(route.path))
+    return routes.filter(
+      (route) => !hiddenRoutesIfLoggedOut.includes(route.path),
+    );
   }
-})
+});
 </script>
 
 <template>
   <div>
-    <ul v-bind:class="{ 'navigation': layout === 'navigation' }">
-      <NuxtLink v-for="route in visibleRoutes" :to="route.path" :key="route.path" activeClass="active-link">
+    <ul v-bind:class="{ navigation: layout === 'navigation' }">
+      <NuxtLink
+        v-for="route in visibleRoutes"
+        :to="route.path"
+        :key="route.path"
+        activeClass="active-link"
+      >
         <li :key="route.path">{{ route.name }}</li>
       </NuxtLink>
     </ul>

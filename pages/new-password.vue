@@ -1,14 +1,12 @@
 <script setup lang="ts">
 definePageMeta({
-  name: "New Password",
-  alias: ['/forgot-password']
-})
+  name: 'New Password',
+  alias: ['/forgot-password'],
+});
 </script>
 
 <template>
-  <div>
-    New Password
-  </div>
+  <div>New Password</div>
 </template>
 
 <style scoped></style>

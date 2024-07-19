@@ -5,13 +5,13 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/api/**': {
-      cors: true
-    }
+      cors: true,
+    },
   },
 
   nitro: {
     imports: {
-      dirs: ['./server/utils']
+      dirs: ['./server/utils'],
     },
     /* storage: {
       redis: {
@@ -26,7 +26,7 @@ export default defineNuxtConfig({
     posthog: {
       apiKey: process.env.POSTHOG_API_KEY,
       apiHost: process.env.POSTHOG_API_HOST,
-      isActive: process.env.POSTHOG_ACTIVE
+      isActive: process.env.POSTHOG_ACTIVE,
     },
     sessionPassword: process.env.NUXT_SESSION_PASSWORD,
     cryptoSecret: process.env.CRYPTO_SECRET,
@@ -34,61 +34,59 @@ export default defineNuxtConfig({
     oauth: {
       github: {
         clientId: process.env.NUXT_OAUTH_GITHUB_CLIENT_ID,
-        clientSecret: process.env.NUXT_OAUTH_GITHUB_CLIENT_SECRET
+        clientSecret: process.env.NUXT_OAUTH_GITHUB_CLIENT_SECRET,
       },
       google: {
         clientId: process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID,
-        clientSecret: process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET
-      }
+        clientSecret: process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET,
+      },
     },
-    session: { /* session persists for 7 days */
-      name: 'nuxai-session',
+    session: {
+      /* session persists for 7 days */ name: 'nuxai-session',
       password: process.env.NUXT_SESSION_PASSWORD,
       cookie: {
-        sameSite: 'lax'
-      }
-    }
+        sameSite: 'lax',
+      },
+    },
   },
 
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
-      meta: [
-        { name: "description", content: "%s - Nuxt Chat App" }
-      ]
+      meta: [{ name: 'description', content: '%s - Nuxt Chat App' }],
     },
     pageTransition: {
       name: 'page',
-      mode: 'out-in' // default
+      mode: 'out-in', // default
     },
     layoutTransition: {
       name: 'layout',
-      mode: 'out-in' // default
-    }
+      mode: 'out-in', // default
+    },
   },
 
   router: {
     options: {
-      scrollBehaviorType: 'smooth'
-    }
+      scrollBehaviorType: 'smooth',
+    },
   },
 
   typescript: {
-    typeCheck: true
+    typeCheck: true,
   },
 
   modules: [
-    "@nuxt/eslint",
-    "@nuxtjs/tailwindcss",
-    "shadcn-nuxt",
-    "@nuxtjs/color-mode",
-    "nuxt-posthog",
+    '@nuxt/eslint',
+    '@nuxtjs/tailwindcss',
+    'shadcn-nuxt',
+    '@nuxtjs/color-mode',
+    'nuxt-posthog',
     '@pinia/nuxt',
-    "nuxt-auth-utils",
-    "@nuxtjs/mdc",
-    "@nuxt/image",
+    'nuxt-auth-utils',
+    '@nuxtjs/mdc',
+    '@nuxt/image',
     '@vueuse/nuxt',
-    "nuxt-time"
+    'nuxt-time',
   ],
 
   mdc: {
@@ -107,10 +105,76 @@ export default defineNuxtConfig({
       }
     }, */
     highlight: {
-      highlighter: "shiki",
-      theme: "github-dark",
-      langs: ['js', 'jsx', 'json', 'toml', 'ts', 'tsx', 'vue', 'vue-html', 'svelte', 'css', 'html', 'xml', 'bash', 'shell', 'shellscript', 'bat', 'batch', 'cmd', 'powershell', 'md', 'mdc', 'yaml', 'yml', 'python', 'py', 'asciidoc', 'c', 'c#', 'cs', 'csharp', 'c++', 'dart', 'objective-c', 'objective-cpp', 'swift', 'docker', 'dockerfile', 'git-commit', 'git-rebase', 'go', 'java', 'kotlin', 'gql', 'http', 'json', 'latex', 'lua', 'sass', 'less', 'markdown', 'makefile', 'md', 'mdx', 'mdc', 'nginx', 'nix', 'php', 'scheme', 'plsql', 'sql', 'postcss', 'prisma', 'rust', 'rs', 'csv']
-    }
+      highlighter: 'shiki',
+      theme: 'github-dark',
+      langs: [
+        'js',
+        'jsx',
+        'json',
+        'toml',
+        'ts',
+        'tsx',
+        'vue',
+        'vue-html',
+        'svelte',
+        'css',
+        'html',
+        'xml',
+        'bash',
+        'shell',
+        'shellscript',
+        'bat',
+        'batch',
+        'cmd',
+        'powershell',
+        'md',
+        'mdc',
+        'yaml',
+        'yml',
+        'python',
+        'py',
+        'asciidoc',
+        'c',
+        'c#',
+        'cs',
+        'csharp',
+        'c++',
+        'dart',
+        'objective-c',
+        'objective-cpp',
+        'swift',
+        'docker',
+        'dockerfile',
+        'git-commit',
+        'git-rebase',
+        'go',
+        'java',
+        'kotlin',
+        'gql',
+        'http',
+        'json',
+        'latex',
+        'lua',
+        'sass',
+        'less',
+        'markdown',
+        'makefile',
+        'md',
+        'mdx',
+        'mdc',
+        'nginx',
+        'nix',
+        'php',
+        'scheme',
+        'plsql',
+        'sql',
+        'postcss',
+        'prisma',
+        'rust',
+        'rs',
+        'csv',
+      ],
+    },
   },
 
   pinia: {
@@ -125,7 +189,7 @@ export default defineNuxtConfig({
     },
   },
   colorMode: {
-    classSuffix: ''
+    classSuffix: '',
   },
 
   shadcn: {
@@ -137,22 +201,25 @@ export default defineNuxtConfig({
      * Directory that the component lives in.
      * @default "./components/ui"
      */
-    componentDir: './components/ui'
+    componentDir: './components/ui',
   },
 
-  posthog: { /* https://nuxt-posthog.cmitjans.dev/configuration */
+  posthog: {
+    /* https://nuxt-posthog.cmitjans.dev/configuration */
     publicKey: process.env.POSTHOG_API_KEY,
     host: process.env.POSTHOG_HOST,
     capturePageViews: true,
-    disabled: process.env.POSTHOG_ACTIVE === 'false' /* process.dev (deprecated), import.meta.dev (unusable in config file) (https://nuxt.com/docs/api/advanced/import-meta#runtime-app-properties) */
+    disabled:
+      process.env.POSTHOG_ACTIVE ===
+      'false' /* process.dev (deprecated), import.meta.dev (unusable in config file) (https://nuxt.com/docs/api/advanced/import-meta#runtime-app-properties) */,
   },
 
   eslint: {
     config: {
       stylistic: {
         quotes: 'single',
-        commaDangle: 'never'
-      }
-    }
-  }
-})
+        commaDangle: 'never',
+      },
+    },
+  },
+});

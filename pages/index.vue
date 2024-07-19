@@ -1,14 +1,31 @@
 <script setup lang="ts">
-import { Book, LifeBuoy, Settings, Settings2, Share, Import, SquareTerminal, SquareUser, Home } from 'lucide-vue-next'
-import { Button } from '@/components/ui/button'
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs'
+import {
+  Book,
+  LifeBuoy,
+  Settings,
+  Settings2,
+  Share,
+  Import,
+  SquareTerminal,
+  SquareUser,
+  Home,
+} from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
   DialogClose,
@@ -18,20 +35,22 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog';
 
 definePageMeta({
-  name: "Dashboard",
-  middleware: ["protected"],
-  alias: ['/dashboard', '/chat']
-})
+  name: 'Dashboard',
+  middleware: ['protected'],
+  alias: ['/dashboard', '/chat'],
+});
 
-const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
+const selectedModelApiPath = useSelectedAiModelApiPath(); // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
 </script>
 
 <template>
   <div class="grid min-h-screen w-full pl-[53px]">
-    <aside class="fixed top-0 left-0 flex flex-col h-full border-t border-r inset-y bg-[hsl(var(--background))] z-50">
+    <aside
+      class="fixed top-0 left-0 flex flex-col h-full border-t border-r inset-y bg-[hsl(var(--background))] z-50"
+    >
       <div class="p-2 border-b">
         <Button variant="outline" size="icon" aria-label="Home" as-child>
           <NuxtLink to="/home">
@@ -43,7 +62,12 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button variant="ghost" size="icon" class="rounded-lg bg-muted" aria-label="Playground">
+              <Button
+                variant="ghost"
+                size="icon"
+                class="rounded-lg bg-muted"
+                aria-label="Playground"
+              >
                 <SquareTerminal class="size-5" />
               </Button>
             </TooltipTrigger>
@@ -53,25 +77,36 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
           </Tooltip>
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button variant="ghost" size="icon" class="rounded-lg" aria-label="Documentation">
+              <Button
+                variant="ghost"
+                size="icon"
+                class="rounded-lg"
+                aria-label="Documentation"
+              >
                 <Book class="size-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" :side-offset="5">
-              Documentation <!-- TODO: waiting for https://github.com/scalar/scalar/issues/2431 -->
+              Documentation
+              <!-- TODO: waiting for https://github.com/scalar/scalar/issues/2431 -->
             </TooltipContent>
           </Tooltip>
           <Tooltip>
             <Dialog>
               <DialogTrigger as-child>
-                  <TooltipTrigger as-child>
-                    <Button variant="ghost" size="icon" class="rounded-lg" aria-label="Settings">
-                      <Settings2 class="size-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" :side-offset="5">
-                    Settings
-                  </TooltipContent>
+                <TooltipTrigger as-child>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    class="rounded-lg"
+                    aria-label="Settings"
+                  >
+                    <Settings2 class="size-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" :side-offset="5">
+                  Settings
+                </TooltipContent>
               </DialogTrigger>
               <DialogContent class="sm:max-w-md">
                 <DialogHeader>
@@ -83,9 +118,7 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
                 </div>
                 <DialogFooter class="sm:justify-start">
                   <DialogClose as-child>
-                    <Button type="button" variant="secondary">
-                      Close
-                    </Button>
+                    <Button type="button" variant="secondary"> Close </Button>
                   </DialogClose>
                 </DialogFooter>
               </DialogContent>
@@ -97,8 +130,18 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button variant="ghost" size="icon" class="mt-auto rounded-lg" aria-label="Help" as-child>
-                <NuxtLink external to="https://github.com/jonasfroeller/nuxt-chat-app/issues/new" target="_blank">
+              <Button
+                variant="ghost"
+                size="icon"
+                class="mt-auto rounded-lg"
+                aria-label="Help"
+                as-child
+              >
+                <NuxtLink
+                  external
+                  to="https://github.com/jonasfroeller/nuxt-chat-app/issues/new"
+                  target="_blank"
+                >
                   <LifeBuoy class="size-5" />
                 </NuxtLink>
               </Button>
@@ -109,7 +152,13 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
           </Tooltip>
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button variant="ghost" size="icon" class="mt-auto rounded-lg" aria-label="Account" as-child>
+              <Button
+                variant="ghost"
+                size="icon"
+                class="mt-auto rounded-lg"
+                aria-label="Account"
+                as-child
+              >
                 <NuxtLink to="/account">
                   <SquareUser class="size-5" />
                 </NuxtLink>
@@ -123,11 +172,11 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
       </nav>
     </aside>
     <div class="flex flex-col">
-      <header class="sticky top-[4.8rem] z-20 flex h-[53px] items-center gap-1 border-b bg-background px-4 justify-between">
+      <header
+        class="sticky top-[4.8rem] z-20 flex h-[53px] items-center gap-1 border-b bg-background px-4 justify-between"
+      >
         <div class="flex items-center gap-2">
-          <h1 class="text-xl font-semibold">
-            Configuration Generator
-          </h1>
+          <h1 class="text-xl font-semibold">Configuration Generator</h1>
           <Drawer>
             <DrawerTrigger as-child>
               <Button variant="ghost" size="icon" class="md:hidden">
@@ -157,25 +206,24 @@ const selectedModelApiPath = useSelectedAiModelApiPath() // TODO: find out, how 
           </Button>
         </div>
       </header>
-      <main class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 2xl:grid-cols-[33%,1fr]">
-        <!-- <ClientOnly> --> <!-- TODO: fix tab hydration warning -->
-          <Tabs default-value="chat" class="h-screen">
-            <TabsList class="flex justify-start w-full bg-muted/50">
-              <TabsTrigger value="chats">
-                All Chats
-              </TabsTrigger>
-              <TabsTrigger value="chat">
-                Active Chat Information
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="chats" class="h-full">
-              <AiChats />
-            </TabsContent>
-            <TabsContent value="chat">
-              <AiChatInformation />
-            </TabsContent>
-          </Tabs>
-          <AiModelChat :key="selectedModelApiPath" />
+      <main
+        class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 2xl:grid-cols-[33%,1fr]"
+      >
+        <!-- <ClientOnly> -->
+        <!-- TODO: fix tab hydration warning -->
+        <Tabs default-value="chat" class="h-screen">
+          <TabsList class="flex justify-start w-full bg-muted/50">
+            <TabsTrigger value="chats"> All Chats </TabsTrigger>
+            <TabsTrigger value="chat"> Active Chat Information </TabsTrigger>
+          </TabsList>
+          <TabsContent value="chats" class="h-full">
+            <AiChats />
+          </TabsContent>
+          <TabsContent value="chat">
+            <AiChatInformation />
+          </TabsContent>
+        </Tabs>
+        <AiModelChat :key="selectedModelApiPath" />
         <!-- </ClientOnly> -->
       </main>
     </div>

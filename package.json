@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare",
     "check": "npx nuxi typecheck",
     "lint": "npx prettier --plugin-search-dir . --check . && npx eslint .",
-    "format": "npx prettier --plugin-search-dir . --write --single-quote --trailing-comma all .",
+    "format": "npx prettier --write . --single-quote --trailing-comma all",
     "ui": "npx shadcn-vue@latest add",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "db:pull": "drizzle-kit introspect --config drizzle.config.ts",

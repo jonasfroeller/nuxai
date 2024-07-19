@@ -1,12 +1,14 @@
 <script setup lang="ts">
 definePageMeta({
-  name: "Sign Up",
-  alias: ['/register', '/signup']
-})
+  name: 'Sign Up',
+  alias: ['/register', '/signup'],
+});
 </script>
 
 <template>
-  <div class="fixed transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+  <div
+    class="fixed transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+  >
     <SignUp />
   </div>
 </template>

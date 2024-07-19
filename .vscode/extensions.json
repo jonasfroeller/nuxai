@@ -1,7 +1,7 @@
 {
-    "recommendations": [ 
-        "Vue.volar",
-        "streetsidesoftware.code-spell-checker",
-        "Selemondev.shadcn-vue"
-    ]
+  "recommendations": [
+    "Vue.volar",
+    "streetsidesoftware.code-spell-checker",
+    "Selemondev.shadcn-vue"
+  ]
 }

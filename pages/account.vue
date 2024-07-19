@@ -4,18 +4,18 @@ import Separator from '~/components/ui/separator/Separator.vue';
 import Input from '~/components/ui/input/Input.vue';
 import Label from '~/components/ui/label/Label.vue';
 
-const { session, clear } = useUserSession()
+const { session, clear } = useUserSession();
 
 const signOut = () => {
   clear().then(() => {
     navigateTo('/home');
-  })
-}
+  });
+};
 
 definePageMeta({
-  name: "Account",
-  middleware: ["protected"]
-})
+  name: 'Account',
+  middleware: ['protected'],
+});
 </script>
 
 <template>
@@ -26,8 +26,17 @@ definePageMeta({
       <template #default="{ loggedIn }">
         <Label for="email">Email</Label>
         <div class="flex gap-2">
-          <Input id="email" type="email" name="email" :value="session?.user?.primary_email" :placeholder="session?.user?.primary_email" required />
-          <Button type="button" v-if="loggedIn" @click="signOut" disabled>Update</Button>
+          <Input
+            id="email"
+            type="email"
+            name="email"
+            :value="session?.user?.primary_email"
+            :placeholder="session?.user?.primary_email"
+            required
+          />
+          <Button type="button" v-if="loggedIn" @click="signOut" disabled
+            >Update</Button
+          >
         </div>
         <Separator class="h-1 my-2" />
         <b>Debug:</b> {{ session }}
