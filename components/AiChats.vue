@@ -6,6 +6,7 @@
   import { toast } from 'vue-sonner';
   import type { AllowedAiModels } from '~/lib/types/ai.models';
   import type { Chat, ChatExtended } from '~/lib/types/chat';
+  import { ScrollArea } from "@/components/ui/scroll-area"
 
   const selectedChat = useSelectedAiChat();
   const chatToEdit = ref<Chat>({
@@ -109,8 +110,8 @@
 </script>
 
 <template>
-  <div class="h-full p-2 border rounded-md">
-    <div class="relative flex items-center w-full gap-1">
+  <div class="relative h-full p-2 border rounded-md">
+    <div class="sticky top-0 left-0 z-10 flex items-center w-full gap-1 pb-2 bg-background">
         <div class="relative w-full">
           <Input v-model="searchQuery" id="search" type="text" placeholder="Search..." class="pl-10" />
           <span class="absolute inset-y-0 flex items-center justify-center px-2 start-0">
@@ -122,33 +123,37 @@
         </Button>
     </div>
 
-    <div class="flex flex-col gap-1 mt-2" v-if="filteredChats && (Array.isArray(filteredChats) && filteredChats?.length !== 0)">
-      <div class="flex justify-between w-full gap-8 p-4 border rounded-sm border-border bg-background" :id="String(chat?.id)" v-for="chat in filteredChats" :key="chat?.id" v-bind:class="{ 'border border-green-600': selectedChat?.id === chat?.id }">
-        <div class="flex flex-col gap-1">
-          <div class="flex items-center gap-1">
-            <template v-if="chatToEdit.id === chat.id">
-              <Input v-model="chatToEdit.name" />
-              <Button variant="outline" @click="saveEdit(chat.id)">Save</Button>
-            </template>
-            <template v-else>
-              <Button :variant="(selectedChat?.id === chat?.id ? 'secondary' : 'outline')" @click="setSelectedChat(chat.id, chat.name, chat.model)">{{ chat?.name }}</Button>
-              <Button variant="outline" @click="editChat(chat.id, chat.name)"><Pen class="w-4 h-4" /></Button>
-            </template>
+    <div class="h-[calc(100%-3rem)]">
+      <ScrollArea class="h-full" v-if="filteredChats && (Array.isArray(filteredChats) && filteredChats?.length !== 0)">
+        <div class="flex flex-col h-full gap-1">
+          <div class="flex justify-between w-full gap-8 p-4 border rounded-sm border-border bg-background" :id="String(chat?.id)" v-for="chat in filteredChats" :key="chat?.id" v-bind:class="{ 'border border-green-600': selectedChat?.id === chat?.id }">
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-1">
+                <template v-if="chatToEdit.id === chat.id">
+                  <Input @keydown.enter="saveEdit(chat.id)" v-model="chatToEdit.name" />
+                  <Button variant="outline" @click="saveEdit(chat.id)">Save</Button>
+                </template>
+                <template v-else>
+                  <Button :variant="(selectedChat?.id === chat?.id ? 'secondary' : 'outline')" @click="setSelectedChat(chat.id, chat.name, chat.model)">{{ chat?.name }}</Button>
+                  <Button variant="outline" @click="editChat(chat.id, chat.name)"><Pen class="w-4 h-4" /></Button>
+                </template>
+              </div>
+              <Button variant="destructive" @click="deleteChat(chat?.id)">delete<Trash2 class="w-4 h-4 ml-1" /></Button>
+            </div>
+            <div class="grid text-right">
+              <span class="truncate text-muted-foreground">{{ chat?.model }}</span>
+              <NuxtTime class="text-muted-foreground" :datetime="chat?.created_at ?? new Date()" day="numeric" month="numeric" year="numeric" hour="numeric" minute="numeric" />
+              <NuxtTime class="text-muted-foreground" :datetime="chat?.updated_at ?? new Date()" day="numeric" month="numeric" year="numeric" hour="numeric" minute="numeric" />
+            </div>
           </div>
-          <Button variant="destructive" @click="deleteChat(chat?.id)">delete<Trash2 class="w-4 h-4 ml-1" /></Button>
         </div>
-        <div class="grid text-right">
-          <span class="truncate text-muted-foreground">{{ chat?.model }}</span>
-          <NuxtTime class="text-muted-foreground" :datetime="chat?.created_at ?? new Date()" day="numeric" month="numeric" year="numeric" hour="numeric" minute="numeric" />
-          <NuxtTime class="text-muted-foreground" :datetime="chat?.updated_at ?? new Date()" day="numeric" month="numeric" year="numeric" hour="numeric" minute="numeric" />
-        </div>
-      </div>
+      </ScrollArea>
+      <div class="pt-2 text-center" v-else>
+        <p v-if="(Array.isArray(data?.chats) && data?.chats?.length === 0)">No Chats yet... ({{ status }})</p>
+        <p v-else>No search results... ({{ status }})</p>
+        <p v-if="error">{{ error.message }} ({{ error.data.data }})</p>
+      </div> 
     </div>
-    <div class="pt-2 text-center" v-else>
-      <p v-if="(Array.isArray(data?.chats) && data?.chats?.length === 0)">No Chats yet... ({{ status }})</p>
-      <p v-else>No search results... ({{ status }})</p>
-      <p v-if="error">{{ error.message }} ({{ error.data.data }})</p>
-    </div> 
   </div>
 </template>
 

@@ -19,8 +19,6 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 
-const { formattedDate, fullDateString } = formatCurrentClientDate();
-
 const filetypeSearchIsOpen = ref(false)
 const filetypeSearchSelectedValue = ref('')
 const filetypeSearchSelectableValues = ref([
@@ -38,14 +36,14 @@ const filetypeSearchSelectableValues = ref([
             </legend>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                <Label>Version ({{ formattedDate }})</Label>
-                <Select :default-value="fullDateString">
+                <Label>Version (<NuxtTime class="text-muted-foreground" :datetime="new Date()" day="numeric" month="numeric" year="numeric" hour="numeric" minute="numeric" />)</Label>
+                <Select :default-value="'null'">
                     <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
-                    <SelectItem :value="fullDateString ?? undefined">
-                        {{ fullDateString }} (+200, -322)
+                    <SelectItem :value="'null'">
+                        <NuxtTime class="text-muted-foreground" :datetime="new Date()" day="numeric" month="long" year="numeric" hour="numeric" minute="numeric" second="numeric" /> (+200, -322)
                     </SelectItem>
                     </SelectContent>
                 </Select>
