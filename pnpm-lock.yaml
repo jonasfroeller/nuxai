@@ -64,7 +64,7 @@ dependencies:
     version: 3.4.4
   radix-vue:
     specifier: ^1.9.1
-    version: 1.9.1(vue@3.4.33)
+    version: 1.9.2(vue@3.4.33)
   rehype-parse:
     specifier: ^9.0.0
     version: 9.0.0
@@ -82,7 +82,7 @@ dependencies:
     version: 2.4.0
   vaul-vue:
     specifier: ^0.2.0
-    version: 0.2.0(radix-vue@1.9.1)(vue@3.4.33)
+    version: 0.2.0(radix-vue@1.9.2)(vue@3.4.33)
   vue:
     specifier: latest
     version: 3.4.33(typescript@5.5.3)
@@ -8254,8 +8254,8 @@ packages:
   /queue-tick@1.0.1:
     resolution: {integrity: sha512-kJt5qhMxoszgU/62PLP1CJytzd2NKetjSRnyuj31fDd3Rlcz3fzlFdFLD1SItunPwyqEOkca6GbV612BWfaBag==}
 
-  /radix-vue@1.9.1(vue@3.4.33):
-    resolution: {integrity: sha512-fObA+9l2ixNWBXRMj5mBZfmVv2znqIUph+0uo7QA/s7pDYSST2vGvxCbrg/xQGxWRwaQ8ejgo1wg2MzhHcbjLw==}
+  /radix-vue@1.9.2(vue@3.4.33):
+    resolution: {integrity: sha512-XXwEMmXJmzcy9SebywbQdrZg8UE1jueqPMpxKK6NoquRC0CP4dvlBcuzp4lDWNSsqOgmkXa6CNbwEzdCX96umg==}
     peerDependencies:
       vue: '>= 3.2.0'
     dependencies:
@@ -9735,14 +9735,14 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vaul-vue@0.2.0(radix-vue@1.9.1)(vue@3.4.33):
+  /vaul-vue@0.2.0(radix-vue@1.9.2)(vue@3.4.33):
     resolution: {integrity: sha512-YV0zqxc8NiVzr1z/Awwbaty0UDDchxj5BfhFbLiYu+Uz0rCfSaDK2zwmuXZvejBJKLGbWw9I5GLHJRse14lQew==}
     peerDependencies:
       radix-vue: ^1.4.0
       vue: ^3.3.0
     dependencies:
       '@vueuse/core': 10.11.0(vue@3.4.33)
-      radix-vue: 1.9.1(vue@3.4.33)
+      radix-vue: 1.9.2(vue@3.4.33)
       vue: 3.4.33(typescript@5.5.3)
     transitivePeerDependencies:
       - '@vue/composition-api'
