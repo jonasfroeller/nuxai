@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 
   const updatedChatConversation = await updateChatConversation(
     Number(chat_id),
-    { name },
+    { name }
   );
 
   return {

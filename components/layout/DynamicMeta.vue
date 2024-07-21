@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const router = useRouter();
 const currentRouteTitle = titleCase(
-  router.currentRoute.value.name?.toString() ?? '',
+  router.currentRoute.value.name?.toString() ?? ''
 );
 </script>
 

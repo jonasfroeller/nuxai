@@ -7,8 +7,8 @@ import type {
 export const useSelectedAiModel = () => {
   return useState('selected-model', () =>
     shallowRef<AllowedAiModels>(
-      'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
-    ),
+      'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5'
+    )
   );
 };
 

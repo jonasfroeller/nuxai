@@ -14,11 +14,11 @@ const hiddenRoutesIfLoggedOut = hiddenRoutes.concat(['/', '/account']);
 const visibleRoutes = computed(() => {
   if (loggedIn.value) {
     return routes.filter(
-      (route) => !hiddenRoutesIfLoggedIn.includes(route.path),
+      (route) => !hiddenRoutesIfLoggedIn.includes(route.path)
     );
   } else {
     return routes.filter(
-      (route) => !hiddenRoutesIfLoggedOut.includes(route.path),
+      (route) => !hiddenRoutesIfLoggedOut.includes(route.path)
     );
   }
 });

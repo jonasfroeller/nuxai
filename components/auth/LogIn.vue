@@ -33,13 +33,11 @@ watch(password, (newPassword) => {
 });
 
 async function signIn() {
-  const { error } = await userStore.signIn(
-    email.value,
-    password.value,
-  );
+  const { error } = await userStore.signIn(email.value, password.value);
 
   if (error.value) {
-    if (LOG_FRONTEND) console.info('error:', error.value?.message, error.value.data);
+    if (LOG_FRONTEND)
+      console.info('error:', error.value?.message, error.value.data);
     emailErrors.value = error.value.data.data.issues
       .filter((issue: any) => issue.path[0] === 'email')
       .map((issue: any) => issue.message);

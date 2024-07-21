@@ -92,9 +92,15 @@ let isPlayground = computed(() => selectedChat.value.id === -1);
             :disabled="!isPlayground"
             type="button"
             variant="secondary"
-            @click="async () => {
-              selectedChat.id = await persistChatConversation(user?.id ?? -1, selectedChat.name, selectedChat.model);
-            }"
+            @click="
+              async () => {
+                selectedChat.id = await persistChatConversation(
+                  user?.id ?? -1,
+                  selectedChat.name,
+                  selectedChat.model
+                );
+              }
+            "
             >Persist Chat History</Button
           >
         </div>

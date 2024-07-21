@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
         statusMessage: 'Bad Request',
         data: 'Missing user_id',
-      }),
+      })
     );
 
   const paramValidationResults = await getValidatedRouterParams(
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
         // check if user_id is a valid user_id
         user_id,
       });
-    },
+    }
   );
 
   if (!paramValidationResults.success || !paramValidationResults.data)
@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
         statusMessage: 'Bad Request',
         data: paramValidationResults.error,
-      }),
+      })
     );
   const user_id = paramValidationResults.data!.user_id;
 
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
   if (session.user.id !== user_id)
     return sendError(
       event,
-      createError({ statusCode: 401, statusMessage: 'Unauthorized' }),
+      createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     );
 
   if (method === 'POST') {
@@ -56,7 +56,7 @@ export default defineEventHandler(async (event) => {
     if (LOG_BACKEND) console.info('creating new chat...');
 
     const result = await readValidatedBody(event, (body) =>
-      ChatConversationToCreateSchema.safeParse(body),
+      ChatConversationToCreateSchema.safeParse(body)
     );
 
     if (LOG_BACKEND) console.info('result', JSON.stringify(result));
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
           statusCode: 400,
           statusMessage: 'Bad Request',
           data: result.error,
-        }),
+        })
       );
     const body = result.data!;
 

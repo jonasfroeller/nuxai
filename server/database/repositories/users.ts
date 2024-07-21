@@ -23,10 +23,13 @@ export const createUser = async (user: UserToCreate) => {
     // @ts-ignore (is allowed, just not properly typed)
     .returning({
       id: chat_user.id,
-      primary_email: decryptColumn(chat_user.primary_email), /* decode(${chat_user.primary_email}, 'hex') instead of ('\x' || ${chat_user.primary_email}) instead of concat('\x', ${chat_user.primary_email}) */
+      primary_email: decryptColumn(
+        chat_user.primary_email
+      ) /* decode(${chat_user.primary_email}, 'hex') instead of ('\x' || ${chat_user.primary_email}) instead of concat('\x', ${chat_user.primary_email}) */,
     })
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to insert user into database', err);
+      if (LOG_BACKEND)
+        console.error('Failed to insert user into database', err);
       return null;
     });
 
@@ -49,7 +52,9 @@ export const createEmptyUser = async () => {
   const createdUser = await db
     .insert(chat_user)
     .values({
-      primary_email: encryptColumn(`${generateUUID()}@account.oAuth`) /* TODO: do not allow login with email and password, if email and password are placeholders */,
+      primary_email: encryptColumn(
+        `${generateUUID()}@account.oAuth`
+      ) /* TODO: do not allow login with email and password, if email and password are placeholders */,
       hashed_password: encryptSecret('NONE'),
     })
     // @ts-ignore (is allowed, just not properly typed)
@@ -58,7 +63,8 @@ export const createEmptyUser = async () => {
       primary_email: decryptColumn(chat_user.primary_email),
     })
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to insert user into database', err);
+      if (LOG_BACKEND)
+        console.error('Failed to insert user into database', err);
       return null;
     });
 
@@ -81,7 +87,7 @@ export const readUser = async (id: GetUser['id']) => {
 };
 
 export const readUserUsingPrimaryEmail = async (
-  email: GetUser['primary_email'],
+  email: GetUser['primary_email']
 ) => {
   /* TODO: Improve, so that other emails are checked too */
   const fetchedUser = await db
@@ -90,12 +96,7 @@ export const readUserUsingPrimaryEmail = async (
       primary_email: decryptColumn(chat_user.primary_email),
     })
     .from(chat_user)
-    .where(
-      like(
-        chat_user.primary_email,
-        encryptColumn(email),
-      ),
-    )
+    .where(like(chat_user.primary_email, encryptColumn(email)))
     .catch((err) => {
       if (LOG_BACKEND) console.error('Failed to fetch user from database', err);
       return null;
@@ -109,7 +110,7 @@ export const readUserUsingPrimaryEmail = async (
 export const updateUser = async (
   id: GetUser['id'],
   primary_email: GetUser['primary_email'] | undefined,
-  password: GetUser['hashed_password'] | undefined,
+  password: GetUser['hashed_password'] | undefined
 ) => {
   /* TODO: check for old password, before allowing update, only allow email, if verified via email code */
   const updated_primary_email = () => {
@@ -148,14 +149,15 @@ export const deleteUser = async (id: GetUser['id']) => {
     .delete(chat_user)
     .where(eq(chat_user.id, id))
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to delete user from database', err);
+      if (LOG_BACKEND)
+        console.error('Failed to delete user from database', err);
       return null;
     });
 };
 
 export const validateUserCredentials = async (
   email: GetUser['primary_email'],
-  password: GetUser['hashed_password'],
+  password: GetUser['hashed_password']
 ) => {
   /* TODO: allow more than one email */
   const fetchedUser = await db
@@ -166,19 +168,17 @@ export const validateUserCredentials = async (
     .from(chat_user)
     .where(
       and(
-        like(
-          chat_user.primary_email,
-          encryptColumn(email),
-        ), // SELECT decrypt('\x2866794d48ffaaef22d27652555382a77dfce3e6b71b8fcb3c18ee1a5e6a466a'::bytea, 'secret', 'aes') LIKE 'e.mail@example.com' AS decrypted_primary_email; --check (\x<hex>)
+        like(chat_user.primary_email, encryptColumn(email)), // SELECT decrypt('\x2866794d48ffaaef22d27652555382a77dfce3e6b71b8fcb3c18ee1a5e6a466a'::bytea, 'secret', 'aes') LIKE 'e.mail@example.com' AS decrypted_primary_email; --check (\x<hex>)
         like(
           chat_user.hashed_password,
-          compareWithSecret(password, chat_user.hashed_password),
-        ), // SELECT crypt('password', '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC') LIKE '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC' AS password_is_correct; --check
-      ),
+          compareWithSecret(password, chat_user.hashed_password)
+        ) // SELECT crypt('password', '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC') LIKE '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC' AS password_is_correct; --check
+      )
     )
     .limit(1)
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to fetch user from database:', err);
+      if (LOG_BACKEND)
+        console.error('Failed to fetch user from database:', err);
       return null;
     });
 
@@ -192,7 +192,7 @@ type StatisticType = 'count';
 
 export const accountStatistics = async (
   accountType: AccountType,
-  statisticType: StatisticType = 'count',
+  statisticType: StatisticType = 'count'
 ) => {
   let statistic = null;
   if (statisticType === 'count') {
@@ -204,10 +204,11 @@ export const accountStatistics = async (
           })
           .from(chat_user)
           .catch((err) => {
-            if (LOG_BACKEND) console.error(
-              'Failed to fetch user statistics from database:',
-              err,
-            );
+            if (LOG_BACKEND)
+              console.error(
+                'Failed to fetch user statistics from database:',
+                err
+              );
             return null;
           });
         break;
@@ -218,10 +219,11 @@ export const accountStatistics = async (
           })
           .from(chat_user_oauth_account)
           .catch((err) => {
-            if (LOG_BACKEND) console.error(
-              'Failed to fetch user statistics from database:',
-              err,
-            );
+            if (LOG_BACKEND)
+              console.error(
+                'Failed to fetch user statistics from database:',
+                err
+              );
             return null;
           });
         break;
@@ -233,10 +235,11 @@ export const accountStatistics = async (
           .from(chat_user_oauth_account)
           .where(like(chat_user_oauth_account.provider, 'google'))
           .catch((err) => {
-            if (LOG_BACKEND) console.error(
-              'Failed to fetch user statistics from database:',
-              err,
-            );
+            if (LOG_BACKEND)
+              console.error(
+                'Failed to fetch user statistics from database:',
+                err
+              );
             return null;
           });
         break;
@@ -248,10 +251,11 @@ export const accountStatistics = async (
           .from(chat_user_oauth_account)
           .where(like(chat_user_oauth_account.provider, 'github'))
           .catch((err) => {
-            if (LOG_BACKEND) console.error(
-              'Failed to fetch user statistics from database:',
-              err,
-            );
+            if (LOG_BACKEND)
+              console.error(
+                'Failed to fetch user statistics from database:',
+                err
+              );
           });
         break;
       default:

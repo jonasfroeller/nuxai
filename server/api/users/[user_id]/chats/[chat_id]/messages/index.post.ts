@@ -1,4 +1,4 @@
-import { createChatConversationMessage } from "~/server/database/repositories/chatConversationMessages";
+import { createChatConversationMessage } from '~/server/database/repositories/chatConversationMessages';
 
 // Read all messages of chat conversation
 export default defineEventHandler(async (event) => {
@@ -13,11 +13,13 @@ export default defineEventHandler(async (event) => {
     actor: String(actor),
     chat_user_id: Number(user_id),
     chat_conversation_id: Number(chat_id),
-  }
+  };
 
-  const createdMessage = await createChatConversationMessage(conversationMessageToCreate)
+  const createdMessage = await createChatConversationMessage(
+    conversationMessageToCreate
+  );
 
   return {
-    chatMessage: createdMessage
+    chatMessage: createdMessage,
   };
 });

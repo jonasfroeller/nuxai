@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   // const body = await readBody(event);
   // const body = await readValidatedBody(event, UserLogInSchema.parse);
   const result = await readValidatedBody(event, (body) =>
-    UserLogInSchema.safeParse(body),
+    UserLogInSchema.safeParse(body)
   );
 
   if (LOG_BACKEND) console.info('result', JSON.stringify(result));
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
         statusMessage: 'Bad Request',
         data: result.error,
-      }),
+      })
     );
   const body = result.data!;
 
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
     if (LOG_BACKEND) console.warn('missing email or password');
     return sendError(
       event,
-      createError({ statusCode: 400, statusMessage: 'Bad Request' }),
+      createError({ statusCode: 400, statusMessage: 'Bad Request' })
     );
   }
 
@@ -57,7 +57,7 @@ export default defineEventHandler(async (event) => {
     if (LOG_BACKEND) console.warn('invalid credentials');
     return sendError(
       event,
-      createError({ statusCode: 401, statusMessage: 'Unauthorized' }),
+      createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     );
   }
 

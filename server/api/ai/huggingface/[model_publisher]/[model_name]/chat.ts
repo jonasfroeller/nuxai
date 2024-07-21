@@ -6,30 +6,58 @@ import {
 } from 'ai/prompts';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
-async function persistChatMessage(user_id: number, chat_id: number, messageText: string, actor: 'user' | 'assistant' = 'user', event: any) {
+async function persistChatMessage(
+  user_id: number,
+  chat_id: number,
+  messageText: string,
+  actor: 'user' | 'assistant' = 'user',
+  event: any
+) {
   if (chat_id >= 1) {
     if (LOG_BACKEND) console.info('persisting chat message:', messageText);
 
-    const persistChatMessage = await event.$fetch(`/api/users/${user_id}/chats/${chat_id}/messages`, { // .event.$fetch used because it contains the current session
-      method: 'POST',
-      body: {
-        message: messageText,
-        actor: 'assistant'
-      },
-    });
+    const persistChatMessage = await event.$fetch(
+      `/api/users/${user_id}/chats/${chat_id}/messages`,
+      {
+        // .event.$fetch used because it contains the current session
+        method: 'POST',
+        body: {
+          message: messageText,
+          actor: 'assistant',
+        },
+      }
+    );
 
-    if (LOG_BACKEND) console.info('persistChatMessage:', persistChatMessage, user_id, chat_id, messageText);
+    if (LOG_BACKEND)
+      console.info(
+        'persistChatMessage:',
+        persistChatMessage,
+        user_id,
+        chat_id,
+        messageText
+      );
     return;
   }
 
   return;
 }
 
-async function persistAiChatMessage(user_id: number, chat_id: number, messageText: string, event: any) { // only persists AI messages
+async function persistAiChatMessage(
+  user_id: number,
+  chat_id: number,
+  messageText: string,
+  event: any
+) {
+  // only persists AI messages
   await persistChatMessage(user_id, chat_id, messageText, 'assistant', event);
 }
 
-async function persistUserChatMessage(user_id: number, chat_id: number, messageText: string, event: any) {
+async function persistUserChatMessage(
+  user_id: number,
+  chat_id: number,
+  messageText: string,
+  event: any
+) {
   await persistChatMessage(user_id, chat_id, messageText, 'user', event);
 }
 
@@ -41,7 +69,7 @@ export default defineLazyEventHandler(async () => {
   return defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event);
     const chat_id_as_string = getQuery(event).chat_id;
-    if (LOG_BACKEND) console.info("chat_id_as_string", chat_id_as_string);
+    if (LOG_BACKEND) console.info('chat_id_as_string', chat_id_as_string);
     const chat_id = Number(chat_id_as_string);
 
     const model_name = getRouterParam(event, 'model_name');
@@ -50,7 +78,7 @@ export default defineLazyEventHandler(async () => {
     const { messages } = await readBody(event); // complete chat history
 
     const userMessage = messages[messages.length - 1]; // { role: 'user', content: 'message' }
-    if (LOG_BACKEND) console.info(userMessage)
+    if (LOG_BACKEND) console.info(userMessage);
     await persistUserChatMessage(user.id, chat_id, userMessage.content, event);
 
     try {
@@ -66,7 +94,7 @@ export default defineLazyEventHandler(async () => {
           createError({
             statusCode: 400,
             statusMessage: 'Invalid model name or publisher',
-          }),
+          })
         );
       }
 
@@ -88,18 +116,16 @@ export default defineLazyEventHandler(async () => {
       const response = Hf.textGenerationStream(
         POSSIBLE_AI_MODELS?.[model_publisher ?? 'OpenAssistant']?.[
           model_name ?? 'oasst-sft-4-pythia-12b-epoch-3.5'
-        ]?.configuration(inputs),
+        ]?.configuration(inputs)
       );
 
       // https://sdk.vercel.ai/docs/ai-sdk-ui/storing-messages
-      const stream = HuggingFaceStream(
-        response,
-        {
-          async onFinal(messageText: string) { // onCompletion, onFinal, onToken and onText is called for each token (word, punctuation)
-            await persistAiChatMessage(user.id, chat_id, messageText, event);
-          }
+      const stream = HuggingFaceStream(response, {
+        async onFinal(messageText: string) {
+          // onCompletion, onFinal, onToken and onText is called for each token (word, punctuation)
+          await persistAiChatMessage(user.id, chat_id, messageText, event);
         },
-      ); // Converts the response into a friendly text-stream
+      }); // Converts the response into a friendly text-stream
 
       return new StreamingTextResponse(stream); // Respond with the stream
     } catch (error) {
@@ -109,7 +135,7 @@ export default defineLazyEventHandler(async () => {
         createError({
           statusCode: 500,
           statusMessage: 'Internal Server Error',
-        }),
+        })
       );
     }
   });

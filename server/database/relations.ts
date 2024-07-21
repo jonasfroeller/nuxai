@@ -17,7 +17,7 @@ export const chat_conversation_messageRelations = relations(
       fields: [chat_conversation_message.chat_conversation_id],
       references: [chat_conversation.id],
     }),
-  }),
+  })
 );
 
 export const chat_userRelations = relations(chat_user, ({ many }) => ({
@@ -34,7 +34,7 @@ export const chat_conversationRelations = relations(
       fields: [chat_conversation.chat_user_id],
       references: [chat_user.id],
     }),
-  }),
+  })
 );
 
 export const chat_user_oauth_accountRelations = relations(
@@ -44,5 +44,5 @@ export const chat_user_oauth_accountRelations = relations(
       fields: [chat_user_oauth_account.chat_user_id],
       references: [chat_user.id],
     }),
-  }),
+  })
 );

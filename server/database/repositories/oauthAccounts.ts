@@ -23,12 +23,12 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
     where: and(
       eq(
         chat_user_oauth_account.provider,
-        account.provider,
+        account.provider
       ) /* check if oauth account with that provider exists for existing user */,
       eq(
         chat_user_oauth_account.oauth_user_id,
-        encryptColumn(account.oauth_user_id),
-      ),
+        encryptColumn(account.oauth_user_id)
+      )
     ),
     with: {
       chat_user: {
@@ -38,7 +38,7 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
         extras: {
           /* custom fields */
           primary_email: decryptColumn(chat_user.primary_email).as(
-            'primary_email',
+            'primary_email'
           ),
         },
       },
@@ -48,10 +48,10 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
     },
     extras: {
       oauth_user_id: decryptColumn(chat_user_oauth_account.oauth_user_id).as(
-        'oauth_user_id',
+        'oauth_user_id'
       ),
       oauth_email: decryptColumn(chat_user_oauth_account.oauth_email).as(
-        'oauth_email',
+        'oauth_email'
       ),
     },
   });
@@ -75,8 +75,12 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
     .insert(chat_user_oauth_account)
     .values({
       provider: account.provider /* github, google */,
-      oauth_user_id: encryptColumn(account.oauth_user_id) /* id from /auth/github or /auth/google */,
-      oauth_email: encryptColumn(account.oauth_email) /* email from /auth/github or /auth/google */,
+      oauth_user_id: encryptColumn(
+        account.oauth_user_id
+      ) /* id from /auth/github or /auth/google */,
+      oauth_email: encryptColumn(
+        account.oauth_email
+      ) /* email from /auth/github or /auth/google */,
       chat_user_id: createdUser.id,
     })
     // @ts-ignore (is allowed, just not properly typed)
@@ -86,7 +90,8 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
       oauth_email: decryptColumn(chat_user_oauth_account.oauth_email),
     })
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to insert oauth account into database', err);
+      if (LOG_BACKEND)
+        console.error('Failed to insert oauth account into database', err);
       return null;
     });
 

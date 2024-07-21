@@ -67,27 +67,28 @@ watch(chatError, () => {
 });
 
 /* SPEECH RECOGNITION */
-const { 
-  isSupported: isSpeechRecognitionSupported, 
-  isListening: isListeningToSpeech, 
-  result: speechRecognitionResult, 
-  start: startSpeechRecognition, 
-  stop: stopSpeechRecognition, 
-  error: speechRecognitionError 
-} =
-  useSpeechRecognition({
-    lang: 'en-US',
-    interimResults: true,
-    continuous: true,
-  });
+const {
+  isSupported: isSpeechRecognitionSupported,
+  isListening: isListeningToSpeech,
+  result: speechRecognitionResult,
+  start: startSpeechRecognition,
+  stop: stopSpeechRecognition,
+  error: speechRecognitionError,
+} = useSpeechRecognition({
+  lang: 'en-US',
+  interimResults: true,
+  continuous: true,
+});
 
 watch(speechRecognitionError, async () => {
   if (speechRecognitionError.value?.error === 'not-allowed') {
     toast.error(
-      'Speech recognition was disabled for this page!\nPlease allow it, to use the feature!',
+      'Speech recognition was disabled for this page!\nPlease allow it, to use the feature!'
     );
   } else {
-    toast.error(`Speech recognition error! (${speechRecognitionError.value?.error})`);
+    toast.error(
+      `Speech recognition error! (${speechRecognitionError.value?.error})`
+    );
   }
 });
 
@@ -250,11 +251,18 @@ let urlToFetchHtmlFrom = ref('');
                   type="button"
                   variant="outline"
                   class="w-full"
-                  @click="async () => {
-                    const updatedCurrentChatMessage = await generateMarkdownFromUrl(urlToFetchHtmlFrom, currentChatMessage)
-                    if (updatedCurrentChatMessage) currentChatMessage = updatedCurrentChatMessage
-                  }"
-                  >
+                  @click="
+                    async () => {
+                      const updatedCurrentChatMessage =
+                        await generateMarkdownFromUrl(
+                          urlToFetchHtmlFrom,
+                          currentChatMessage
+                        );
+                      if (updatedCurrentChatMessage)
+                        currentChatMessage = updatedCurrentChatMessage;
+                    }
+                  "
+                >
                   Add URL for further context
                 </Button>
               </PopoverContent>
@@ -296,9 +304,7 @@ let urlToFetchHtmlFrom = ref('');
                     type="button"
                     variant="ghost"
                     size="icon"
-                    :disabled="
-                      chatIsLoading || chatMessages.length === 0
-                    "
+                    :disabled="chatIsLoading || chatMessages.length === 0"
                   >
                     <Trash2 class="size-4" />
                     <span class="sr-only">Clear Chat</span>
@@ -370,9 +376,7 @@ let urlToFetchHtmlFrom = ref('');
             type="submit"
             size="sm"
             class="gap-1.5"
-            :disabled="
-              /* chatIsLoading ||  */currentChatMessage.trim() === ''
-            "
+            :disabled="/* chatIsLoading ||  */ currentChatMessage.trim() === ''"
           >
             Send Message
             <CornerDownLeft class="size-3.5" />

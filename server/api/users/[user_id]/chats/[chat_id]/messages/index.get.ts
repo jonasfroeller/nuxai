@@ -1,4 +1,4 @@
-import { readChatConversationMessages } from "~/server/database/repositories/chatConversationMessages";
+import { readChatConversationMessages } from '~/server/database/repositories/chatConversationMessages';
 
 // Read all messages of chat conversation
 export default defineEventHandler(async (event) => {
@@ -7,9 +7,11 @@ export default defineEventHandler(async (event) => {
 
   /* TODO: validation */
 
-  const fetchedChatMessages = await readChatConversationMessages(Number(chat_id));
+  const fetchedChatMessages = await readChatConversationMessages(
+    Number(chat_id)
+  );
 
   return {
-    chatMessages: fetchedChatMessages
+    chatMessages: fetchedChatMessages,
   };
 });

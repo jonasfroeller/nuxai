@@ -83,8 +83,8 @@ export const POSSIBLE_AI_MODELS: PossibleAiModels = {
 export const ALLOWED_AI_MODELS = Object.keys(POSSIBLE_AI_MODELS).flatMap(
   (publisher) =>
     Object.keys(POSSIBLE_AI_MODELS[publisher]).map(
-      (model) => `${publisher}/${model}`,
-    ),
+      (model) => `${publisher}/${model}`
+    )
 );
 
 type ModelConfiguration = {

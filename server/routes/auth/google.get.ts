@@ -4,7 +4,7 @@ export default oauth.googleEventHandler({
   config: {
     scope: ['email'],
   },
-  async onSuccess(event, { user/* , tokens */ }) {
+  async onSuccess(event, { user /* , tokens */ }) {
     const user_email =
       user?.email; /* maybe add email_verified, picture for icon */
     const user_id =
@@ -23,7 +23,7 @@ export default oauth.googleEventHandler({
         createError({
           statusCode: 500,
           statusMessage: 'Failed to create oauth account',
-        }),
+        })
       );
     }
 

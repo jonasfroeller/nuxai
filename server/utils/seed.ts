@@ -21,7 +21,8 @@ async function seedDatabase() {
     await instance
       .delete(tables[i])
       .then(() => {
-        if (IS_DEV) console.info(`Deleted table ${tables[i].id.table._.name}...`);
+        if (IS_DEV)
+          console.info(`Deleted table ${tables[i].id.table._.name}...`);
       })
       .catch((e) => {
         if (IS_DEV) console.error('Failed to delete table. Cause:', e);

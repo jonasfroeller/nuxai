@@ -89,8 +89,7 @@ const filetypeSearchSelectableValues = ref([
                 {{
                   filetypeSearchSelectedValue
                     ? filetypeSearchSelectableValues.find(
-                        (option) =>
-                          option.value === filetypeSearchSelectedValue,
+                        (option) => option.value === filetypeSearchSelectedValue
                       )?.label
                     : 'Select filetype...'
                 }}
@@ -123,7 +122,7 @@ const filetypeSearchSelectableValues = ref([
                             'ml-auto h-4 w-4',
                             filetypeSearchSelectedValue === option.value
                               ? 'opacity-100'
-                              : 'opacity-0',
+                              : 'opacity-0'
                           )
                         "
                       />

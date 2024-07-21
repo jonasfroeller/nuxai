@@ -7,17 +7,18 @@ export type GetChatConversation = typeof chat_conversation.$inferSelect;
 
 // type ReadChatConversation = GetChatConversation;
 export interface ChatConversationToCreate
-  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> { }
+  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> {}
 
 export async function createChatConversation(
-  conversation: ChatConversationToCreate,
+  conversation: ChatConversationToCreate
 ) {
   const createdChatConversation = await db
     .insert(chat_conversation)
     .values(conversation)
     .returning()
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to insert chat conversation into database', err);
+      if (LOG_BACKEND)
+        console.error('Failed to insert chat conversation into database', err);
       return null;
     });
 
@@ -32,7 +33,8 @@ export async function readChatConversation(id: GetChatConversation['id']) {
     .from(chat_conversation)
     .where(eq(chat_conversation.id, id))
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to fetch chat conversation from database', err);
+      if (LOG_BACKEND)
+        console.error('Failed to fetch chat conversation from database', err);
       return null;
     });
 
@@ -47,7 +49,8 @@ export async function readAllChatConversationsOfUser(user_id: GetUser['id']) {
     .from(chat_conversation)
     .where(eq(chat_conversation.chat_user_id, user_id))
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to fetch chat conversations from database', err);
+      if (LOG_BACKEND)
+        console.error('Failed to fetch chat conversations from database', err);
       return null;
     });
 
@@ -58,7 +61,12 @@ export async function readAllChatConversationsOfUser(user_id: GetUser['id']) {
 
 export async function updateChatConversation(
   id: GetChatConversation['id'],
-  fields: Partial<Omit<GetChatConversation, 'id' | 'model' | 'created_at' | 'updated_at' | 'chat_user_id'>>,
+  fields: Partial<
+    Omit<
+      GetChatConversation,
+      'id' | 'model' | 'created_at' | 'updated_at' | 'chat_user_id'
+    >
+  >
 ) {
   const updatedChatConversation = await db
     .update(chat_conversation)
@@ -66,7 +74,8 @@ export async function updateChatConversation(
     .where(eq(chat_conversation.id, id))
     .returning()
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to update chat conversation in database', err);
+      if (LOG_BACKEND)
+        console.error('Failed to update chat conversation in database', err);
       return null;
     });
 
@@ -81,7 +90,8 @@ export async function deleteChatConversation(id: GetChatConversation['id']) {
     .where(eq(chat_conversation.id, id))
     .returning()
     .catch((err) => {
-      if (LOG_BACKEND) console.error('Failed to delete chat conversation from database', err);
+      if (LOG_BACKEND)
+        console.error('Failed to delete chat conversation from database', err);
       return null;
     });
 

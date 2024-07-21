@@ -35,7 +35,7 @@ function validateInput(input: string, schema: z.ZodString | z.ZodEffects<any>) {
   if (validationResult.success) return [];
 
   const errorMessages = validationResult.error.issues.map(
-    (issue: any) => issue.message,
+    (issue: any) => issue.message
   );
 
   return errorMessages as never[];

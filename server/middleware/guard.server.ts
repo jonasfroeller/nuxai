@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
       // just to be on the safe side
       return sendError(
         event,
-        createError({ statusCode: 401, statusMessage: 'Unauthorized' }),
+        createError({ statusCode: 401, statusMessage: 'Unauthorized' })
       );
     }
 

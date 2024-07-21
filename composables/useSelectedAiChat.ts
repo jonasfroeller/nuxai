@@ -6,6 +6,6 @@ export const useSelectedAiChat = () => {
       id: -1,
       name: `chat-${Date.now()}`,
       model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
-    }),
+    })
   );
 };

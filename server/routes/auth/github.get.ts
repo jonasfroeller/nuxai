@@ -4,7 +4,7 @@ export default oauth.githubEventHandler({
   config: {
     emailRequired: true,
   },
-  async onSuccess(event, { user/* , tokens */ }) {
+  async onSuccess(event, { user /* , tokens */ }) {
     const user_email =
       user?.email; /* maybe add login (for username), gravatar_id or avatar_url for icon, name, location (for i18n) */
     const user_id = String(user?.id);
@@ -22,7 +22,7 @@ export default oauth.githubEventHandler({
         createError({
           statusCode: 500,
           statusMessage: 'Failed to create oauth account',
-        }),
+        })
       );
     }
 

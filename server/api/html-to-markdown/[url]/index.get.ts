@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   if (!urlToFetch)
     return sendError(
       event,
-      createError({ statusCode: 400, statusMessage: 'Bad Request' }),
+      createError({ statusCode: 400, statusMessage: 'Bad Request' })
     );
 
   const decodedUrl = decodeURIComponent(urlToFetch);
@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
         statusMessage: 'Bad Request',
         data: markdown,
-      }),
+      })
     );
 
   return markdown;

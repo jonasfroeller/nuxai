@@ -23,11 +23,12 @@ function setSelectedChat(
   id: number,
   name: string,
   model: AllowedAiModels,
-  force: boolean = false,
+  force: boolean = false
 ) {
   if (selectedChat.value.id === id && force === false) {
     selectedChat.value.id = -1;
-    selectedChat.value.name = `chat-${Date.now()}`; selectedChat
+    selectedChat.value.name = `chat-${Date.now()}`;
+    selectedChat;
   } else {
     selectedChat.value.id = id;
     selectedChat.value.name = name;
@@ -43,18 +44,22 @@ const editChat = (id: number, name: string) => {
 };
 
 const saveEdit = async (id: number) => {
-  const data = await persistChatConversationEdit(user?.value?.id ?? -1, id, chatToEdit.value?.name);
+  const data = await persistChatConversationEdit(
+    user?.value?.id ?? -1,
+    id,
+    chatToEdit.value?.name
+  );
 
   if (data && data.chat?.name) {
     const { name: chatName } = data.chat;
 
     setSelectedChat(
-        chatToEdit.value.id,
-        chatName,
-        chatToEdit.value.model,
-        true,
+      chatToEdit.value.id,
+      chatName,
+      chatToEdit.value.model,
+      true
     );
-    
+
     chatToEdit.value.id = -1;
     chatToEdit.value.name = `chat-${Date.now()}`;
   }
@@ -67,36 +72,34 @@ const deleteChat = async (id: number) => {
 
   if (selectedChat.value.id === id) {
     setSelectedChat(
-        -1,
-        `chat-${Date.now()}`,
-        'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
+      -1,
+      `chat-${Date.now()}`,
+      'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5'
     );
   }
 
   fetchedChatsRefresh();
 };
 
-const { 
-  data: fetchedChats, 
-  status: fetchedChatsStatus, 
-  error: fetchedChatsError, 
-  refresh: fetchedChatsRefresh 
-} = await useFetch(
-  `/api/users/${user.value?.id}/chats`,
-  {
-    method: 'GET',
-    lazy: true,
-    pick: ['chats'],
-  },
-);
+const {
+  data: fetchedChats,
+  status: fetchedChatsStatus,
+  error: fetchedChatsError,
+  refresh: fetchedChatsRefresh,
+} = await useFetch(`/api/users/${user.value?.id}/chats`, {
+  method: 'GET',
+  lazy: true,
+  pick: ['chats'],
+});
 
 const searchQuery = ref('');
 let filteredChats = computed(() => {
   if (!fetchedChats.value?.chats) return [];
 
-  const chats: FullyFeaturedChat[] = fetchedChats.value.chats as FullyFeaturedChat[];
+  const chats: FullyFeaturedChat[] = fetchedChats.value
+    .chats as FullyFeaturedChat[];
   return chats.filter((chat: FullyFeaturedChat) =>
-    chat.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+    chat.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
 </script>
@@ -206,11 +209,18 @@ let filteredChats = computed(() => {
         </div>
       </ScrollArea>
       <div class="pt-2 text-center" v-else>
-        <p v-if="Array.isArray(fetchedChats?.chats) && fetchedChats?.chats?.length === 0">
+        <p
+          v-if="
+            Array.isArray(fetchedChats?.chats) &&
+            fetchedChats?.chats?.length === 0
+          "
+        >
           No Chats yet... ({{ fetchedChatsStatus }})
         </p>
         <p v-else>No search results... ({{ fetchedChatsStatus }})</p>
-        <p v-if="fetchedChatsError">{{ fetchedChatsError.message }} ({{ fetchedChatsError.data.data }})</p>
+        <p v-if="fetchedChatsError">
+          {{ fetchedChatsError.message }} ({{ fetchedChatsError.data.data }})
+        </p>
       </div>
     </div>
   </div>

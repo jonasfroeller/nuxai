@@ -19,19 +19,21 @@ export const databaseMap = {
 
 export const db = IS_SERVERLESS
   ? neonDrizzle(new NeonPostgres(connectionString), {
-    schema: databaseMap,
-    logger: LOG_SQL_QUERIES,
-  })
+      schema: databaseMap,
+      logger: LOG_SQL_QUERIES,
+    })
   : drizzle(postgres(connectionString), {
-    schema: databaseMap,
-    logger: LOG_SQL_QUERIES,
-  });
+      schema: databaseMap,
+      logger: LOG_SQL_QUERIES,
+    });
 
 export function encryptColumn(value: any) {
   return sql<string>`encode(encrypt(${value}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`;
 }
 
-export function decryptColumn<T extends ColumnBaseConfig<ColumnDataType, string>>(column: PgColumn<T>) {
+export function decryptColumn<
+  T extends ColumnBaseConfig<ColumnDataType, string>,
+>(column: PgColumn<T>) {
   return sql<string>`encode(decrypt(decode(${column}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`;
 }
 
@@ -42,6 +44,8 @@ export function encryptSecret(secret: any) {
 /**
  * Is value equal to that stored secret?
  */
-export function compareWithSecret<T extends ColumnBaseConfig<ColumnDataType, string>>(value: any, column: PgColumn<T>) {
+export function compareWithSecret<
+  T extends ColumnBaseConfig<ColumnDataType, string>,
+>(value: any, column: PgColumn<T>) {
   return sql<string>`crypt(${value}, ${column})`;
 }
