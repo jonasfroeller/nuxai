@@ -4,7 +4,7 @@ import { Search } from 'lucide-vue-next';
 import Input from './ui/input/Input.vue';
 import Button from './ui/button/Button.vue';
 import type { AllowedAiModels } from '~/lib/types/ai.models';
-import type { Chat, ChatExtended } from '~/lib/types/chat';
+import type { MinimalChat, FullyFeaturedChat } from '~/lib/types/chat';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 // improves ux
@@ -13,7 +13,7 @@ const { persistChatConversationEdit, persistChatConversationDelete } = useAPI();
 // data
 const { user } = useUserSession();
 const selectedChat = useSelectedAiChat();
-const chatToEdit = ref<Chat>({
+const chatToEdit = ref<MinimalChat>({
   id: -1,
   name: `chat-${Date.now()}`,
   model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
@@ -96,8 +96,8 @@ const searchQuery = ref('');
 let filteredChats = computed(() => {
   if (!fetchedChats.value?.chats) return [];
 
-  const chats: ChatExtended[] = fetchedChats.value.chats as ChatExtended[];
-  return chats.filter((chat: ChatExtended) =>
+  const chats: FullyFeaturedChat[] = fetchedChats.value.chats as FullyFeaturedChat[];
+  return chats.filter((chat: FullyFeaturedChat) =>
     chat.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
   );
 });
