@@ -7,7 +7,7 @@ import {
   RefreshCcw,
   Trash2,
   Delete,
-  Loader2,
+  /* Loader2, */
 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import Input from './ui/input/Input.vue';
@@ -49,12 +49,13 @@ let {
   error: chatError,
   handleSubmit: handleChatMessageSubmit,
   reload: reloadLastChatMessage,
-  isLoading: chatResponseIsLoading,
+  isLoading: chatResponseIsLoading, // not reactive
   setMessages: setChatMessages,
 } = useChat({
-  api: selectedModelApiPath.value,
+  api: `${selectedModelApiPath.value}?chat_id=${selectedChat.value.id}`,
   keepLastMessageOnError: true,
 });
+let chatIsLoading = ref(chatResponseIsLoading);
 
 watch(chatError, () => {
   if (chatError.value) {
@@ -97,19 +98,18 @@ if (isSpeechRecognitionSupported.value && IS_CLIENT) {
 let toastIdAiIsResponding: string | number;
 let toastIdAiIsNotResponding: string | number;
 watch(chatResponseIsLoading, (newValue) => {
-  if (!newValue) {
-    if (IS_CLIENT) {
-      toastIdAiIsNotResponding = toast.success('AI is done responding!');
-      toast.dismiss(toastIdAiIsResponding);
-    }
+  chatIsLoading.value = newValue; // somehow chatResponseIsLoading is not reactive
 
-    chatResponseIsLoading.value = false; // TODO: find out why this is needed
-  } else if (newValue) {
-    if (IS_CLIENT) {
-      toastIdAiIsResponding = toast.loading('AI is responding...');
-      toast.dismiss(toastIdAiIsNotResponding);
-    }
+  if (!chatIsLoading.value) {
+    console.info('AI is done responding...');
+    toastIdAiIsNotResponding = toast.success('AI is done responding!');
+    toast.dismiss(toastIdAiIsResponding);
+    return;
   }
+
+  console.info('AI is responding...');
+  toastIdAiIsResponding = toast.loading('AI is responding...');
+  toast.dismiss(toastIdAiIsNotResponding);
 });
 
 /* CONVERT HTML TO MARKDOWN */
@@ -176,13 +176,15 @@ let urlToFetchHtmlFrom = ref('');
         </div>
       </div>
 
-      <div
-        v-show="chatResponseIsLoading"
+      <!-- TODO: fix section not disappearing on chatIsLoading change (v-if is server-side and v-show client-side) -->
+      <!-- <div
+        v-if="chatIsLoading"
+        v-show="chatIsLoading"
         class="flex flex-wrap items-center gap-2 px-4 py-2 border border-blue-200 rounded-lg bg-background"
       >
         <Loader2 class="w-4 h-4 mr-2 text-blue-500 animate-spin" />
         <p class="flex-grow">Waiting for response...</p>
-      </div>
+      </div> -->
 
       <div
         v-if="chatError"
@@ -292,7 +294,7 @@ let urlToFetchHtmlFrom = ref('');
                     variant="ghost"
                     size="icon"
                     :disabled="
-                      chatResponseIsLoading || chatMessages.length === 0
+                      chatIsLoading || chatMessages.length === 0
                     "
                   >
                     <Trash2 class="size-4" />
@@ -333,7 +335,7 @@ let urlToFetchHtmlFrom = ref('');
                 variant="ghost"
                 size="icon"
                 @click="reloadLastChatMessage"
-                :disabled="chatResponseIsLoading || chatMessages.length === 0"
+                :disabled="chatIsLoading || chatMessages.length === 0"
               >
                 <RefreshCcw class="size-4" />
                 <span class="sr-only">Refresh Last Response</span>
@@ -366,7 +368,7 @@ let urlToFetchHtmlFrom = ref('');
             size="sm"
             class="gap-1.5"
             :disabled="
-              chatResponseIsLoading || currentChatMessage.trim() === ''
+              chatIsLoading || currentChatMessage.trim() === ''
             "
           >
             Send Message

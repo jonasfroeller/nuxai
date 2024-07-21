@@ -6,27 +6,41 @@ import {
 } from 'ai/prompts';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
+async function persistChatMessage(user_id: number, chat_id: number, messageText: string) {
+  console.info('persisting chat message:', messageText);
+
+  const persistChatMessage = await $fetch(`/api/users/${user_id}/chats/${chat_id}/messages`, {
+    method: 'POST',
+    body: {
+      messageText
+    },
+  });
+
+  console.log('persistChatMessage:', persistChatMessage);
+}
+
 export default defineLazyEventHandler(async () => {
   const apiKey = useRuntimeConfig().huggingfaceApiKey;
   if (!apiKey) throw new Error('Missing OpenAI API key');
   const Hf = new HfInference(apiKey);
 
-  return defineEventHandler(async (event: any) => {
+  return defineEventHandler(async (event) => {
+    const { user } = await requireUserSession(event);
+    const chat_id = Number(getRouterParam(event, 'chat_id'));
+
     const model_name = getRouterParam(event, 'model_name');
     const model_publisher = getRouterParam(event, 'model_publisher');
-    console.info(`Fetching model: ${model_publisher}/${model_name}...`);
+    // console.info(`Fetching model: ${model_publisher}/${model_name}...`);
     const { messages } = await readBody(event); // complete chat history
 
     try {
-      console.info('allowed models:', ALLOWED_AI_MODELS);
+      // console.info('allowed models:', ALLOWED_AI_MODELS);
       if (
         !model_name ||
         !model_publisher ||
         !ALLOWED_AI_MODELS.includes(`${model_publisher}/${model_name}`)
       ) {
-        console.warn(
-          `Invalid model name or publisher: ${model_publisher}/${model_name}. Allowed are '${ALLOWED_AI_MODELS.join(', ')}'`,
-        );
+        // console.warn(`Invalid model name or publisher: ${model_publisher}/${model_name}. Allowed are '${ALLOWED_AI_MODELS.join(', ')}'`);
         sendError(
           event,
           createError({
@@ -37,22 +51,19 @@ export default defineLazyEventHandler(async () => {
       }
 
       let inputs = messages;
-      if (model_publisher === 'OpenAssistant') {
-        inputs = experimental_buildOpenAssistantPrompt(messages);
-        console.info('using custom prompt builder for OpenAssistant');
+      if (model_publisher === 'OpenAssistant' || model_publisher === '01-ai') {
+        inputs = experimental_buildOpenAssistantPrompt(messages); // basically convertToCoreMessages from 'ai'
+        // console.info('using custom prompt builder for OpenAssistant');
       } else if (model_name === 'mistralai') {
         inputs = experimental_buildLlama2Prompt(messages);
-        console.info('using custom prompt builder for Llama2');
+        // console.info('using custom prompt builder for Llama2');
       } else {
-        console.warn(
-          `Using default prompt builder (buildOpenAssistantPrompt) for: ${model_publisher}/${model_name}`,
-        );
-        inputs = experimental_buildOpenAssistantPrompt(messages);
+        inputs = messages;
       }
 
-      console.log('---');
-      console.info('AI request:', inputs);
-      console.log('---');
+      // console.log('---');
+      // console.info('AI request:', inputs);
+      // console.log('---');
 
       const response = Hf.textGenerationStream(
         POSSIBLE_AI_MODELS?.[model_publisher ?? 'OpenAssistant']?.[
@@ -60,7 +71,16 @@ export default defineLazyEventHandler(async () => {
         ]?.configuration(inputs),
       );
 
-      const stream = HuggingFaceStream(response); // Convert the response into a friendly text-stream
+      // https://sdk.vercel.ai/docs/ai-sdk-ui/storing-messages
+      const stream = HuggingFaceStream(
+        response,
+        {
+          async onFinal(messageText: string) {
+            await persistChatMessage(user.id, chat_id, messageText);
+          }
+        },
+      ); // Converts the response into a friendly text-stream
+
       return new StreamingTextResponse(stream); // Respond with the stream
     } catch (error) {
       console.error('AI request errored:', error);
