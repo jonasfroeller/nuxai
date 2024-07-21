@@ -40,6 +40,9 @@ import { useChat } from '@ai-sdk/vue';
 import { Label } from '@/components/ui/label';
 import { toast } from 'vue-sonner';
 
+// improves ux
+const { generateMarkdownFromUrl } = useAPI();
+
 /* CHAT AI */
 const selectedChat = useSelectedAiChat();
 const selectedModelApiPath = useSelectedAiModelApiPath();
@@ -100,7 +103,7 @@ let toastIdAiIsNotResponding: string | number;
 watch(chatResponseIsLoading, (newValue) => {
   chatIsLoading.value = newValue; // somehow chatResponseIsLoading is not reactive
 
-  if (!chatIsLoading.value) {
+  if (!newValue) {
     console.info('AI is done responding...');
     toastIdAiIsNotResponding = toast.success('AI is done responding!');
     toast.dismiss(toastIdAiIsResponding);
@@ -108,7 +111,7 @@ watch(chatResponseIsLoading, (newValue) => {
   }
 
   console.info('AI is responding...');
-  toastIdAiIsResponding = toast.loading('AI is responding...');
+  toastIdAiIsResponding = toast.info('AI is responding...');
   toast.dismiss(toastIdAiIsNotResponding);
 });
 

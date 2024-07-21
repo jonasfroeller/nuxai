@@ -12,6 +12,9 @@ import {
 } from '@/components/ui/select';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
+// improves ux
+const { persistChatConversation } = useAPI();
+
 const { user } = useUserSession();
 const selectedChat = useSelectedAiChat();
 const selectedModel = useSelectedAiModel();

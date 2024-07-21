@@ -7,8 +7,10 @@ import type { AllowedAiModels } from '~/lib/types/ai.models';
 import type { Chat, ChatExtended } from '~/lib/types/chat';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-// TODO: make helper functions for the toasts and other functions that can be used multiple times
+// improves ux
+const { persistChatConversationEdit, persistChatConversationDelete } = useAPI();
 
+// data
 const { user } = useUserSession();
 const selectedChat = useSelectedAiChat();
 const chatToEdit = ref<Chat>({
