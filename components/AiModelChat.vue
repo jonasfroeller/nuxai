@@ -371,7 +371,7 @@ let urlToFetchHtmlFrom = ref('');
             size="sm"
             class="gap-1.5"
             :disabled="
-              chatIsLoading || currentChatMessage.trim() === ''
+              /* chatIsLoading ||  */currentChatMessage.trim() === ''
             "
           >
             Send Message

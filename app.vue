@@ -11,23 +11,25 @@ const main_layout = 'main';
 </script>
 
 <template>
-  <Toaster closeButton />
-  <NuxtLoadingIndicator
-    color="hsl(var(--primary) / 0.9)"
-    errorColor="hsl(var(--destructive))"
-    :height="3"
-    :duration="2000"
-    :throttle="200"
-  />
-  <!-- when it shows: https://github.com/nuxt/nuxt/issues/18630, https://nuxt.com/docs/api/composables/use-loading-indicator -->
-  <DynamicMeta :key="$route.path" />
-  <!-- key is needed, so that the component is rerendered without a prop change -->
   <div>
-    <!-- needed for transitions to work properly -->
-    <NuxtRouteAnnouncer />
-    <NuxtLayout :name="main_layout">
-      <NuxtPage />
-    </NuxtLayout>
+    <Toaster closeButton />
+    <NuxtLoadingIndicator
+      color="hsl(var(--primary) / 0.9)"
+      errorColor="hsl(var(--destructive))"
+      :height="3"
+      :duration="2000"
+      :throttle="200"
+    />
+    <!-- when it shows: https://github.com/nuxt/nuxt/issues/18630, https://nuxt.com/docs/api/composables/use-loading-indicator -->
+    <DynamicMeta :key="$route.path" />
+    <!-- key is needed, so that the component is rerendered without a prop change -->
+    <div>
+      <!-- needed for transitions to work properly -->
+      <NuxtRouteAnnouncer />
+      <NuxtLayout :name="main_layout">
+        <NuxtPage />
+      </NuxtLayout>
+    </div>
   </div>
 </template>
 

@@ -1,7 +1,8 @@
-import { toast } from "vue-sonner";
+import { toast } from 'vue-sonner';
 
-// wrapper around the API, to improve ux
+// TODO: find out, why toast only works, if no chat message is sent
 
+// wrapper around the REST-API, to improve ux
 export const useAPI = () => { // Why not in in utils? -> doesn't seem to work, all the time (because it uses other composables (useFetch))
     async function generateMarkdownFromUrl(url: string, currentChatMessage: string) {
         if (url.trim() === '') return;
@@ -56,9 +57,9 @@ export const useAPI = () => { // Why not in in utils? -> doesn't seem to work, a
                     name,
                 },
                 pick: ['chat'],
-                onRequest({ request, options }) {
+                /* onRequest({ request, options }) {
                     // console.info("onRequest", request, options)
-                },
+                }, */
                 onResponse({ request, response, options }) {
                     // console.info("onResponse", request, response, options)
                     resolve(response._data);
@@ -90,9 +91,9 @@ export const useAPI = () => { // Why not in in utils? -> doesn't seem to work, a
                     name: chat_name,
                 },
                 lazy: true,
-                onRequest({ request, options }) {
+                /* onRequest({ request, options }) {
                     // console.info("onRequest", request, options)
-                },
+                }, */
                 onResponse({ request, response, options }) {
                     // console.info("onResponse", request, response, options)
                     resolve(response._data);
@@ -119,9 +120,9 @@ export const useAPI = () => { // Why not in in utils? -> doesn't seem to work, a
             await useFetch(`/api/users/${user_id}/chats/${chat_id}`, {
                 method: 'DELETE',
                 lazy: true,
-                onRequest({ request, options }) {
+                /* onRequest({ request, options }) {
                     // console.info("onRequest", request, options)
-                },
+                }, */
                 onResponse({ request, response, options }) {
                     // console.info("onResponse", request, response, options)
                     resolve(response._data);

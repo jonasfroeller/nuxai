@@ -6,7 +6,7 @@ const props = defineProps({
   error: Object as () => NuxtError,
 });
 
-const handleError = () => clearError({ redirect: '/' });
+const handleError = () => clearError({ redirect: '/home' });
 
 const error_layout = 'error';
 </script>

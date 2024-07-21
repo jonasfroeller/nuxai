@@ -7,9 +7,10 @@ export default defineEventHandler(async (event) => {
 
   /* TODO: validation */
 
-  const { message } = await readBody(event);
+  const { message, actor } = await readBody(event);
   const conversationMessageToCreate = {
     message: String(message),
+    actor: String(actor),
     chat_user_id: Number(user_id),
     chat_conversation_id: Number(chat_id),
   }

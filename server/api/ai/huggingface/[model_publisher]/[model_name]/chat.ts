@@ -6,17 +6,31 @@ import {
 } from 'ai/prompts';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
-async function persistChatMessage(user_id: number, chat_id: number, messageText: string) {
-  console.info('persisting chat message:', messageText);
+async function persistChatMessage(user_id: number, chat_id: number, messageText: string, actor: 'user' | 'assistant' = 'user', event: any) {
+  if (chat_id >= 1) {
+    console.info('persisting chat message:', messageText);
 
-  const persistChatMessage = await $fetch(`/api/users/${user_id}/chats/${chat_id}/messages`, {
-    method: 'POST',
-    body: {
-      messageText
-    },
-  });
+    const persistChatMessage = await event.$fetch(`/api/users/${user_id}/chats/${chat_id}/messages`, { // .event.$fetch used because it contains the current session
+      method: 'POST',
+      body: {
+        message: messageText,
+        actor: 'assistant'
+      },
+    });
 
-  console.log('persistChatMessage:', persistChatMessage);
+    console.log('persistChatMessage:', persistChatMessage, user_id, chat_id, messageText);
+    return;
+  }
+
+  return;
+}
+
+async function persistAiChatMessage(user_id: number, chat_id: number, messageText: string, event: any) { // only persists AI messages
+  await persistChatMessage(user_id, chat_id, messageText, 'assistant', event);
+}
+
+async function persistUserChatMessage(user_id: number, chat_id: number, messageText: string, event: any) {
+  await persistChatMessage(user_id, chat_id, messageText, 'user', event);
 }
 
 export default defineLazyEventHandler(async () => {
@@ -26,12 +40,18 @@ export default defineLazyEventHandler(async () => {
 
   return defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event);
-    const chat_id = Number(getRouterParam(event, 'chat_id'));
+    const chat_id_as_string = getQuery(event).chat_id;
+    console.log("chat_id_as_string", chat_id_as_string);
+    const chat_id = Number(chat_id_as_string);
 
     const model_name = getRouterParam(event, 'model_name');
     const model_publisher = getRouterParam(event, 'model_publisher');
     // console.info(`Fetching model: ${model_publisher}/${model_name}...`);
     const { messages } = await readBody(event); // complete chat history
+
+    const userMessage = messages[messages.length - 1]; // { role: 'user', content: 'message' }
+    console.log(userMessage)
+    await persistUserChatMessage(user.id, chat_id, userMessage.content, event);
 
     try {
       // console.info('allowed models:', ALLOWED_AI_MODELS);
@@ -75,8 +95,8 @@ export default defineLazyEventHandler(async () => {
       const stream = HuggingFaceStream(
         response,
         {
-          async onFinal(messageText: string) {
-            await persistChatMessage(user.id, chat_id, messageText);
+          async onFinal(messageText: string) { // onCompletion, onFinal, onToken and onText is called for each token (word, punctuation)
+            await persistAiChatMessage(user.id, chat_id, messageText, event);
           }
         },
       ); // Converts the response into a friendly text-stream
