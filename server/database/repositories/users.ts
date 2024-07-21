@@ -1,6 +1,5 @@
 import { chat_user, chat_user_oauth_account } from '../schema';
 import { and, eq, like, sql } from 'drizzle-orm';
-import { ENCRYPTION_SECRET } from '~/server/utils/globals';
 
 type NewUser = typeof chat_user.$inferInsert;
 export type GetUser = typeof chat_user.$inferSelect;
@@ -18,13 +17,13 @@ export const createUser = async (user: UserToCreate) => {
   const createdUser = await db
     .insert(chat_user)
     .values({
-      primary_email: sql<string>`encode(encrypt(${user.primary_email}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`, // SELECT encode(encrypt('e.mail@example.com', 'secret', 'aes'), 'hex') AS encrypted_primary_email; --encrypt
-      hashed_password: sql<string>`crypt(${user.password}, gen_salt('bf', 12))`, // SELECT crypt('password', gen_salt('bf', 12)) AS hashed_password; --encrypt
+      primary_email: encryptColumn(user.primary_email), // SELECT encode(encrypt('e.mail@example.com', 'secret', 'aes'), 'hex') AS encrypted_primary_email; --encrypt
+      hashed_password: encryptSecret(user.password), // SELECT crypt('password', gen_salt('bf', 12)) AS hashed_password; --encrypt
     })
     // @ts-ignore (is allowed, just not properly typed)
     .returning({
       id: chat_user.id,
-      primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')` /* decode(${chat_user.primary_email}, 'hex') instead of ('\x' || ${chat_user.primary_email}) instead of concat('\x', ${chat_user.primary_email}) */,
+      primary_email: decryptColumn(chat_user.primary_email), /* decode(${chat_user.primary_email}, 'hex') instead of ('\x' || ${chat_user.primary_email}) instead of concat('\x', ${chat_user.primary_email}) */
     })
     .catch((err) => {
       if (LOG_BACKEND) console.error('Failed to insert user into database', err);
@@ -50,13 +49,13 @@ export const createEmptyUser = async () => {
   const createdUser = await db
     .insert(chat_user)
     .values({
-      primary_email: sql<string>`encode(encrypt(${'OauthAccount-' + generateUUID()}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')` /* TODO: do not allow login with email and password, if email and password are placeholders */,
-      hashed_password: sql<string>`encode(encrypt(${'NONE'}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`,
+      primary_email: encryptColumn(`${generateUUID()}@account.oAuth`) /* TODO: do not allow login with email and password, if email and password are placeholders */,
+      hashed_password: encryptSecret('NONE'),
     })
     // @ts-ignore (is allowed, just not properly typed)
     .returning({
       id: chat_user.id,
-      primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
+      primary_email: decryptColumn(chat_user.primary_email),
     })
     .catch((err) => {
       if (LOG_BACKEND) console.error('Failed to insert user into database', err);
@@ -71,7 +70,7 @@ export const readUser = async (id: GetUser['id']) => {
   return await db
     .select({
       id: chat_user.id,
-      primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
+      primary_email: decryptColumn(chat_user.primary_email),
     })
     .from(chat_user)
     .where(eq(chat_user.id, id))
@@ -88,13 +87,13 @@ export const readUserUsingPrimaryEmail = async (
   const fetchedUser = await db
     .select({
       id: chat_user.id,
-      primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
+      primary_email: decryptColumn(chat_user.primary_email),
     })
     .from(chat_user)
     .where(
       like(
         chat_user.primary_email,
-        sql<string>`encode(encrypt(${email}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`,
+        encryptColumn(email),
       ),
     )
     .catch((err) => {
@@ -117,7 +116,7 @@ export const updateUser = async (
     if (!primary_email) return null;
 
     return {
-      primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
+      primary_email: decryptColumn(chat_user.primary_email),
     };
   };
 
@@ -162,18 +161,18 @@ export const validateUserCredentials = async (
   const fetchedUser = await db
     .select({
       id: chat_user.id,
-      primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
+      primary_email: decryptColumn(chat_user.primary_email),
     })
     .from(chat_user)
     .where(
       and(
         like(
           chat_user.primary_email,
-          sql<string>`encode(encrypt(${email}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`,
+          encryptColumn(email),
         ), // SELECT decrypt('\x2866794d48ffaaef22d27652555382a77dfce3e6b71b8fcb3c18ee1a5e6a466a'::bytea, 'secret', 'aes') LIKE 'e.mail@example.com' AS decrypted_primary_email; --check (\x<hex>)
         like(
           chat_user.hashed_password,
-          sql<string>`crypt(${password}, ${chat_user.hashed_password})`,
+          compareWithSecret(password, chat_user.hashed_password),
         ), // SELECT crypt('password', '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC') LIKE '$2a$12$rUibDTAV38yIModD5ufgmOnlpy89Syof3sU0QitE9J.aKdKtwH3IC' AS password_is_correct; --check
       ),
     )

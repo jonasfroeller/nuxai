@@ -3,7 +3,6 @@ import {
   createChatConversation,
   readAllChatConversationsOfUser,
 } from '~/server/database/repositories/chatConversations';
-import { ChatConversationToCreateSchema } from '~/server/utils/validators';
 
 export default defineEventHandler(async (event) => {
   assertMethod(event, ['POST', 'GET']);

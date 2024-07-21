@@ -1,10 +1,11 @@
-import { connectionString, databaseMap, IS_SERVERLESS } from './db';
+import { connectionString, databaseMap } from './db';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import { Client as NeonPostgres } from '@neondatabase/serverless';
 import { drizzle as neonDrizzle } from 'drizzle-orm/neon-serverless';
 import { migrate as neonMigrate } from 'drizzle-orm/neon-serverless/migrator';
+import { IS_DEV, IS_SERVERLESS } from './globals'; // needed, if run as package.json script
 
 async function migrateDatabase() {
   if (IS_SERVERLESS) {
