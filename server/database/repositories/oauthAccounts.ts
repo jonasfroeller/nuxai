@@ -91,7 +91,7 @@ export const createOauthAccount = async (account: OauthAccountToCreate) => {
       oauth_email: sql<string>`encode(decrypt(decode(${chat_user_oauth_account.oauth_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
     })
     .catch((err) => {
-      console.error('Failed to insert oauth account into database', err);
+      if (LOG_BACKEND) console.error('Failed to insert oauth account into database', err);
       return null;
     });
 

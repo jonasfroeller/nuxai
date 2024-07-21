@@ -4,9 +4,7 @@ export default oauth.googleEventHandler({
   config: {
     scope: ['email'],
   },
-  async onSuccess(event, { user, tokens }) {
-    // console.log(user, tokens);
-
+  async onSuccess(event, { user/* , tokens */ }) {
     const user_email =
       user?.email; /* maybe add email_verified, picture for icon */
     const user_id =
@@ -30,15 +28,9 @@ export default oauth.googleEventHandler({
     }
 
     if (createdOrFetchedUserAndConnectedOauthAccount.isNewOauthAccount) {
-      console.info(
-        'new oauth account created:',
-        createdOrFetchedUserAndConnectedOauthAccount,
-      );
+      if (LOG_BACKEND) console.info('New oAuth account created!');
     } else {
-      console.info(
-        'oauth account already exists:',
-        createdOrFetchedUserAndConnectedOauthAccount,
-      );
+      if (LOG_BACKEND) console.info('Fetched existing oAuth account!');
     }
 
     await setUserSession(event, {

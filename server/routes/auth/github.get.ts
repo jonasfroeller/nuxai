@@ -4,9 +4,7 @@ export default oauth.githubEventHandler({
   config: {
     emailRequired: true,
   },
-  async onSuccess(event, { user, tokens }) {
-    // console.log(user, tokens);
-
+  async onSuccess(event, { user/* , tokens */ }) {
     const user_email =
       user?.email; /* maybe add login (for username), gravatar_id or avatar_url for icon, name, location (for i18n) */
     const user_id = String(user?.id);
@@ -29,15 +27,9 @@ export default oauth.githubEventHandler({
     }
 
     if (createdOrFetchedUserAndConnectedOauthAccount.isNewOauthAccount) {
-      console.info(
-        'new oauth account created:',
-        createdOrFetchedUserAndConnectedOauthAccount,
-      );
+      if (LOG_BACKEND) console.info('New oAuth account created!');
     } else {
-      console.info(
-        'oauth account already exists:',
-        createdOrFetchedUserAndConnectedOauthAccount,
-      );
+      if (LOG_BACKEND) console.info('Fetched existing oAuth account!');
     }
 
     await setUserSession(event, {

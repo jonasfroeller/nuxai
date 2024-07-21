@@ -34,7 +34,7 @@ function setSelectedChat(
     selectedChat.value.model = model;
   }
 
-  console.info('setSelectedChat', selectedChat.value);
+  if (LOG_FRONTEND) console.info('setSelectedChat', selectedChat.value);
 }
 
 const editChat = (id: number, name: string) => {
@@ -44,8 +44,6 @@ const editChat = (id: number, name: string) => {
 
 const saveEdit = async (id: number) => {
   const data = await persistChatConversationEdit(user?.value?.id ?? -1, id, chatToEdit.value?.name);
-
-  console.log("DATA", data);
 
   if (data && data.chat?.name) {
     const { name: chatName } = data.chat;

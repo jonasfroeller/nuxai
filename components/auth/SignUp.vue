@@ -39,7 +39,7 @@ async function signUp() {
   );
 
   if (error.value) {
-    console.log('error:', error.value?.message, error.value.data);
+    if (LOG_FRONTEND) console.info('error:', error.value?.message, error.value.data);
     emailErrors.value = error.value.data.data.issues
       .filter((issue: any) => issue.path[0] === 'email')
       .map((issue: any) => issue.message);

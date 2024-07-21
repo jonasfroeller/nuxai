@@ -4,11 +4,11 @@ import { validateUserCredentials } from '~/server/database/repositories/users';
 export default defineEventHandler(async (event) => {
   /* 0. CHECK IF USER IS ALREADY LOGGED IN => UPDATE SESSION */
   const session = await getUserSession(event);
-  console.log('current session', JSON.stringify(session));
+  if (LOG_BACKEND) console.info('current session', JSON.stringify(session));
 
   if (Object.keys(session).length !== 0) {
     const loggedInAt = new Date();
-    console.log('replacing session');
+    if (LOG_BACKEND) console.info('replacing session');
 
     return await replaceUserSession(event, {
       user: session.user,
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     UserLogInSchema.safeParse(body),
   );
 
-  console.info('result', JSON.stringify(result));
+  if (LOG_BACKEND) console.info('result', JSON.stringify(result));
   if (!result.success || !result.data)
     return sendError(
       event,
@@ -35,13 +35,13 @@ export default defineEventHandler(async (event) => {
     );
   const body = result.data!;
 
-  console.info('body', body);
+  if (LOG_BACKEND) console.info('body', body);
 
   const { email, password } = body;
 
   if (!email || !password) {
     /* TODO: improve with zod, also add feedback before on frontend using zod */
-    console.warn('missing email or password');
+    if (LOG_BACKEND) console.warn('missing email or password');
     return sendError(
       event,
       createError({ statusCode: 400, statusMessage: 'Bad Request' }),
@@ -51,10 +51,10 @@ export default defineEventHandler(async (event) => {
   /* 2. CHECK IF USER IS VALID */
 
   const userIsValid = await validateUserCredentials(email, password);
-  console.info('userIsValid:', userIsValid);
+  if (LOG_BACKEND) console.info('userIsValid:', userIsValid);
 
   if (!userIsValid) {
-    console.warn('invalid credentials');
+    if (LOG_BACKEND) console.warn('invalid credentials');
     return sendError(
       event,
       createError({ statusCode: 401, statusMessage: 'Unauthorized' }),
@@ -69,7 +69,7 @@ export default defineEventHandler(async (event) => {
   };
 
   const loggedInAt = new Date();
-  console.log('setting new session');
+  if (LOG_BACKEND) console.info('setting new session');
 
   return await setUserSession(event, {
     user,

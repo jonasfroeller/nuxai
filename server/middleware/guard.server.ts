@@ -21,6 +21,6 @@ export default defineEventHandler(async (event) => {
     }
 
     event.context.user =
-      session.user; /* Context is accessible in the route, that runs after the middleware */
+      session.user; /* Context is accessible in the route, that runs after the middleware. */
   }
 });

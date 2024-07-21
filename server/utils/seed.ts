@@ -16,15 +16,15 @@ async function seedDatabase() {
   const instance = db;
   if (!instance) return;
 
-  console.log('Deleting tables...');
+  if (IS_DEV) console.info('Deleting tables...');
   for (let i = 0; i < tables.length; i++) {
     await instance
       .delete(tables[i])
       .then(() => {
-        console.info(`Deleted table ${tables[i].id.table._.name}...`);
+        if (IS_DEV) console.info(`Deleted table ${tables[i].id.table._.name}...`);
       })
       .catch((e) => {
-        console.error('Failed to delete table. Cause:', e);
+        if (IS_DEV) console.error('Failed to delete table. Cause:', e);
         throw createError({
           statusCode: 500,
           statusMessage: 'Internal Server Error',
@@ -33,16 +33,16 @@ async function seedDatabase() {
       });
   }
 
-  console.log('Seeding database...');
+  if (IS_DEV) console.info('Seeding database...');
 
   await instance
     .insert(chat_user)
     .values([]) // TODO
     .then(() => {
-      console.info('Seeded database...');
+      if (IS_DEV) console.info('Seeded database...');
     })
     .catch((e) => {
-      console.error('Failed to seed database:', e);
+      if (IS_DEV) console.error('Failed to seed database:', e);
       throw createError({
         statusCode: 500,
         statusMessage: 'Internal Server Error',

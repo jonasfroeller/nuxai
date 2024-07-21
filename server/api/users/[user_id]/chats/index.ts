@@ -54,13 +54,13 @@ export default defineEventHandler(async (event) => {
 
   if (method === 'POST') {
     // Create new Chat conversation
-    console.log('creating new chat...');
+    if (LOG_BACKEND) console.info('creating new chat...');
 
     const result = await readValidatedBody(event, (body) =>
       ChatConversationToCreateSchema.safeParse(body),
     );
 
-    console.info('result', JSON.stringify(result));
+    if (LOG_BACKEND) console.info('result', JSON.stringify(result));
     if (!result.success || !result.data)
       return sendError(
         event,
@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
       );
     const body = result.data!;
 
-    console.info('body', body);
+    if (LOG_BACKEND) console.info('body', body);
 
     const { model, name } = body;
 
@@ -89,7 +89,7 @@ export default defineEventHandler(async (event) => {
     };
   } else {
     // Read all chat conversations of user
-    console.log('fetching chat information...');
+    if (LOG_BACKEND) console.info('fetching chat information...');
 
     const fetchedChatConversations =
       await readAllChatConversationsOfUser(user_id);

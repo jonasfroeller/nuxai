@@ -8,7 +8,7 @@ import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
 async function persistChatMessage(user_id: number, chat_id: number, messageText: string, actor: 'user' | 'assistant' = 'user', event: any) {
   if (chat_id >= 1) {
-    console.info('persisting chat message:', messageText);
+    if (LOG_BACKEND) console.info('persisting chat message:', messageText);
 
     const persistChatMessage = await event.$fetch(`/api/users/${user_id}/chats/${chat_id}/messages`, { // .event.$fetch used because it contains the current session
       method: 'POST',
@@ -18,7 +18,7 @@ async function persistChatMessage(user_id: number, chat_id: number, messageText:
       },
     });
 
-    console.log('persistChatMessage:', persistChatMessage, user_id, chat_id, messageText);
+    if (LOG_BACKEND) console.info('persistChatMessage:', persistChatMessage, user_id, chat_id, messageText);
     return;
   }
 
@@ -41,26 +41,26 @@ export default defineLazyEventHandler(async () => {
   return defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event);
     const chat_id_as_string = getQuery(event).chat_id;
-    console.log("chat_id_as_string", chat_id_as_string);
+    if (LOG_BACKEND) console.info("chat_id_as_string", chat_id_as_string);
     const chat_id = Number(chat_id_as_string);
 
     const model_name = getRouterParam(event, 'model_name');
     const model_publisher = getRouterParam(event, 'model_publisher');
-    // console.info(`Fetching model: ${model_publisher}/${model_name}...`);
+    // if (LOG_BACKEND) console.info(`Fetching model: ${model_publisher}/${model_name}...`);
     const { messages } = await readBody(event); // complete chat history
 
     const userMessage = messages[messages.length - 1]; // { role: 'user', content: 'message' }
-    console.log(userMessage)
+    if (LOG_BACKEND) console.info(userMessage)
     await persistUserChatMessage(user.id, chat_id, userMessage.content, event);
 
     try {
-      // console.info('allowed models:', ALLOWED_AI_MODELS);
+      // if (LOG_BACKEND) console.info('allowed models:', ALLOWED_AI_MODELS);
       if (
         !model_name ||
         !model_publisher ||
         !ALLOWED_AI_MODELS.includes(`${model_publisher}/${model_name}`)
       ) {
-        // console.warn(`Invalid model name or publisher: ${model_publisher}/${model_name}. Allowed are '${ALLOWED_AI_MODELS.join(', ')}'`);
+        // if (LOG_BACKEND) console.warn(`Invalid model name or publisher: ${model_publisher}/${model_name}. Allowed are '${ALLOWED_AI_MODELS.join(', ')}'`);
         sendError(
           event,
           createError({
@@ -73,17 +73,17 @@ export default defineLazyEventHandler(async () => {
       let inputs = messages;
       if (model_publisher === 'OpenAssistant' || model_publisher === '01-ai') {
         inputs = experimental_buildOpenAssistantPrompt(messages); // basically convertToCoreMessages from 'ai'
-        // console.info('using custom prompt builder for OpenAssistant');
+        // if (LOG_BACKEND) console.info('using custom prompt builder for OpenAssistant');
       } else if (model_name === 'mistralai') {
         inputs = experimental_buildLlama2Prompt(messages);
-        // console.info('using custom prompt builder for Llama2');
+        // if (LOG_BACKEND) console.info('using custom prompt builder for Llama2');
       } else {
         inputs = messages;
       }
 
-      // console.log('---');
-      // console.info('AI request:', inputs);
-      // console.log('---');
+      // if (LOG_BACKEND) console.info('---');
+      // if (LOG_BACKEND) console.info('AI request:', inputs);
+      // if (LOG_BACKEND) console.info('---');
 
       const response = Hf.textGenerationStream(
         POSSIBLE_AI_MODELS?.[model_publisher ?? 'OpenAssistant']?.[
@@ -103,7 +103,7 @@ export default defineLazyEventHandler(async () => {
 
       return new StreamingTextResponse(stream); // Respond with the stream
     } catch (error) {
-      console.error('AI request errored:', error);
+      if (LOG_BACKEND) console.error('AI request errored:', error);
       sendError(
         event,
         createError({

@@ -21,7 +21,7 @@ export const createChatConversationMessage = async (
     .values(message)
     .returning()
     .catch((err) => {
-      console.error(
+      if (LOG_BACKEND) console.error(
         'Failed to insert chat conversation message into database',
         err,
       );
@@ -41,7 +41,7 @@ export const readChatConversationMessage = async (
     .from(chat_conversation_message)
     .where(eq(chat_conversation_message.id, id))
     .catch((err) => {
-      console.error(
+      if (LOG_BACKEND) console.error(
         'Failed to read chat conversation message from database',
         err,
       );
@@ -63,7 +63,7 @@ export const readChatConversationMessages = async (
       eq(chat_conversation_message.chat_conversation_id, chat_conversation_id),
     )
     .catch((err) => {
-      console.error(
+      if (LOG_BACKEND) console.error(
         'Failed to read chat conversation messages from database',
         err,
       );
@@ -86,7 +86,7 @@ export const updateChatConversationMessage = async (
     .where(eq(chat_conversation_message.id, id))
     .returning()
     .catch((err) => {
-      console.error(
+      if (LOG_BACKEND) console.error(
         'Failed to update chat conversation message in database',
         err,
       );
@@ -107,7 +107,7 @@ export const deleteChatConversationMessage = async (
     .where(eq(chat_conversation_message.id, id))
     .returning()
     .catch((err) => {
-      console.error(
+      if (LOG_BACKEND) console.error(
         'Failed to delete chat conversation message from database',
         err,
       );

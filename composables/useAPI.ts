@@ -20,14 +20,14 @@ export const useAPI = () => { // Why not in in utils? -> doesn't seem to work, a
         const fetchPromise = new Promise(async (resolve, reject) => {
             await useFetch(`${endpoint}${encodedUrl}`, {
                 /* onRequest({ request, options }) {
-                    // console.info("onRequest", request, options)
+                    // if (LOG_FRONTEND) console.info("onRequest", request, options)
                 }, */
                 onResponse({ request, response, options }) {
-                    // console.info("onResponse", request, response, options)
+                    // if (LOG_FRONTEND) console.info("onResponse", request, response, options)
                     resolve(response._data);
                 },
                 onResponseError({ request, response, options }) {
-                    // console.error("onResponseError", request, response, options)
+                    // if (LOG_FRONTEND) console.error("onResponseError", request, response, options)
                     reject(response._data);
                 },
             });
@@ -58,14 +58,14 @@ export const useAPI = () => { // Why not in in utils? -> doesn't seem to work, a
                 },
                 pick: ['chat'],
                 /* onRequest({ request, options }) {
-                    // console.info("onRequest", request, options)
+                    // if (LOG_FRONTEND) console.info("onRequest", request, options)
                 }, */
                 onResponse({ request, response, options }) {
-                    // console.info("onResponse", request, response, options)
+                    // if (LOG_FRONTEND) console.info("onResponse", request, response, options)
                     resolve(response._data);
                 },
                 onResponseError({ request, response, options }) {
-                    // console.error("onResponseError", request, response, options)
+                    // if (LOG_FRONTEND) console.error("onResponseError", request, response, options)
                     reject(response._data);
                 },
             });
@@ -92,14 +92,14 @@ export const useAPI = () => { // Why not in in utils? -> doesn't seem to work, a
                 },
                 lazy: true,
                 /* onRequest({ request, options }) {
-                    // console.info("onRequest", request, options)
+                    // if (LOG_FRONTEND) console.info("onRequest", request, options)
                 }, */
                 onResponse({ request, response, options }) {
-                    // console.info("onResponse", request, response, options)
+                    // if (LOG_FRONTEND) console.info("onResponse", request, response, options)
                     resolve(response._data);
                 },
                 onResponseError({ request, response, options }) {
-                    // console.error("onResponseError", request, response, options)
+                    // if (LOG_FRONTEND) console.error("onResponseError", request, response, options)
                     reject(response._data);
                 },
             });
@@ -121,14 +121,14 @@ export const useAPI = () => { // Why not in in utils? -> doesn't seem to work, a
                 method: 'DELETE',
                 lazy: true,
                 /* onRequest({ request, options }) {
-                    // console.info("onRequest", request, options)
+                    // if (LOG_FRONTEND) console.info("onRequest", request, options)
                 }, */
                 onResponse({ request, response, options }) {
-                    // console.info("onResponse", request, response, options)
+                    // if (LOG_FRONTEND) console.info("onResponse", request, response, options)
                     resolve(response._data);
                 },
                 onResponseError({ request, response, options }) {
-                    // console.error("onResponseError", request, response, options)
+                    // if (LOG_FRONTEND) console.error("onResponseError", request, response, options)
                     reject(response._data);
                 },
             });

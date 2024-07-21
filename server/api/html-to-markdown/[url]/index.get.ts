@@ -34,14 +34,14 @@ export default defineEventHandler(async (event) => {
 
         markdown = String(file);
       } catch (error: any) {
-        console.error('Failed to parse HTML:', error?.message);
+        if (LOG_BACKEND) console.error('Failed to parse HTML:', error?.message);
         markdown = `Failed to parse HTML: ${error?.message}`;
       }
 
       return markdown;
     })
     .catch((err) => {
-      console.error(err);
+      if (LOG_BACKEND) console.error(err);
       return 'FAILED';
     });
 

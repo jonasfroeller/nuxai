@@ -18,11 +18,11 @@ async function migrateDatabase() {
       migrationsFolder: 'server/database/migrations',
     })
       .then(() => {
-        console.log('Migrated database...');
+        if (IS_DEV) console.info('Migrated database...');
         return true;
       })
       .catch((e) => {
-        console.error('Failed to migrate database:', e);
+        if (IS_DEV) console.error('Failed to migrate database:', e);
         throw createError({
           statusCode: 500,
           statusMessage: 'Internal Server Error',
@@ -31,7 +31,7 @@ async function migrateDatabase() {
         });
       })
       .finally(async () => {
-        console.log('Closing database connection...');
+        if (IS_DEV) console.info('Closing database connection...');
         await migrationClient.end();
       });
   }
@@ -46,11 +46,11 @@ async function migrateDatabase() {
     migrationsFolder: 'server/database/migrations',
   })
     .then(() => {
-      console.log('Migrated database...');
+      if (IS_DEV) console.info('Migrated database...');
       return true;
     })
     .catch((e) => {
-      console.error('Failed to migrate database:', e);
+      if (IS_DEV) console.error('Failed to migrate database:', e);
       throw createError({
         statusCode: 500,
         statusMessage: 'Internal Server Error',
@@ -59,7 +59,7 @@ async function migrateDatabase() {
       });
     })
     .finally(async () => {
-      console.log('Closing database connection...');
+      if (IS_DEV) console.info('Closing database connection...');
       await migrationClient.end();
     });
 }

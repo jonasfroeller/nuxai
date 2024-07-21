@@ -104,13 +104,13 @@ watch(chatResponseIsLoading, (newValue) => {
   chatIsLoading.value = newValue; // somehow chatResponseIsLoading is not reactive
 
   if (!newValue) {
-    console.info('AI is done responding...');
+    if (LOG_FRONTEND) console.info('AI is done responding...');
     toastIdAiIsNotResponding = toast.success('AI is done responding!');
     toast.dismiss(toastIdAiIsResponding);
     return;
   }
 
-  console.info('AI is responding...');
+  if (LOG_FRONTEND) console.info('AI is responding...');
   toastIdAiIsResponding = toast.info('AI is responding...');
   toast.dismiss(toastIdAiIsNotResponding);
 });
@@ -273,10 +273,10 @@ let urlToFetchHtmlFrom = ref('');
                 @click="
                   () => {
                     if (isListeningToSpeech) {
-                      console.log('stopping listening');
+                      if (LOG_FRONTEND) console.info('stopping listening');
                       stopSpeechRecognition();
                     } else {
-                      console.log('starting listening');
+                      if (LOG_FRONTEND) console.info('starting listening');
                       startSpeechRecognition();
                     }
                   }

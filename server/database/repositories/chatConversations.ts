@@ -17,7 +17,7 @@ export async function createChatConversation(
     .values(conversation)
     .returning()
     .catch((err) => {
-      console.error('Failed to insert chat conversation into database', err);
+      if (LOG_BACKEND) console.error('Failed to insert chat conversation into database', err);
       return null;
     });
 
@@ -32,7 +32,7 @@ export async function readChatConversation(id: GetChatConversation['id']) {
     .from(chat_conversation)
     .where(eq(chat_conversation.id, id))
     .catch((err) => {
-      console.error('Failed to fetch chat conversation from database', err);
+      if (LOG_BACKEND) console.error('Failed to fetch chat conversation from database', err);
       return null;
     });
 
@@ -47,7 +47,7 @@ export async function readAllChatConversationsOfUser(user_id: GetUser['id']) {
     .from(chat_conversation)
     .where(eq(chat_conversation.chat_user_id, user_id))
     .catch((err) => {
-      console.error('Failed to fetch chat conversations from database', err);
+      if (LOG_BACKEND) console.error('Failed to fetch chat conversations from database', err);
       return null;
     });
 
@@ -66,7 +66,7 @@ export async function updateChatConversation(
     .where(eq(chat_conversation.id, id))
     .returning()
     .catch((err) => {
-      console.error('Failed to update chat conversation in database', err);
+      if (LOG_BACKEND) console.error('Failed to update chat conversation in database', err);
       return null;
     });
 
@@ -81,7 +81,7 @@ export async function deleteChatConversation(id: GetChatConversation['id']) {
     .where(eq(chat_conversation.id, id))
     .returning()
     .catch((err) => {
-      console.error('Failed to delete chat conversation from database', err);
+      if (LOG_BACKEND) console.error('Failed to delete chat conversation from database', err);
       return null;
     });
 

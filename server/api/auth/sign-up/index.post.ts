@@ -7,11 +7,11 @@ import {
 export default defineEventHandler(async (event) => {
   /* 0. CHECK IF USER IS ALREADY LOGGED IN => UPDATE SESSION */
   const session = await getUserSession(event);
-  console.log('current session', JSON.stringify(session));
+  if (LOG_BACKEND) console.info('current session', JSON.stringify(session));
 
   if (Object.keys(session).length !== 0) {
     const loggedInAt = new Date();
-    console.log('replacing session');
+    if (LOG_BACKEND) console.info('replacing session');
 
     return await replaceUserSession(event, {
       user: session.user,
@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
     UserLogInSchema.safeParse(body),
   );
 
-  console.info('result', JSON.stringify(result));
+  if (LOG_BACKEND) console.info('result', JSON.stringify(result));
   if (!result.success || !result.data)
     return sendError(
       event,
@@ -36,13 +36,13 @@ export default defineEventHandler(async (event) => {
     );
   const body = result.data!;
 
-  console.info('body', body);
+  if (LOG_BACKEND) console.info('body', body);
 
   const { email, password } = body;
 
   if (!email || !password) {
     /* TODO: improve with zod, also add feedback before on frontend using zod */
-    console.warn('missing email or password');
+    if (LOG_BACKEND) console.warn('missing email or password');
     return sendError(
       event,
       createError({ statusCode: 400, statusMessage: 'Bad Request' }),
@@ -52,10 +52,10 @@ export default defineEventHandler(async (event) => {
   /* 2. CHECK IF USER EXISTS */
 
   const userExists = await readUserUsingPrimaryEmail(email);
-  console.info('userExists:', userExists);
+  if (LOG_BACKEND) console.info('userExists:', userExists);
 
   if (userExists) {
-    console.warn('user already exists');
+    if (LOG_BACKEND) console.warn('user already exists');
     return sendError(
       event,
       createError({ statusCode: 409, statusMessage: 'Conflict' }),
@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
   const createdUser = await createUser(userToCreate);
 
   if (!createdUser) {
-    console.warn('failed to create user');
+    if (LOG_BACKEND) console.warn('failed to create user');
     return sendError(
       event,
       createError({ statusCode: 500, statusMessage: 'Internal Server Error' }),
@@ -87,7 +87,7 @@ export default defineEventHandler(async (event) => {
   };
 
   const loggedInAt = new Date();
-  console.log('setting new session');
+  if (LOG_BACKEND) console.info('setting new session');
 
   return await setUserSession(event, {
     user,

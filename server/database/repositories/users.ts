@@ -27,7 +27,7 @@ export const createUser = async (user: UserToCreate) => {
       primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')` /* decode(${chat_user.primary_email}, 'hex') instead of ('\x' || ${chat_user.primary_email}) instead of concat('\x', ${chat_user.primary_email}) */,
     })
     .catch((err) => {
-      console.error('Failed to insert user into database', err);
+      if (LOG_BACKEND) console.error('Failed to insert user into database', err);
       return null;
     });
 
@@ -59,7 +59,7 @@ export const createEmptyUser = async () => {
       primary_email: sql<string>`encode(decrypt(decode(${chat_user.primary_email}, 'hex'), ${ENCRYPTION_SECRET}, 'aes'), 'escape')`,
     })
     .catch((err) => {
-      console.error('Failed to insert user into database', err);
+      if (LOG_BACKEND) console.error('Failed to insert user into database', err);
       return null;
     });
 
@@ -76,7 +76,7 @@ export const readUser = async (id: GetUser['id']) => {
     .from(chat_user)
     .where(eq(chat_user.id, id))
     .catch((err) => {
-      console.error('Failed to fetch user from database', err);
+      if (LOG_BACKEND) console.error('Failed to fetch user from database', err);
       return null;
     });
 };
@@ -98,7 +98,7 @@ export const readUserUsingPrimaryEmail = async (
       ),
     )
     .catch((err) => {
-      console.error('Failed to fetch user from database', err);
+      if (LOG_BACKEND) console.error('Failed to fetch user from database', err);
       return null;
     });
 
@@ -139,7 +139,7 @@ export const updateUser = async (
     .set(updatedUserInformation)
     .where(eq(chat_user.id, id))
     .catch((err) => {
-      console.error('Failed to update user in database', err);
+      if (LOG_BACKEND) console.error('Failed to update user in database', err);
       return null;
     });
 };
@@ -149,7 +149,7 @@ export const deleteUser = async (id: GetUser['id']) => {
     .delete(chat_user)
     .where(eq(chat_user.id, id))
     .catch((err) => {
-      console.error('Failed to delete user from database', err);
+      if (LOG_BACKEND) console.error('Failed to delete user from database', err);
       return null;
     });
 };
@@ -179,7 +179,7 @@ export const validateUserCredentials = async (
     )
     .limit(1)
     .catch((err) => {
-      console.error('Failed to fetch user from database:', err);
+      if (LOG_BACKEND) console.error('Failed to fetch user from database:', err);
       return null;
     });
 
@@ -205,7 +205,7 @@ export const accountStatistics = async (
           })
           .from(chat_user)
           .catch((err) => {
-            console.error(
+            if (LOG_BACKEND) console.error(
               'Failed to fetch user statistics from database:',
               err,
             );
@@ -219,7 +219,7 @@ export const accountStatistics = async (
           })
           .from(chat_user_oauth_account)
           .catch((err) => {
-            console.error(
+            if (LOG_BACKEND) console.error(
               'Failed to fetch user statistics from database:',
               err,
             );
@@ -234,7 +234,7 @@ export const accountStatistics = async (
           .from(chat_user_oauth_account)
           .where(like(chat_user_oauth_account.provider, 'google'))
           .catch((err) => {
-            console.error(
+            if (LOG_BACKEND) console.error(
               'Failed to fetch user statistics from database:',
               err,
             );
@@ -249,7 +249,7 @@ export const accountStatistics = async (
           .from(chat_user_oauth_account)
           .where(like(chat_user_oauth_account.provider, 'github'))
           .catch((err) => {
-            console.error(
+            if (LOG_BACKEND) console.error(
               'Failed to fetch user statistics from database:',
               err,
             );
