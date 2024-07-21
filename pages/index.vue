@@ -230,7 +230,9 @@ const aiChatKey = computed(
         <AiModelChat :key="aiChatKey" />
         <!-- </ClientOnly> -->
       </main>
-      {{ aiChatKey }}
+      <DevOnly>
+        <div class="text-center">{{ aiChatKey }}</div>
+      </DevOnly>
     </div>
   </div>
 </template>
