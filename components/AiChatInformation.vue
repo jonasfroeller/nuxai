@@ -35,10 +35,10 @@ const filetypeSearchSelectableValues = ref([
 
 <template>
   <div
-    class="relative flex-col items-start order-2 hidden gap-8 md:flex 2xl:order-1"
-  >
+    class="relative flex flex-col items-start order-2 h-full gap-8 2xl:order-1"
+  > <!-- hidden md:flex -->
     <AiModelConfiguration />
-    <fieldset class="grid w-full gap-6 p-4 border rounded-lg">
+    <fieldset class="flex flex-col w-full h-full gap-6 p-4 border rounded-lg">
       <legend class="px-1 -ml-1 text-sm font-medium">
         Generated Configuration File
       </legend>
@@ -134,27 +134,71 @@ const filetypeSearchSelectableValues = ref([
           </Popover>
         </div>
       </div>
-      <div class="grid gap-3">
+      <div class="flex flex-col h-full gap-2">
         <Label for="content">Content of the selected version:</Label>
-        <ScrollArea class="border rounded-sm">
-          <pre id="content" class="min-h-[9.5rem] max-h-[20.33rem] px-4 py-2">
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-xxx
-                    </pre
-          >
+        <ScrollArea class="h-[14.45rem] flex-grow border rounded-sm">
+          <pre id="content" class="h-full py-2">
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+  xxx
+          </pre>
         </ScrollArea>
       </div>
     </fieldset>

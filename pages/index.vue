@@ -51,7 +51,7 @@ const aiChatKey = computed(
 </script>
 
 <template>
-  <div class="grid min-h-screen w-full pl-[53px]">
+  <div class="grid w-full pl-16">
     <aside
       class="fixed top-0 left-0 flex flex-col h-full border-t border-r inset-y bg-[hsl(var(--background))] z-50"
     >
@@ -199,7 +199,7 @@ const aiChatKey = computed(
             </DrawerContent>
           </Drawer>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2 pr-5">
           <Button variant="outline" size="sm" class="ml-auto gap-1.5 text-sm">
             <Import class="size-3.5" />
             Import Code Repository To Analyze
@@ -215,7 +215,7 @@ const aiChatKey = computed(
       >
         <!-- <ClientOnly> -->
         <!-- TODO: fix tab hydration warning -->
-        <Tabs default-value="chat" class="h-screen">
+        <Tabs default-value="chat" class="h-screen max-h-[calc(100%-3rem)]">
           <TabsList class="flex justify-start w-full bg-muted/50">
             <TabsTrigger value="chats"> All Chats </TabsTrigger>
             <TabsTrigger value="chat"> Active Chat Information </TabsTrigger>
@@ -223,16 +223,16 @@ const aiChatKey = computed(
           <TabsContent value="chats" class="h-full">
             <AiChats />
           </TabsContent>
-          <TabsContent value="chat">
+          <TabsContent value="chat" class="h-full">
             <AiChatInformation />
           </TabsContent>
         </Tabs>
         <AiModelChat :key="aiChatKey" />
         <!-- </ClientOnly> -->
       </main>
-      <DevOnly>
+      <!-- <DevOnly>
         <div class="text-center">{{ aiChatKey }}</div>
-      </DevOnly>
+      </DevOnly> -->
     </div>
   </div>
 </template>

@@ -144,7 +144,7 @@ let filteredChats = computed(() => {
       >
         <div class="flex flex-col h-full gap-1">
           <div
-            class="flex justify-between w-full gap-8 p-4 border rounded-sm border-border bg-background"
+            class="flex justify-between flex-grow w-full gap-8 p-4 border rounded-sm border-border bg-background"
             :id="String(chat?.id)"
             v-for="chat in filteredChats"
             :key="chat?.id"
@@ -208,7 +208,7 @@ let filteredChats = computed(() => {
           </div>
         </div>
       </ScrollArea>
-      <div class="pt-2 text-center" v-else>
+      <div class="h-full pt-2 text-center" v-else>
         <p
           v-if="
             Array.isArray(fetchedChats?.chats) &&
