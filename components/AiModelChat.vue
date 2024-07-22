@@ -46,16 +46,14 @@ async function loadPersistedChatMessages() {
 
   const message: CreateMessage = {
     content: 'Persisted chat message.',
-    role: 'user'
+    role: 'user',
   };
-  
+
   await appendChatMessage(message);
 }
 
 // improves ux
-const { 
-  generateMarkdownFromUrl,
-} = useAPI();
+const { generateMarkdownFromUrl } = useAPI();
 
 /* CHAT AI */
 const selectedChat = useSelectedAiChat();
@@ -96,9 +94,13 @@ const {
 
 watch(speechRecognitionError, async () => {
   if (speechRecognitionError.value?.error === 'not-allowed') {
-    toast.error('Speech recognition was disabled for this page!\nPlease allow it, to use the feature!');
+    toast.error(
+      'Speech recognition was disabled for this page!\nPlease allow it, to use the feature!'
+    );
   } else {
-    toast.error(`Speech recognition error! (${speechRecognitionError.value?.error})`);
+    toast.error(
+      `Speech recognition error! (${speechRecognitionError.value?.error})`
+    );
   }
 });
 
@@ -110,8 +112,8 @@ if (isSpeechRecognitionSupported.value && IS_CLIENT) {
 
 /* LOADING INDICATOR */
 
-// Uncaught (in promise) Maximum recursive updates exceeded in component <Toaster>. 
-// This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. 
+// Uncaught (in promise) Maximum recursive updates exceeded in component <Toaster>.
+// This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself.
 // Possible sources include component template, render function, updated hook or watcher source function.
 
 /* let toastIdAiIsResponding: string | number;
@@ -317,7 +319,9 @@ let urlToFetchHtmlFrom = ref('');
                     type="button"
                     variant="ghost"
                     size="icon"
-                    :disabled="chatResponseIsLoading || chatMessages.length === 0"
+                    :disabled="
+                      chatResponseIsLoading || chatMessages.length === 0
+                    "
                   >
                     <Trash2 class="size-4" />
                     <span class="sr-only">Clear Chat</span>
@@ -389,7 +393,9 @@ let urlToFetchHtmlFrom = ref('');
             type="submit"
             size="sm"
             class="gap-1.5"
-            :disabled="chatResponseIsLoading ||  currentChatMessage.trim() === ''"
+            :disabled="
+              chatResponseIsLoading || currentChatMessage.trim() === ''
+            "
           >
             Send Message
             <CornerDownLeft class="size-3.5" />

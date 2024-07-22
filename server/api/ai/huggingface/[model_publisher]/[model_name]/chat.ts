@@ -102,7 +102,7 @@ export default defineLazyEventHandler(async () => {
       if (model_publisher === 'OpenAssistant' || model_publisher === '01-ai') {
         inputs = experimental_buildOpenAssistantPrompt(messages); // basically convertToCoreMessages from 'ai'
         // if (LOG_BACKEND) console.info('using custom prompt builder for OpenAssistant');
-      } else if (model_name === 'mistralai') {
+      } else if (model_publisher === 'mistralai') {
         inputs = experimental_buildLlama2Prompt(messages);
         // if (LOG_BACKEND) console.info('using custom prompt builder for Llama2');
       } else {

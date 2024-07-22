@@ -3,9 +3,9 @@
 <template>
   <div>
     <DynamicHeader />
-      <main class="border-t">
-        <slot />
-      </main>
+    <main class="border-t">
+      <slot />
+    </main>
     <DynamicFooter />
   </div>
 </template>
