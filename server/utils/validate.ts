@@ -19,11 +19,11 @@ export const ChatMessageIdSchema = z.object({
 
 /* BODY */
 
-const allowedAiModelsValues = Object.values(AllowedAiModelsEnum) as [
+/* const allowedAiModelsValues = Object.values(AllowedAiModelsEnum) as [
   string,
   ...string[],
-];
+]; z.enum(allowedAiModelsValues) */
 export const ChatConversationToCreateSchema = z.object({
-  model: z.enum(allowedAiModelsValues),
+  model: z.nativeEnum(AllowedAiModelsEnum),
   name: z.string().min(3),
 });

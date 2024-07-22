@@ -1,19 +1,36 @@
 import { toast } from 'vue-sonner';
+import type { FullyFeaturedChat/* , MinimalChat */ } from '~/lib/types/chat';
+/* import type { UseFetchOptions } from '#app'; */
 
-// TODO: find out, why toast only works, if no chat message is sent
-
-// wrapper around the REST-API, to improve ux
 export const useAPI = () => {
-  // Why not in in utils? -> doesn't seem to work, all the time (because it uses other composables (useFetch))
-  async function generateMarkdownFromUrl(
+  const handleFetch = async <T>(
     url: string,
-    currentChatMessage: string
-  ) {
+    options: any /* UseFetchOptions<unknown> */ = {},
+    toastMessages: { loading: string; success: (data: any) => string; error: (data: any) => string }
+  ): Promise<T> => {
+    const fetchPromise = new Promise<T>(async (resolve, reject) => {
+      await useFetch(url, {
+        ...options,
+        onResponse({ response }: any) {
+          resolve(response._data);
+        },
+        onResponseError({ response }: any) {
+          reject(response._data);
+        },
+      });
+    });
+
+    toast.promise(fetchPromise, toastMessages);
+
+    return fetchPromise.then((data) => data);
+  };
+
+  const generateMarkdownFromUrl = async (url: string, currentChatMessage: string): Promise<string | undefined> => {
     if (url.trim() === '') return;
 
     try {
       new URL(url);
-    } catch (error) {
+    } catch {
       toast.error('Invalid URL!');
       return;
     }
@@ -21,142 +38,71 @@ export const useAPI = () => {
     const endpoint = '/api/html-to-markdown/';
     const encodedUrl = encodeURIComponent(url);
 
-    const fetchPromise = new Promise(async (resolve, reject) => {
-      await useFetch(`${endpoint}${encodedUrl}`, {
-        /* onRequest({ request, options }) {
-                    // if (LOG_FRONTEND) console.info("onRequest", request, options)
-                }, */
-        onResponse({ request, response, options }) {
-          // if (LOG_FRONTEND) console.info("onResponse", request, response, options)
-          resolve(response._data);
-        },
-        onResponseError({ request, response, options }) {
-          // if (LOG_FRONTEND) console.error("onResponseError", request, response, options)
-          reject(response._data);
-        },
-      });
-    });
+    const toastMessages = {
+      loading: "Fetching URL and converting its HTML content to Markdown...",
+      success: (data: any) => "Successfully fetched the URL and converted its HTML content to Markdown!",
+      error: (data: any) => "Failed to fetch the URL and convert its HTML content to Markdown!",
+    };
 
-    toast.promise(fetchPromise, {
-      loading: "Fetching url and converting it's HTML content to markdown...",
-      success: (data: any) =>
-        "Successfully fetched the url and converted it's HTML content to markdown!",
-      error: (data: any) =>
-        "Failed to fetch the url and convert it's HTML content to markdown!",
-    });
+    try {
+      const markdownOfUrl = await handleFetch<string>(`${endpoint}${encodedUrl}`, {}, toastMessages);
+      return currentChatMessage + markdownOfUrl;
+    } catch {
+      return currentChatMessage;
+    }
+  };
 
-    const markdownOfUrl = await fetchPromise;
-    return currentChatMessage + markdownOfUrl;
-  }
+  const persistChatConversation = async (user_id: number, name: string, model: string) => {
+    const url = `/api/users/${user_id}/chats`;
+    const options = {
+      method: 'POST',
+      body: { model, name },
+      lazy: true,
+      pick: ['chat'],
+    };
 
-  // DATA PERSISTENCE
-
-  async function persistChatConversation(
-    user_id: number,
-    name: string,
-    model: string
-  ) {
-    const fetchPromise = new Promise(async (resolve, reject) => {
-      await useFetch(`/api/users/${user_id}/chats`, {
-        method: 'POST',
-        lazy: true,
-        body: {
-          model,
-          name,
-        },
-        pick: ['chat'],
-        /* onRequest({ request, options }) {
-                    // if (LOG_FRONTEND) console.info("onRequest", request, options)
-                }, */
-        onResponse({ request, response, options }) {
-          // if (LOG_FRONTEND) console.info("onResponse", request, response, options)
-          resolve(response._data);
-        },
-        onResponseError({ request, response, options }) {
-          // if (LOG_FRONTEND) console.error("onResponseError", request, response, options)
-          reject(response._data);
-        },
-      });
-    });
-
-    toast.promise(fetchPromise, {
+    const toastMessages = {
       loading: 'Persisting chat history...',
       success: (data: any) => 'Chat history persisted!',
       error: (data: any) => 'Failed to persist chat history!',
-    });
+    };
 
-    // TODO: actually persist the messages onFinish() in chat.ts
-
-    const response = await fetchPromise.then((data: any) => data);
+    const response = await handleFetch<{ chat: FullyFeaturedChat }>(url, options, toastMessages);
     return response.chat.id;
-  }
+  };
 
-  async function persistChatConversationEdit(
-    user_id: number,
-    chat_id: number,
-    chat_name: string
-  ) {
-    const fetchPromise = new Promise(async (resolve, reject) => {
-      await useFetch(`/api/users/${user_id}/chats/${chat_id}`, {
-        method: 'PATCH',
-        body: {
-          name: chat_name,
-        },
-        lazy: true,
-        /* onRequest({ request, options }) {
-                    // if (LOG_FRONTEND) console.info("onRequest", request, options)
-                }, */
-        onResponse({ request, response, options }) {
-          // if (LOG_FRONTEND) console.info("onResponse", request, response, options)
-          resolve(response._data);
-        },
-        onResponseError({ request, response, options }) {
-          // if (LOG_FRONTEND) console.error("onResponseError", request, response, options)
-          reject(response._data);
-        },
-      });
-    });
+  const persistChatConversationEdit = async (user_id: number, chat_id: number, chat_name: string) => {
+    const url = `/api/users/${user_id}/chats/${chat_id}`;
+    const options = {
+      method: 'PATCH',
+      body: { name: chat_name },
+      lazy: true,
+    };
 
-    toast.promise(fetchPromise, {
+    const toastMessages = {
       loading: 'Renaming chat...',
       success: (data: any) => 'Chat renamed!',
       error: (data: any) => 'Failed to rename chat!',
-    });
+    };
 
-    const data = await fetchPromise.then((data: any) => data);
-    return data;
-  }
+    return await handleFetch<{ chat: FullyFeaturedChat }>(url, options, toastMessages);
+  };
 
-  async function persistChatConversationDelete(
-    user_id: number,
-    chat_id: number
-  ) {
-    const fetchPromise = new Promise(async (resolve, reject) => {
-      await useFetch(`/api/users/${user_id}/chats/${chat_id}`, {
-        method: 'DELETE',
-        lazy: true,
-        /* onRequest({ request, options }) {
-                    // if (LOG_FRONTEND) console.info("onRequest", request, options)
-                }, */
-        onResponse({ request, response, options }) {
-          // if (LOG_FRONTEND) console.info("onResponse", request, response, options)
-          resolve(response._data);
-        },
-        onResponseError({ request, response, options }) {
-          // if (LOG_FRONTEND) console.error("onResponseError", request, response, options)
-          reject(response._data);
-        },
-      });
-    });
+  const persistChatConversationDelete = async (user_id: number, chat_id: number): Promise<void> => {
+    const url = `/api/users/${user_id}/chats/${chat_id}`;
+    const options = {
+      method: 'DELETE',
+      lazy: true,
+    };
 
-    toast.promise(fetchPromise, {
+    const toastMessages = {
       loading: 'Deleting chat...',
       success: (data: any) => 'Chat deleted!',
       error: (data: any) => 'Failed to delete chat!',
-    });
+    };
 
-    await fetchPromise;
-  }
+    await handleFetch<void>(url, options, toastMessages);
+  };
 
   return {
     generateMarkdownFromUrl,

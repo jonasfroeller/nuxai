@@ -23,7 +23,7 @@ async function persistChatMessage(
         method: 'POST',
         body: {
           message: messageText,
-          actor: 'assistant',
+          actor,
         },
       }
     );

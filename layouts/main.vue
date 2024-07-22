@@ -1,11 +1,13 @@
 <script setup lang="ts"></script>
 
 <template>
+  <div>
     <DynamicHeader />
       <main class="border-t">
         <slot />
       </main>
     <DynamicFooter />
+  </div>
 </template>
 
 <style scoped>

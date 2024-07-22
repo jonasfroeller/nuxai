@@ -7,7 +7,7 @@ import {
   RefreshCcw,
   Trash2,
   Delete,
-  /* Loader2, */
+  Loader2,
 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import Input from './ui/input/Input.vue';
@@ -38,10 +38,24 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useChat } from '@ai-sdk/vue';
 import { Label } from '@/components/ui/label';
+import type { CreateMessage } from '@ai-sdk/vue';
 import { toast } from 'vue-sonner';
 
+async function loadPersistedChatMessages() {
+  // TODO: fetch from db and map to this type:
+
+  const message: CreateMessage = {
+    content: 'Persisted chat message.',
+    role: 'user'
+  };
+  
+  await appendChatMessage(message);
+}
+
 // improves ux
-const { generateMarkdownFromUrl } = useAPI();
+const { 
+  generateMarkdownFromUrl,
+} = useAPI();
 
 /* CHAT AI */
 const selectedChat = useSelectedAiChat();
@@ -52,17 +66,17 @@ let {
   error: chatError,
   handleSubmit: handleChatMessageSubmit,
   reload: reloadLastChatMessage,
-  isLoading: chatResponseIsLoading, // not reactive
+  isLoading: chatResponseIsLoading, // not reactive?
   setMessages: setChatMessages,
+  append: appendChatMessage,
 } = useChat({
   api: `${selectedModelApiPath.value}?chat_id=${selectedChat.value.id}`,
   keepLastMessageOnError: true,
 });
-let chatIsLoading = ref(chatResponseIsLoading);
 
 watch(chatError, () => {
   if (chatError.value) {
-    toast.error(`Chat error! (${chatError.value.message})`);
+    toast.error(`Chat error!`);
   }
 });
 
@@ -82,13 +96,9 @@ const {
 
 watch(speechRecognitionError, async () => {
   if (speechRecognitionError.value?.error === 'not-allowed') {
-    toast.error(
-      'Speech recognition was disabled for this page!\nPlease allow it, to use the feature!'
-    );
+    toast.error('Speech recognition was disabled for this page!\nPlease allow it, to use the feature!');
   } else {
-    toast.error(
-      `Speech recognition error! (${speechRecognitionError.value?.error})`
-    );
+    toast.error(`Speech recognition error! (${speechRecognitionError.value?.error})`);
   }
 });
 
@@ -99,22 +109,25 @@ if (isSpeechRecognitionSupported.value && IS_CLIENT) {
 }
 
 /* LOADING INDICATOR */
-let toastIdAiIsResponding: string | number;
+
+// Uncaught (in promise) Maximum recursive updates exceeded in component <Toaster>. 
+// This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. 
+// Possible sources include component template, render function, updated hook or watcher source function.
+
+/* let toastIdAiIsResponding: string | number;
 let toastIdAiIsNotResponding: string | number;
 watch(chatResponseIsLoading, (newValue) => {
-  chatIsLoading.value = newValue; // somehow chatResponseIsLoading is not reactive
-
   if (!newValue) {
     if (LOG_FRONTEND) console.info('AI is done responding...');
-    toastIdAiIsNotResponding = toast.success('AI is done responding!');
-    toast.dismiss(toastIdAiIsResponding);
+    toastIdAiIsNotResponding = -1 // toast.success('AI is done responding!');
+    // toast.dismiss(toastIdAiIsResponding);
     return;
   }
 
   if (LOG_FRONTEND) console.info('AI is responding...');
-  toastIdAiIsResponding = toast.info('AI is responding...');
-  toast.dismiss(toastIdAiIsNotResponding);
-});
+  toastIdAiIsResponding =  -1 // toast.info('AI is responding...');
+  // toast.dismiss(toastIdAiIsNotResponding);
+}); */
 
 /* CONVERT HTML TO MARKDOWN */
 let urlToFetchHtmlFrom = ref('');
@@ -180,29 +193,29 @@ let urlToFetchHtmlFrom = ref('');
         </div>
       </div>
 
-      <!-- TODO: fix section not disappearing on chatIsLoading change (v-if is server-side and v-show client-side) -->
-      <!-- <div
-        v-if="chatIsLoading"
-        v-show="chatIsLoading"
+      <!-- v-if="chatResponseIsLoading" -->
+      <!-- TODO: fix section not disappearing on chatResponseIsLoading change (v-if is server-side and v-show client-side) -->
+      <div
+        v-show="chatResponseIsLoading"
         class="flex flex-wrap items-center gap-2 px-4 py-2 border border-blue-200 rounded-lg bg-background"
       >
         <Loader2 class="w-4 h-4 mr-2 text-blue-500 animate-spin" />
         <p class="flex-grow">Waiting for response...</p>
-      </div> -->
+      </div>
 
       <div
         v-if="chatError"
         class="flex flex-wrap items-center w-full p-4 mt-8 font-black uppercase border-2 rounded-md text-ellipsis border-destructive"
       >
         <p class="flex-grow">Something went wrong!</p>
-        <Button variant="outline" @click="reloadLastChatMessage"
+        <Button variant="outline" @click="async () => reloadLastChatMessage"
           >Try again</Button
         >
       </div>
     </ScrollArea>
 
     <form
-      @submit="handleChatMessageSubmit"
+      @submit.prevent="handleChatMessageSubmit"
       class="relative flex-shrink-0 overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring"
     >
       <Label for="message" class="sr-only"> Message </Label>
@@ -304,7 +317,7 @@ let urlToFetchHtmlFrom = ref('');
                     type="button"
                     variant="ghost"
                     size="icon"
-                    :disabled="chatIsLoading || chatMessages.length === 0"
+                    :disabled="chatResponseIsLoading || chatMessages.length === 0"
                   >
                     <Trash2 class="size-4" />
                     <span class="sr-only">Clear Chat</span>
@@ -343,8 +356,8 @@ let urlToFetchHtmlFrom = ref('');
                 type="button"
                 variant="ghost"
                 size="icon"
-                @click="reloadLastChatMessage"
-                :disabled="chatIsLoading || chatMessages.length === 0"
+                @click="async () => reloadLastChatMessage"
+                :disabled="chatResponseIsLoading || chatMessages.length === 0"
               >
                 <RefreshCcw class="size-4" />
                 <span class="sr-only">Refresh Last Response</span>
@@ -376,7 +389,7 @@ let urlToFetchHtmlFrom = ref('');
             type="submit"
             size="sm"
             class="gap-1.5"
-            :disabled="/* chatIsLoading ||  */ currentChatMessage.trim() === ''"
+            :disabled="chatResponseIsLoading ||  currentChatMessage.trim() === ''"
           >
             Send Message
             <CornerDownLeft class="size-3.5" />
