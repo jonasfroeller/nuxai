@@ -38,19 +38,10 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useChat } from '@ai-sdk/vue';
 import { Label } from '@/components/ui/label';
-import type { CreateMessage } from '@ai-sdk/vue';
+import type { Message } from '@ai-sdk/vue';
 import { toast } from 'vue-sonner';
 
-async function loadPersistedChatMessages() {
-  // TODO: fetch from db and map to this type:
-
-  const message: CreateMessage = {
-    content: 'Persisted chat message.',
-    role: 'user',
-  };
-
-  await appendChatMessage(message);
-}
+const { user } = useUserSession();
 
 // improves ux
 const { generateMarkdownFromUrl } = useAPI();
@@ -64,9 +55,9 @@ let {
   error: chatError,
   handleSubmit: handleChatMessageSubmit,
   reload: reloadLastChatMessage,
-  isLoading: chatResponseIsLoading, // not reactive?
+  isLoading: chatResponseIsLoading,
   setMessages: setChatMessages,
-  append: appendChatMessage,
+  /* append: appendChatMessage, */
 } = useChat({
   api: `${selectedModelApiPath.value}?chat_id=${selectedChat.value.id}`,
   keepLastMessageOnError: true,
@@ -133,6 +124,30 @@ watch(chatResponseIsLoading, (newValue) => {
 
 /* CONVERT HTML TO MARKDOWN */
 let urlToFetchHtmlFrom = ref('');
+
+async function loadPersistedChatMessages(user_id: number, chat_id: number) {
+  if (user_id !== -1) {
+    const data = await useFetch(`/api/users/${user_id}/chats/${chat_id}/messages`);
+
+    if (data.data.value?.chatMessages && data.data.value?.chatMessages.length > 0) {
+      const chatMessages = data.data.value.chatMessages; 
+
+      const messages = chatMessages.map(({ id, message, actor }) => (
+        {
+          id: `${String(id)}-${String(Date.now())}`,
+          content: message,
+          role: actor
+        } as Message)
+      );
+
+      setChatMessages(messages);
+    }
+  }
+}
+
+onMounted(async () => {
+  await loadPersistedChatMessages(user.value?.id ?? -1, selectedChat.value.id);
+})
 </script>
 
 <template>
