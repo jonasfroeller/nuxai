@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from '@iconify/vue';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
 const { user } = useUserSession();
@@ -23,7 +24,7 @@ const {
     }}<br />
     SELECTED: {{ selectedAiChat }}<br />
     PLAYGROUND: {{ JSON.stringify(currentAiChatPlaygroundName) }} /
-    {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}
+    <!-- {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }} -->
   </DevOnly>
 
   <form class="grid items-start w-full gap-6">
@@ -45,7 +46,7 @@ const {
           <ShadcnSelectContent>
             <ShadcnSelectItem :value="model" v-for="model in ALLOWED_AI_MODELS">
               <div class="flex items-start gap-3 text-muted-foreground">
-                <ShadcnIcon
+                <Icon
                   :icon="
                     POSSIBLE_AI_MODELS[model.split('/')[0]][
                       model.split('/')[1]

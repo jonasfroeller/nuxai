@@ -140,6 +140,36 @@ if (isSpeechRecognitionSupported.value && IS_CLIENT) {
 /* CONVERT HTML TO MARKDOWN */
 let urlToFetchHtmlFrom = ref('');
 
+/* FILE UPLOAD */
+const { /* files: uploadedFiles,  */open: openFile, reset: resetFile, onChange } = useFileDialog({
+  accept: 'text/plain',
+  /* directory: true, */ // TODO: allow importing of file structure
+})
+
+onChange(async (uploadedFiles) => {
+  if (uploadedFiles) {
+    for (const file of uploadedFiles) {
+      if (file.type !== 'text/plain') {
+        toast.error('File type not supported!');
+        resetFile();
+        return;
+      };
+      appendFileUploadToInput(file.type, file.name, await file.text());
+    }
+
+    resetFile();
+  }
+})
+
+function appendFileUploadToInput(type: string, name: string, text: string) {
+  if (LOG_FRONTEND) console.info('Appending file upload to input...');
+  
+  let prettierFileContent = `\`\`\`${type}:${name}\n${text}\n\`\`\``;
+  currentChatMessage.value = prettierFileContent + currentChatMessage.value;
+}
+
+// Load data
+
 onMounted(async () => {
   const messages = await loadPersistedChatMessages(
     user.value?.id ?? -1,
@@ -159,7 +189,7 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
 
 <template>
   <div
-    class="relative flex flex-col h-full min-h-[60vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 w-[100%-2rem] order-1 2xl:order-2"
+    class="relative flex flex-col h-full min-h-[60vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 w-[calc(100%-2rem)] order-1 2xl:order-2"
   >
     <ShadcnBadge
       variant="outline"
@@ -168,9 +198,8 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
       {{ selectedAiChat.name }}
     </ShadcnBadge>
 
-    <ShadcnScrollArea
-      class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6"
-    >
+    <div class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
+      <ShadcnScrollArea>
       <div
         v-for="m in chatMessages"
         :key="m.id"
@@ -244,6 +273,7 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
         >
       </div>
     </ShadcnScrollArea>
+    </div>
 
     <form
       @submit.prevent="
@@ -266,7 +296,7 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
         <ShadcnTooltipProvider>
           <ShadcnTooltip>
             <ShadcnTooltipTrigger as-child>
-              <ShadcnButton type="button" variant="ghost" size="icon" disabled>
+              <ShadcnButton @click="openFile" type="button" variant="ghost" size="icon">
                 <Paperclip class="size-4" />
                 <span class="sr-only">Attach file</span>
               </ShadcnButton>
