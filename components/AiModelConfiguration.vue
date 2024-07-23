@@ -2,21 +2,28 @@
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
 const { user } = useUserSession();
-const { selectedAiChat, selectedAiChatId, selectedAiChatIsPlayground, resetSelectedAiChatToDefaults } = useSelectedAiChat();
+const {
+  selectedAiChat,
+  selectedAiChatId,
+  selectedAiChatIsPlayground,
+  resetSelectedAiChatToDefaults,
+} = useSelectedAiChat();
 const selectedModel = useSelectedAiModel();
 const { persistChatConversation } = useAPI();
 
-const { 
-  messages: currentAiChatPlaygroundMessagesBackup, 
-  name: currentAiChatPlaygroundName 
+const {
+  messages: currentAiChatPlaygroundMessagesBackup,
+  name: currentAiChatPlaygroundName,
 } = useAiChatPlayground();
 </script>
 
 <template>
   <DevOnly>
-    {{ selectedAiChatId }} / {{ `${selectedModel}?chat_id=${selectedAiChatId}` }}<br>
-    SELECTED: {{ selectedAiChat }}<br>
-    PLAYGROUND: {{ JSON.stringify(currentAiChatPlaygroundName) }} / {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}
+    {{ selectedAiChatId }} / {{ `${selectedModel}?chat_id=${selectedAiChatId}`
+    }}<br />
+    SELECTED: {{ selectedAiChat }}<br />
+    PLAYGROUND: {{ JSON.stringify(currentAiChatPlaygroundName) }} /
+    {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}
   </DevOnly>
 
   <form class="grid items-start w-full gap-6">

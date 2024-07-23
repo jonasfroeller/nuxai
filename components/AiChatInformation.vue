@@ -82,7 +82,10 @@ const aiChatKey = computed(
             </ShadcnPopoverTrigger>
             <ShadcnPopoverContent class="p-0 w-fit">
               <ShadcnCommand>
-                <ShadcnCommandInput class="h-9" placeholder="Search filetype..." />
+                <ShadcnCommandInput
+                  class="h-9"
+                  placeholder="Search filetype..."
+                />
                 <ShadcnCommandEmpty>Filetype not found.</ShadcnCommandEmpty>
                 <ShadcnCommandList>
                   <ShadcnCommandGroup>
@@ -119,7 +122,9 @@ const aiChatKey = computed(
         </div>
       </div>
       <div class="flex flex-col h-full gap-2">
-        <ShadcnLabel for="content">Content of the selected version:</ShadcnLabel>
+        <ShadcnLabel for="content"
+          >Content of the selected version:</ShadcnLabel
+        >
         <ShadcnScrollArea class="h-[14.45rem] flex-grow border rounded-sm">
           <pre id="content" class="h-full py-2">
   xxx

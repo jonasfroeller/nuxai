@@ -5,3 +5,4 @@ public
 components/ui/**
 server/.generated/**
 server/database/migrations/**
+pnpm-lock.yaml

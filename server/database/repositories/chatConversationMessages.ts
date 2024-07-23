@@ -11,7 +11,7 @@ interface ChatConversationMessageToCreate
   extends Omit<
     NewChatConversationMessage,
     'id' | 'created_at' | 'updated_at'
-  > { }
+  > {}
 
 export const createChatConversationMessages = async (
   messages: ChatConversationMessageToCreate[]

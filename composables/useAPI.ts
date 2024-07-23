@@ -1,6 +1,6 @@
 import type { Message } from 'ai';
 import { toast } from 'vue-sonner';
-import type { FullyFeaturedChat, /* , MinimalChat */ } from '~/lib/types/chat';
+import type { FullyFeaturedChat /* , MinimalChat */ } from '~/lib/types/chat';
 /* import type { UseFetchOptions } from '#app'; */
 
 // TODO: improve => return data, isLoading etc. too.
@@ -13,7 +13,7 @@ export const useAPI = () => {
       loading: string;
       success: (data: any) => string;
       error: (data: any) => string;
-    } | null = null,
+    } | null = null
   ): Promise<T> => {
     const fetchPromise = new Promise<T>(async (resolve, reject) => {
       await useFetch(url, {
@@ -100,7 +100,10 @@ export const useAPI = () => {
     return response.chat.id;
   };
 
-  const persistChatConversationMessages = async (user_id: number, chat_id: number/* , messages: Message[] */) => {
+  const persistChatConversationMessages = async (
+    user_id: number,
+    chat_id: number /* , messages: Message[] */
+  ) => {
     const { messages: messagesRef } = useAiChatPlayground();
     const messages = messagesRef.value;
 
@@ -128,9 +131,12 @@ export const useAPI = () => {
       await handleFetch(url, options, toastMessages);
       messagesRef.value = [];
     }
-  }
+  };
 
-  const loadPersistedChatMessages = async (user_id: number, chat_id: number) => {
+  const loadPersistedChatMessages = async (
+    user_id: number,
+    chat_id: number
+  ) => {
     if (user_id !== -1) {
       const url = `/api/users/${user_id}/chats/${chat_id}/messages`;
       const options = {
@@ -143,27 +149,31 @@ export const useAPI = () => {
         error: (data: any) => 'Failed to load chat messages!',
       }; */
 
-      const data = await handleFetch<{ // TODO: improved typing. move db schema and relations in both client and server-side code
-        chatMessages: {
-          id: number;
-          created_at: Date | null;
-          updated_at: Date | null;
-          chat_user_id: number;
-          message: string;
-          actor: string;
-          chat_conversation_id: number;
-        }[] | null
+      const data = await handleFetch<{
+        // TODO: improved typing. move db schema and relations in both client and server-side code
+        chatMessages:
+          | {
+              id: number;
+              created_at: Date | null;
+              updated_at: Date | null;
+              chat_user_id: number;
+              message: string;
+              actor: string;
+              chat_conversation_id: number;
+            }[]
+          | null;
       }>(url, options);
 
       if (data.chatMessages && data.chatMessages.length > 0) {
         const chatMessages = data.chatMessages;
 
-        const messages = chatMessages.map(({ id, message, actor }) => (
-          {
-            id: `${String(id)}-${String(Date.now())}`,
-            content: message,
-            role: actor
-          } as Message)
+        const messages = chatMessages.map(
+          ({ id, message, actor }) =>
+            ({
+              id: `${String(id)}-${String(Date.now())}`,
+              content: message,
+              role: actor,
+            }) as Message
         );
 
         return messages;
@@ -173,7 +183,7 @@ export const useAPI = () => {
     }
 
     return [];
-  }
+  };
 
   const persistChatConversationEdit = async (
     user_id: number,

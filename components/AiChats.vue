@@ -3,10 +3,7 @@ import { RefreshCcw, Pen, Trash2, Search } from 'lucide-vue-next';
 import type { AllowedAiModels } from '~/lib/types/ai.models';
 import type { MinimalChat, FullyFeaturedChat } from '~/lib/types/chat';
 
-const { 
-  persistChatConversationEdit, 
-  persistChatConversationDelete 
-} = useAPI();
+const { persistChatConversationEdit, persistChatConversationDelete } = useAPI();
 const { user } = useUserSession();
 const { selectedAiChat, resetSelectedAiChatToDefaults } = useSelectedAiChat();
 const chatToEdit = ref<MinimalChat>({

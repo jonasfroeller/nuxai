@@ -21,27 +21,23 @@ export default defineEventHandler(async (event) => {
       chat_conversation_id: Number(chat_id),
     };
 
-    const createdMessage = await createChatConversationMessages(
-      [conversationMessageToCreate]
-    );
+    const createdMessage = await createChatConversationMessages([
+      conversationMessageToCreate,
+    ]);
 
     return {
       chatMessage: createdMessage,
     };
   }
 
-  const messages = (rawMessages as Message[]).map(({ content, role }) => (
-    {
-      message: content,
-      actor: role,
-      chat_user_id: Number(user_id),
-      chat_conversation_id: Number(chat_id),
-    }
-  ));
+  const messages = (rawMessages as Message[]).map(({ content, role }) => ({
+    message: content,
+    actor: role,
+    chat_user_id: Number(user_id),
+    chat_conversation_id: Number(chat_id),
+  }));
 
-  const createdMessages = await createChatConversationMessages(
-    messages
-  );
+  const createdMessages = await createChatConversationMessages(messages);
 
   return {
     chatMessages: createdMessages,

@@ -14,7 +14,8 @@ import { toast } from 'vue-sonner';
 // import type { Message } from '@ai-sdk/vue';
 
 const { user } = useUserSession();
-const { messages: currentAiChatPlaygroundMessagesBackup } = useAiChatPlayground();
+const { messages: currentAiChatPlaygroundMessagesBackup } =
+  useAiChatPlayground();
 const { generateMarkdownFromUrl, loadPersistedChatMessages } = useAPI();
 
 /* CHAT AI */
@@ -42,7 +43,9 @@ watch(chatError, () => {
 });
 
 // NOTE: Listening to chatMessages would be way more inefficient, since that would cause the callback function to be called on every token, the AI answers.
-const waitForAiResponseToComplete = async (condition: Ref<boolean | undefined>) => {
+const waitForAiResponseToComplete = async (
+  condition: Ref<boolean | undefined>
+) => {
   return new Promise<void>((resolve) => {
     const unwatch = watch(
       condition,
@@ -57,10 +60,16 @@ const waitForAiResponseToComplete = async (condition: Ref<boolean | undefined>) 
   });
 };
 
-watch(() => chatMessages.value.length, async (newLength, oldLength) => {
-    const aiIsDoneResponding = waitForAiResponseToComplete(chatResponseIsLoading);
+watch(
+  () => chatMessages.value.length,
+  async (newLength, oldLength) => {
+    const aiIsDoneResponding = waitForAiResponseToComplete(
+      chatResponseIsLoading
+    );
 
-    if (chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant') {
+    if (
+      chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant'
+    ) {
       toast.promise(aiIsDoneResponding, {
         loading: 'Fetching AI response...',
         success: (data: any) => 'AI response fetched!',
@@ -71,8 +80,9 @@ watch(() => chatMessages.value.length, async (newLength, oldLength) => {
     await aiIsDoneResponding;
 
     if (LOG_FRONTEND) console.info('Setting chat history messages backup...');
-    console.log(selectedAiChatIsPlayground)
-    if (selectedAiChatIsPlayground) currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
+    console.log(selectedAiChatIsPlayground);
+    if (selectedAiChatIsPlayground)
+      currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
   }
 );
 
@@ -131,9 +141,12 @@ if (isSpeechRecognitionSupported.value && IS_CLIENT) {
 let urlToFetchHtmlFrom = ref('');
 
 onMounted(async () => {
-  const messages = await loadPersistedChatMessages(user.value?.id ?? -1, selectedAiChat.value.id);
+  const messages = await loadPersistedChatMessages(
+    user.value?.id ?? -1,
+    selectedAiChat.value.id
+  );
   setChatMessages(messages);
-})
+});
 
 // Send Message on CTRL + ENTER
 function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
@@ -148,11 +161,16 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
   <div
     class="relative flex flex-col h-full min-h-[60vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 w-[100%-2rem] order-1 2xl:order-2"
   >
-    <ShadcnBadge variant="outline" class="absolute z-10 right-3 top-3 bg-background">
+    <ShadcnBadge
+      variant="outline"
+      class="absolute z-10 right-3 top-3 bg-background"
+    >
       {{ selectedAiChat.name }}
     </ShadcnBadge>
 
-    <ShadcnScrollArea class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
+    <ShadcnScrollArea
+      class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6"
+    >
       <div
         v-for="m in chatMessages"
         :key="m.id"
@@ -219,17 +237,21 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
         class="flex flex-wrap items-center w-full p-4 mt-8 font-black uppercase border-2 rounded-md text-ellipsis border-destructive"
       >
         <p class="flex-grow">Something went wrong!</p>
-        <ShadcnButton variant="outline" @click="async () => reloadLastChatMessage"
+        <ShadcnButton
+          variant="outline"
+          @click="async () => reloadLastChatMessage"
           >Try again</ShadcnButton
         >
       </div>
     </ShadcnScrollArea>
 
     <form
-      @submit.prevent="() => {
-        if (currentChatMessage.trim() === '') return;
-        handleChatMessageSubmit();
-      }"
+      @submit.prevent="
+        () => {
+          if (currentChatMessage.trim() === '') return;
+          handleChatMessageSubmit();
+        }
+      "
       class="relative flex-shrink-0 overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring"
     >
       <ShadcnLabel for="message" class="sr-only"> Message </ShadcnLabel>
@@ -249,7 +271,9 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
                 <span class="sr-only">Attach file</span>
               </ShadcnButton>
             </ShadcnTooltipTrigger>
-            <ShadcnTooltipContent side="top"> Attach File </ShadcnTooltipContent>
+            <ShadcnTooltipContent side="top">
+              Attach File
+            </ShadcnTooltipContent>
           </ShadcnTooltip>
           <ShadcnTooltip>
             <ShadcnPopover>
@@ -260,7 +284,9 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
                     <span class="sr-only">URL context</span>
                   </ShadcnButton>
                 </ShadcnTooltipTrigger>
-                <ShadcnTooltipContent side="top"> URL context </ShadcnTooltipContent>
+                <ShadcnTooltipContent side="top">
+                  URL context
+                </ShadcnTooltipContent>
               </ShadcnPopoverTrigger>
               <ShadcnPopoverContent>
                 <div class="grid gap-2 mb-1">
@@ -322,7 +348,9 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
                 <span class="sr-only">Use Microphone</span>
               </ShadcnButton>
             </ShadcnTooltipTrigger>
-            <ShadcnTooltipContent side="top"> Use Microphone </ShadcnTooltipContent>
+            <ShadcnTooltipContent side="top">
+              Use Microphone
+            </ShadcnTooltipContent>
           </ShadcnTooltip>
           <ShadcnTooltip>
             <ShadcnAlertDialog>
@@ -401,7 +429,9 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
                   <Delete class="w-4 h-4" />
                 </ShadcnButton>
               </ShadcnTooltipTrigger>
-              <ShadcnTooltipContent side="top"> Clear Input </ShadcnTooltipContent>
+              <ShadcnTooltipContent side="top">
+                Clear Input
+              </ShadcnTooltipContent>
             </ShadcnTooltip>
           </ShadcnTooltipProvider>
           <ShadcnButton

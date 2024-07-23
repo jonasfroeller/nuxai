@@ -1,7 +1,9 @@
 import type { MinimalChat } from '~/lib/types/chat';
 
 export const useSelectedAiChat = () => {
-  const selectedAiChatIsPlayground = computed(() => selectedAiChatId.value === -1);
+  const selectedAiChatIsPlayground = computed(
+    () => selectedAiChatId.value === -1
+  );
   const selectedAiChatId = computed(() => selectedAiChat?.value?.id ?? -1);
 
   const resetSelectedAiChatToDefaults = () => {
