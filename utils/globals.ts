@@ -3,8 +3,7 @@ export const IS_PRERENDER = import.meta.prerender;
 export const IS_CLIENT = import.meta.client; // import.meta.browser
 export const IS_SERVER = import.meta.server; // import.meta.nitro
 
-export const LOG_FRONTEND =
-  JSON.parse(process.env.LOG_FRONTEND ?? 'false') ?? false;
+export const LOG_FRONTEND = JSON.parse(process.env.LOG_FRONTEND ?? 'false');
 
 if (IS_DEV) {
   console.log(

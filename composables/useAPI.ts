@@ -1,6 +1,10 @@
+import { useChat } from '@ai-sdk/vue';
+import type { Message } from 'ai';
 import { toast } from 'vue-sonner';
 import type { FullyFeaturedChat /* , MinimalChat */ } from '~/lib/types/chat';
 /* import type { UseFetchOptions } from '#app'; */
+
+// TODO: improve => return data, isLoading etc. too.
 
 export const useAPI = () => {
   const handleFetch = async <T>(
@@ -89,8 +93,67 @@ export const useAPI = () => {
       options,
       toastMessages
     );
+
+    await persistChatConversationMessages(user_id, response.chat.id);
+
     return response.chat.id;
   };
+
+  const persistChatConversationMessages = async (user_id: number, chat_id: number/* , messages: Message[] */) => {
+    const { messages: messagesRef } = useAiChatPlayground();
+    const messages = messagesRef.value;
+
+    if (!messages) {
+      if (LOG_FRONTEND) console.error('No messages to persist!');
+      return;
+    }
+
+    /* if (LOG_FRONTEND)  */console.info('persisting chat messages...', messages);
+
+    if (messages.length > 0) {
+      const url = `/api/users/${user_id}/chats/${chat_id}/messages`;
+      const options = {
+        method: 'POST',
+        body: { messages },
+        lazy: true,
+      };
+
+      const toastMessages = {
+        loading: 'Persisting chat messages...',
+        success: (data: any) => 'Chat messages persisted!',
+        error: (data: any) => 'Failed to persist chat messages!',
+      };
+
+      /* if (LOG_FRONTEND)  */console.info('persisting messages...', messages);
+
+      await handleFetch(url, options, toastMessages);
+      messagesRef.value = [];
+    }
+  }
+
+  const loadPersistedChatMessages = async (user_id: number, chat_id: number) => { // TODO: toast
+    if (user_id !== -1) {
+      const data = await useFetch(`/api/users/${user_id}/chats/${chat_id}/messages`);
+
+      if (data.data.value?.chatMessages && data.data.value?.chatMessages.length > 0) {
+        const chatMessages = data.data.value.chatMessages;
+
+        const messages = chatMessages.map(({ id, message, actor }) => (
+          {
+            id: `${String(id)}-${String(Date.now())}`,
+            content: message,
+            role: actor
+          } as Message)
+        );
+
+        return messages;
+      }
+
+      return [];
+    }
+
+    return [];
+  }
 
   const persistChatConversationEdit = async (
     user_id: number,
@@ -139,6 +202,7 @@ export const useAPI = () => {
   return {
     generateMarkdownFromUrl,
     persistChatConversation,
+    loadPersistedChatMessages,
     persistChatConversationEdit,
     persistChatConversationDelete,
   };

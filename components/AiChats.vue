@@ -12,7 +12,7 @@ const { persistChatConversationEdit, persistChatConversationDelete } = useAPI();
 
 // data
 const { user } = useUserSession();
-const selectedChat = useSelectedAiChat();
+const { selectedAiChat, resetSelectedAiChatToDefaults } = useSelectedAiChat();
 const chatToEdit = ref<MinimalChat>({
   id: -1,
   name: `chat-${Date.now()}`,
@@ -25,17 +25,15 @@ function setSelectedChat(
   model: AllowedAiModels,
   force: boolean = false
 ) {
-  if (selectedChat.value.id === id && force === false) {
-    selectedChat.value.id = -1;
-    selectedChat.value.name = `chat-${Date.now()}`;
-    selectedChat;
+  if (selectedAiChat.value.id === id && force === false) {
+    resetSelectedAiChatToDefaults();
   } else {
-    selectedChat.value.id = id;
-    selectedChat.value.name = name;
-    selectedChat.value.model = model;
+    selectedAiChat.value.id = id;
+    selectedAiChat.value.name = name;
+    selectedAiChat.value.model = model;
   }
 
-  if (LOG_FRONTEND) console.info('setSelectedChat', selectedChat.value);
+  if (LOG_FRONTEND) console.info('setSelectedChat', selectedAiChat.value);
 }
 
 const editChat = (id: number, name: string) => {
@@ -70,7 +68,7 @@ const saveEdit = async (id: number) => {
 const deleteChat = async (id: number) => {
   await persistChatConversationDelete(user?.value?.id ?? -1, id);
 
-  if (selectedChat.value.id === id) {
+  if (selectedAiChat.value.id === id) {
     setSelectedChat(
       -1,
       `chat-${Date.now()}`,
@@ -149,7 +147,7 @@ let filteredChats = computed(() => {
             v-for="chat in filteredChats"
             :key="chat?.id"
             v-bind:class="{
-              'border border-green-600': selectedChat?.id === chat?.id,
+              'border border-green-600': selectedAiChat?.id === chat?.id,
             }"
           >
             <div class="flex flex-col gap-1">
@@ -166,7 +164,7 @@ let filteredChats = computed(() => {
                 <template v-else>
                   <Button
                     :variant="
-                      selectedChat?.id === chat?.id ? 'secondary' : 'outline'
+                      selectedAiChat?.id === chat?.id ? 'secondary' : 'outline'
                     "
                     @click="setSelectedChat(chat.id, chat.name, chat.model)"
                     >{{ chat?.name }}</Button

@@ -11,14 +11,14 @@ interface ChatConversationMessageToCreate
   extends Omit<
     NewChatConversationMessage,
     'id' | 'created_at' | 'updated_at'
-  > {}
+  > { }
 
-export const createChatConversationMessage = async (
-  message: ChatConversationMessageToCreate
+export const createChatConversationMessages = async (
+  messages: ChatConversationMessageToCreate[]
 ) => {
   const createdChatConversationMessage = await db
     .insert(chat_conversation_message)
-    .values(message)
+    .values(messages)
     .returning()
     .catch((err) => {
       if (LOG_BACKEND)

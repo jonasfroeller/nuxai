@@ -44,7 +44,7 @@ definePageMeta({
 });
 
 const selectedModelApiPath = useSelectedAiModelApiPath(); // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
-const selectedAiChat = useSelectedAiChat();
+const { selectedAiChat } = useSelectedAiChat();
 const aiChatKey = computed(
   () => `${selectedModelApiPath.value}?=${selectedAiChat.value.id}`
 );
@@ -195,7 +195,7 @@ const aiChatKey = computed(
                   Configure the settings for the model
                 </DrawerDescription>
               </DrawerHeader>
-              <AiModelConfiguration />
+              <AiModelConfiguration :key="aiChatKey" />
             </DrawerContent>
           </Drawer>
         </div>
@@ -224,7 +224,7 @@ const aiChatKey = computed(
             <AiChats />
           </TabsContent>
           <TabsContent value="chat" class="h-full">
-            <AiChatInformation />
+            <AiChatInformation :key="aiChatKey" />
           </TabsContent>
         </Tabs>
         <AiModelChat :key="aiChatKey" />

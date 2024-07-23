@@ -11,17 +11,53 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
+// import { useChat } from '@ai-sdk/vue';
 
 // improves ux
 const { persistChatConversation } = useAPI();
 
 const { user } = useUserSession();
-const selectedChat = useSelectedAiChat();
+const { selectedAiChat, selectedAiChatId, selectedAiChatIsPlayground, resetSelectedAiChatToDefaults } = useSelectedAiChat();
 const selectedModel = useSelectedAiModel();
-let isPlayground = computed(() => selectedChat.value.id === -1);
+
+const { messages: currentAiChatPlaygroundMessagesBackup, name: currentAiChatPlaygroundName } = useAiChatPlayground();
+
+/* const { messages } = useChat({ // TODO: messages are not updated properly. set currentAiChatPlaygroundMessagesBackup on sendMessage in AiModelChat
+  id: String(selectedAiChatId),
+  api: `${selectedModel}?chat_id=${selectedAiChatId}`,
+  keepLastMessageOnError: true,
+}); */
+
+// causes "Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.""
+/* async function persistChatHistory() {
+  const { messages } = useChat({
+    id: String(selectedChat.value.id),
+    api: `${selectedModel}?chat_id=${selectedChat.value.id}`,
+    keepLastMessageOnError: true,
+  });
+  
+  console.log('persisting chat history...');
+
+  chatMessagesBackup.value = messages.value;
+
+  console.log('chatMessagesBackup', chatMessagesBackup.value);
+
+  selectedChat.value.id = await persistChatConversation(
+    user?.value?.id ?? -1,
+    selectedChat.value.name,
+    selectedChat.value.model,
+  );
+} */
 </script>
 
 <template>
+  <DevOnly>
+    {{ selectedAiChatId }} | {{ `${selectedModel}?chat_id=${selectedAiChatId}` }}<br>
+    SELECTED: {{ selectedAiChat }}<br>
+    <!-- {{ messages }} -->
+    PLAYGROUND: {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }} / {{ JSON.stringify(currentAiChatPlaygroundName) }}
+  </DevOnly>
+
   <form class="grid items-start w-full gap-6">
     <fieldset class="grid gap-6 p-4 border rounded-lg">
       <legend class="px-1 -ml-1 text-sm font-medium">Settings</legend>
@@ -32,7 +68,7 @@ let isPlayground = computed(() => selectedChat.value.id === -1);
           default-value="OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5"
         >
           <SelectTrigger
-            :disabled="!isPlayground"
+            :disabled="!selectedAiChatIsPlayground"
             id="model"
             class="items-start [&_[data-description]]:hidden"
           >
@@ -82,22 +118,22 @@ let isPlayground = computed(() => selectedChat.value.id === -1);
         </Select>
         <div class="grid grid-cols-[1fr_auto] gap-1">
           <Input
-            :disabled="!isPlayground"
+            :disabled="!selectedAiChatIsPlayground"
             id="chat-name"
             type="text"
-            v-model="selectedChat.name"
+            v-model="selectedAiChat.name"
             placeholder="Name of the chat... (optional)"
           />
           <Button
-            :disabled="!isPlayground"
+            :disabled="!selectedAiChatIsPlayground"
             type="button"
             variant="secondary"
             @click="
               async () => {
-                selectedChat.id = await persistChatConversation(
+                selectedAiChat.id = await persistChatConversation(
                   user?.id ?? -1,
-                  selectedChat.name,
-                  selectedChat.model
+                  selectedAiChat.name,
+                  selectedAiChat.model
                 );
               }
             "
@@ -105,17 +141,10 @@ let isPlayground = computed(() => selectedChat.value.id === -1);
           >
         </div>
         <Button
-          :disabled="isPlayground"
+          :disabled="selectedAiChatIsPlayground"
           type="button"
           variant="secondary"
-          @click="
-            () => {
-              selectedChat.id = -1;
-              selectedChat.name = `chat-${Date.now()}`;
-              selectedChat.model =
-                'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5';
-            }
-          "
+          @click="() => resetSelectedAiChatToDefaults()"
           >New Playground Chat</Button
         >
       </div>

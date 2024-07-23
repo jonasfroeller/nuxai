@@ -38,16 +38,17 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useChat } from '@ai-sdk/vue';
 import { Label } from '@/components/ui/label';
-import type { Message } from '@ai-sdk/vue';
+// import type { Message } from '@ai-sdk/vue';
 import { toast } from 'vue-sonner';
 
+const { messages: currentAiChatPlaygroundMessagesBackup } = useAiChatPlayground();
 const { user } = useUserSession();
 
 // improves ux
-const { generateMarkdownFromUrl } = useAPI();
+const { generateMarkdownFromUrl, loadPersistedChatMessages } = useAPI();
 
 /* CHAT AI */
-const selectedChat = useSelectedAiChat();
+const { selectedAiChat } = useSelectedAiChat();
 const selectedModelApiPath = useSelectedAiModelApiPath();
 let {
   messages: chatMessages,
@@ -59,7 +60,8 @@ let {
   setMessages: setChatMessages,
   /* append: appendChatMessage, */
 } = useChat({
-  api: `${selectedModelApiPath.value}?chat_id=${selectedChat.value.id}`,
+  id: String(selectedAiChat.value.id),
+  api: `${selectedModelApiPath.value}?chat_id=${selectedAiChat.value.id}`,
   keepLastMessageOnError: true,
 });
 
@@ -68,6 +70,39 @@ watch(chatError, () => {
     toast.error(`Chat error!`);
   }
 });
+
+// Is called way too often. Using useChat id instead => didn't work out, would be a pain to handle the rerendering, because useChat can only be used in setup scripts...
+/* watch(chatMessages, () => {
+  if (chatMessages.value.length > 0) {
+    if (LOG_FRONTEND) console.info("Setting chat messages...");
+    currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
+  }
+}); */
+const waitForAiResponseToComplete = async (condition: Ref<boolean | undefined>) => {
+  return new Promise<void>((resolve) => {
+    const unwatch = watch(
+      condition,
+      (newValue) => {
+        if (!newValue) {
+          resolve();
+          unwatch();
+        }
+      },
+      { immediate: true }
+    );
+  });
+};
+
+watch(() => chatMessages.value.length, async (newLength, oldLength) => {
+    // if (LOG_FRONTEND) console.info(`Array length changed from ${oldLength} to ${newLength}`);
+
+    await waitForAiResponseToComplete(chatResponseIsLoading);
+
+    if (LOG_FRONTEND) console.info('Setting message backup...');
+
+    currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
+  }
+);
 
 /* SPEECH RECOGNITION */
 const {
@@ -125,28 +160,9 @@ watch(chatResponseIsLoading, (newValue) => {
 /* CONVERT HTML TO MARKDOWN */
 let urlToFetchHtmlFrom = ref('');
 
-async function loadPersistedChatMessages(user_id: number, chat_id: number) {
-  if (user_id !== -1) {
-    const data = await useFetch(`/api/users/${user_id}/chats/${chat_id}/messages`);
-
-    if (data.data.value?.chatMessages && data.data.value?.chatMessages.length > 0) {
-      const chatMessages = data.data.value.chatMessages; 
-
-      const messages = chatMessages.map(({ id, message, actor }) => (
-        {
-          id: `${String(id)}-${String(Date.now())}`,
-          content: message,
-          role: actor
-        } as Message)
-      );
-
-      setChatMessages(messages);
-    }
-  }
-}
-
 onMounted(async () => {
-  await loadPersistedChatMessages(user.value?.id ?? -1, selectedChat.value.id);
+  const messages = await loadPersistedChatMessages(user.value?.id ?? -1, selectedAiChat.value.id);
+  setChatMessages(messages);
 })
 </script>
 
@@ -155,7 +171,7 @@ onMounted(async () => {
     class="relative flex flex-col h-full min-h-[60vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 w-[100%-2rem] order-1 2xl:order-2"
   >
     <Badge variant="outline" class="absolute z-10 right-3 top-3 bg-background">
-      {{ selectedChat.name }}
+      {{ selectedAiChat.name }}
     </Badge>
 
     <ScrollArea class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
@@ -232,7 +248,10 @@ onMounted(async () => {
     </ScrollArea>
 
     <form
-      @submit.prevent="handleChatMessageSubmit"
+      @submit.prevent="() => {
+        if (currentChatMessage.trim() === '') return;
+        handleChatMessageSubmit();
+      }"
       class="relative flex-shrink-0 overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring"
     >
       <Label for="message" class="sr-only"> Message </Label>
