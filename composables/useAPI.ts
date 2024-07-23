@@ -133,7 +133,7 @@ export const useAPI = () => {
     }
   };
 
-  const loadPersistedChatMessages = async (
+  const loadPersistedChatMessages = async ( // TODO: fix me, I am broken
     user_id: number,
     chat_id: number
   ) => {
@@ -152,16 +152,16 @@ export const useAPI = () => {
       const data = await handleFetch<{
         // TODO: improved typing. move db schema and relations in both client and server-side code
         chatMessages:
-          | {
-              id: number;
-              created_at: Date | null;
-              updated_at: Date | null;
-              chat_user_id: number;
-              message: string;
-              actor: string;
-              chat_conversation_id: number;
-            }[]
-          | null;
+        | {
+          id: number;
+          created_at: Date | null;
+          updated_at: Date | null;
+          chat_user_id: number;
+          message: string;
+          actor: string;
+          chat_conversation_id: number;
+        }[]
+        | null;
       }>(url, options);
 
       if (data.chatMessages && data.chatMessages.length > 0) {

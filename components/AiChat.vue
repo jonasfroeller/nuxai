@@ -9,7 +9,7 @@ import {
   Delete,
   Loader2,
 } from 'lucide-vue-next';
-import { useChat } from '@ai-sdk/vue'; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
+import { useChat, type Message } from '@ai-sdk/vue'; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
 import { toast } from 'vue-sonner';
 // import type { Message } from '@ai-sdk/vue';
 
@@ -70,7 +70,7 @@ watch(
     if (
       chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant'
     ) {
-      toast.promise(aiIsDoneResponding, {
+      toast.promise(aiIsDoneResponding, { // TODO: only trigger, if message is new and not also if it is received from database
         loading: 'Fetching AI response...',
         success: (data: any) => 'AI response fetched!',
         error: (data: any) => 'Failed to fetch AI response!',
@@ -170,13 +170,42 @@ function appendFileUploadToInput(type: string, name: string, text: string) {
 
 // Load data
 
-onMounted(async () => {
+/* async function loadChatMessages() {
   const messages = await loadPersistedChatMessages(
     user.value?.id ?? -1,
     selectedAiChat.value.id
   );
+
+  console.log(messages, user.value?.id, selectedAiChat.value.id);
+
   setChatMessages(messages);
+} */
+
+async function loadChatMessages(user_id: number, chat_id: number) {
+  if (user_id !== -1) {
+    const data = await useFetch(`/api/users/${user_id}/chats/${chat_id}/messages`);
+    if (data.data.value?.chatMessages && data.data.value?.chatMessages.length > 0) {
+      const chatMessages = data.data.value.chatMessages; 
+      const messages = chatMessages.map(({ id, message, actor }) => (
+        {
+          id: `${String(id)}-${String(Date.now())}`,
+          content: message,
+          role: actor
+        } as Message)
+      );
+      
+      setChatMessages(messages);
+    }
+  }
+}
+
+onMounted(async () => {
+  await loadChatMessages(user.value?.id ?? -1, selectedAiChat.value.id);
 });
+
+/* onRenderTriggered(async () => {
+  await loadChatMessages();
+}) */
 
 // Send Message on CTRL + ENTER
 function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
