@@ -1,4 +1,3 @@
-import { shallowRef } from 'vue';
 import type {
     AllowedAiModels,
     AllowedAiModelPaths,

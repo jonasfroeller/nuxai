@@ -227,7 +227,7 @@ const aiChatKey = computed(
             <AiChatInformation :key="aiChatKey" />
           </TabsContent>
         </Tabs>
-        <AiModelChat :key="aiChatKey" />
+        <AiChat :key="aiChatKey" />
         <!-- </ClientOnly> -->
       </main>
       <DevOnly>

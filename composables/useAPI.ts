@@ -1,7 +1,6 @@
-import { useChat } from '@ai-sdk/vue';
 import type { Message } from 'ai';
 import { toast } from 'vue-sonner';
-import type { FullyFeaturedChat /* , MinimalChat */ } from '~/lib/types/chat';
+import type { FullyFeaturedChat, /* , MinimalChat */ } from '~/lib/types/chat';
 /* import type { UseFetchOptions } from '#app'; */
 
 // TODO: improve => return data, isLoading etc. too.
@@ -14,7 +13,7 @@ export const useAPI = () => {
       loading: string;
       success: (data: any) => string;
       error: (data: any) => string;
-    }
+    } | null = null,
   ): Promise<T> => {
     const fetchPromise = new Promise<T>(async (resolve, reject) => {
       await useFetch(url, {
@@ -28,7 +27,9 @@ export const useAPI = () => {
       });
     });
 
-    toast.promise(fetchPromise, toastMessages);
+    if (toastMessages) {
+      toast.promise(fetchPromise, toastMessages);
+    }
 
     return fetchPromise.then((data) => data);
   };
@@ -108,8 +109,6 @@ export const useAPI = () => {
       return;
     }
 
-    /* if (LOG_FRONTEND)  */console.info('persisting chat messages...', messages);
-
     if (messages.length > 0) {
       const url = `/api/users/${user_id}/chats/${chat_id}/messages`;
       const options = {
@@ -124,19 +123,40 @@ export const useAPI = () => {
         error: (data: any) => 'Failed to persist chat messages!',
       };
 
-      /* if (LOG_FRONTEND)  */console.info('persisting messages...', messages);
+      if (LOG_FRONTEND) console.info('Persisting messages...', messages);
 
       await handleFetch(url, options, toastMessages);
       messagesRef.value = [];
     }
   }
 
-  const loadPersistedChatMessages = async (user_id: number, chat_id: number) => { // TODO: toast
+  const loadPersistedChatMessages = async (user_id: number, chat_id: number) => {
     if (user_id !== -1) {
-      const data = await useFetch(`/api/users/${user_id}/chats/${chat_id}/messages`);
+      const url = `/api/users/${user_id}/chats/${chat_id}/messages`;
+      const options = {
+        lazy: true,
+      };
 
-      if (data.data.value?.chatMessages && data.data.value?.chatMessages.length > 0) {
-        const chatMessages = data.data.value.chatMessages;
+      /* const toastMessages = { // would require to fetch two times..., TODO: different solution
+        loading: 'Loading chat messages...',
+        success: (data: any) => 'Chat messages loaded!',
+        error: (data: any) => 'Failed to load chat messages!',
+      }; */
+
+      const data = await handleFetch<{ // TODO: improved typing. move db schema and relations in both client and server-side code
+        chatMessages: {
+          id: number;
+          created_at: Date | null;
+          updated_at: Date | null;
+          chat_user_id: number;
+          message: string;
+          actor: string;
+          chat_conversation_id: number;
+        }[] | null
+      }>(url, options);
+
+      if (data.chatMessages && data.chatMessages.length > 0) {
+        const chatMessages = data.chatMessages;
 
         const messages = chatMessages.map(({ id, message, actor }) => (
           {

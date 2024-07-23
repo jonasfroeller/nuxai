@@ -1,83 +1,44 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue';
-import { Label } from '@/components/ui/label';
-import Button from './ui/button/Button.vue';
-import Input from './ui/input/Input.vue';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
-// import { useChat } from '@ai-sdk/vue';
-
-// improves ux
-const { persistChatConversation } = useAPI();
 
 const { user } = useUserSession();
 const { selectedAiChat, selectedAiChatId, selectedAiChatIsPlayground, resetSelectedAiChatToDefaults } = useSelectedAiChat();
 const selectedModel = useSelectedAiModel();
+const { persistChatConversation } = useAPI();
 
-const { messages: currentAiChatPlaygroundMessagesBackup, name: currentAiChatPlaygroundName } = useAiChatPlayground();
-
-/* const { messages } = useChat({ // TODO: messages are not updated properly. set currentAiChatPlaygroundMessagesBackup on sendMessage in AiModelChat
-  id: String(selectedAiChatId),
-  api: `${selectedModel}?chat_id=${selectedAiChatId}`,
-  keepLastMessageOnError: true,
-}); */
-
-// causes "Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.""
-/* async function persistChatHistory() {
-  const { messages } = useChat({
-    id: String(selectedChat.value.id),
-    api: `${selectedModel}?chat_id=${selectedChat.value.id}`,
-    keepLastMessageOnError: true,
-  });
-  
-  console.log('persisting chat history...');
-
-  chatMessagesBackup.value = messages.value;
-
-  console.log('chatMessagesBackup', chatMessagesBackup.value);
-
-  selectedChat.value.id = await persistChatConversation(
-    user?.value?.id ?? -1,
-    selectedChat.value.name,
-    selectedChat.value.model,
-  );
-} */
+const { 
+  messages: currentAiChatPlaygroundMessagesBackup, 
+  name: currentAiChatPlaygroundName 
+} = useAiChatPlayground();
 </script>
 
 <template>
   <DevOnly>
-    {{ selectedAiChatId }} | {{ `${selectedModel}?chat_id=${selectedAiChatId}` }}<br>
+    {{ selectedAiChatId }} / {{ `${selectedModel}?chat_id=${selectedAiChatId}` }}<br>
     SELECTED: {{ selectedAiChat }}<br>
-    <!-- {{ messages }} -->
-    PLAYGROUND: {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }} / {{ JSON.stringify(currentAiChatPlaygroundName) }}
+    PLAYGROUND: {{ JSON.stringify(currentAiChatPlaygroundName) }} / {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}
   </DevOnly>
 
   <form class="grid items-start w-full gap-6">
     <fieldset class="grid gap-6 p-4 border rounded-lg">
       <legend class="px-1 -ml-1 text-sm font-medium">Settings</legend>
       <div class="grid gap-3">
-        <Label for="model">Model</Label>
-        <Select
+        <ShadcnLabel for="model">Model</ShadcnLabel>
+        <ShadcnSelect
           v-model="selectedModel"
           default-value="OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5"
         >
-          <SelectTrigger
+          <ShadcnSelectTrigger
             :disabled="!selectedAiChatIsPlayground"
             id="model"
             class="items-start [&_[data-description]]:hidden"
           >
-            <SelectValue placeholder="Select a model" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem :value="model" v-for="model in ALLOWED_AI_MODELS">
+            <ShadcnSelectValue placeholder="ShadcnSelect a model" />
+          </ShadcnSelectTrigger>
+          <ShadcnSelectContent>
+            <ShadcnSelectItem :value="model" v-for="model in ALLOWED_AI_MODELS">
               <div class="flex items-start gap-3 text-muted-foreground">
-                <Icon
+                <ShadcnIcon
                   :icon="
                     POSSIBLE_AI_MODELS[model.split('/')[0]][
                       model.split('/')[1]
@@ -113,18 +74,18 @@ const { messages: currentAiChatPlaygroundMessagesBackup, name: currentAiChatPlay
                   ></p>
                 </div>
               </div>
-            </SelectItem>
-          </SelectContent>
-        </Select>
+            </ShadcnSelectItem>
+          </ShadcnSelectContent>
+        </ShadcnSelect>
         <div class="grid grid-cols-[1fr_auto] gap-1">
-          <Input
+          <ShadcnInput
             :disabled="!selectedAiChatIsPlayground"
             id="chat-name"
             type="text"
             v-model="selectedAiChat.name"
             placeholder="Name of the chat... (optional)"
           />
-          <Button
+          <ShadcnButton
             :disabled="!selectedAiChatIsPlayground"
             type="button"
             variant="secondary"
@@ -137,15 +98,15 @@ const { messages: currentAiChatPlaygroundMessagesBackup, name: currentAiChatPlay
                 );
               }
             "
-            >Persist Chat History</Button
+            >Persist Chat History</ShadcnButton
           >
         </div>
-        <Button
+        <ShadcnButton
           :disabled="selectedAiChatIsPlayground"
           type="button"
           variant="secondary"
           @click="() => resetSelectedAiChatToDefaults()"
-          >New Playground Chat</Button
+          >New Playground Chat</ShadcnButton
         >
       </div>
     </fieldset>

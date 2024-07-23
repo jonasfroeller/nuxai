@@ -1,16 +1,12 @@
 <script lang="ts" setup>
-import { RefreshCcw, Pen, Trash2 } from 'lucide-vue-next';
-import { Search } from 'lucide-vue-next';
-import Input from './ui/input/Input.vue';
-import Button from './ui/button/Button.vue';
+import { RefreshCcw, Pen, Trash2, Search } from 'lucide-vue-next';
 import type { AllowedAiModels } from '~/lib/types/ai.models';
 import type { MinimalChat, FullyFeaturedChat } from '~/lib/types/chat';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
-// improves ux
-const { persistChatConversationEdit, persistChatConversationDelete } = useAPI();
-
-// data
+const { 
+  persistChatConversationEdit, 
+  persistChatConversationDelete 
+} = useAPI();
 const { user } = useUserSession();
 const { selectedAiChat, resetSelectedAiChatToDefaults } = useSelectedAiChat();
 const chatToEdit = ref<MinimalChat>({
@@ -108,7 +104,7 @@ let filteredChats = computed(() => {
       class="sticky top-0 left-0 z-10 flex items-center w-full gap-1 pb-2 bg-background"
     >
       <div class="relative w-full">
-        <Input
+        <ShadcnInput
           v-model="searchQuery"
           id="search"
           type="text"
@@ -121,18 +117,18 @@ let filteredChats = computed(() => {
           <Search class="size-6 text-muted-foreground" />
         </span>
       </div>
-      <Button
+      <ShadcnButton
         :disabled="fetchedChatsStatus === 'pending'"
         variant="outline"
         @click="fetchedChatsRefresh"
         class="[&>*]:hover:animate-spin"
       >
         <RefreshCcw class="w-4 h-4" />
-      </Button>
+      </ShadcnButton>
     </div>
 
     <div class="h-[calc(100%-3rem)]">
-      <ScrollArea
+      <ShadcnScrollArea
         class="h-full"
         v-if="
           filteredChats &&
@@ -153,32 +149,32 @@ let filteredChats = computed(() => {
             <div class="flex flex-col gap-1">
               <div class="flex items-center gap-1">
                 <template v-if="chatToEdit.id === chat.id">
-                  <Input
+                  <ShadcnInput
                     @keydown.enter="saveEdit(chat.id)"
                     v-model="chatToEdit.name"
                   />
-                  <Button variant="outline" @click="saveEdit(chat.id)"
-                    >Save</Button
+                  <ShadcnButton variant="outline" @click="saveEdit(chat.id)"
+                    >Save</ShadcnButton
                   >
                 </template>
                 <template v-else>
-                  <Button
+                  <ShadcnButton
                     :variant="
                       selectedAiChat?.id === chat?.id ? 'secondary' : 'outline'
                     "
                     @click="setSelectedChat(chat.id, chat.name, chat.model)"
-                    >{{ chat?.name }}</Button
+                    >{{ chat?.name }}</ShadcnButton
                   >
-                  <Button
+                  <ShadcnButton
                     variant="outline"
                     @click="editChat(chat.id, chat.name)"
                     ><Pen class="w-4 h-4"
-                  /></Button>
+                  /></ShadcnButton>
                 </template>
               </div>
-              <Button variant="destructive" @click="deleteChat(chat?.id)"
+              <ShadcnButton variant="destructive" @click="deleteChat(chat?.id)"
                 >delete<Trash2 class="w-4 h-4 ml-1"
-              /></Button>
+              /></ShadcnButton>
             </div>
             <div class="grid text-right">
               <span class="truncate text-muted-foreground">{{
@@ -205,7 +201,7 @@ let filteredChats = computed(() => {
             </div>
           </div>
         </div>
-      </ScrollArea>
+      </ShadcnScrollArea>
       <div class="h-full pt-2 text-center" v-else>
         <p
           v-if="

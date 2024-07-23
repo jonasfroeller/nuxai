@@ -9,7 +9,6 @@ interface UserToCreate extends Omit<NewUser, 'id' | 'hashed_password'> {
   password: string;
 }
 
-// TODO: put encryption and decryption in separate functions, to avoid code duplication
 /* TODO: check if user has access to CRUD operations (make sure everything here is LGTM) */
 
 export const createUser = async (user: UserToCreate) => {

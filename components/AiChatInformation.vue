@@ -1,29 +1,6 @@
 <script lang="ts" setup>
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { cn } from '~/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 
 const filetypeSearchIsOpen = ref(false);
 const filetypeSearchSelectedValue = ref('');
@@ -51,7 +28,7 @@ const aiChatKey = computed(
       </legend>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <Label
+          <ShadcnLabel
             >Version (<NuxtTime
               class="text-muted-foreground"
               :datetime="new Date()"
@@ -60,14 +37,14 @@ const aiChatKey = computed(
               year="numeric"
               hour="numeric"
               minute="numeric"
-            />)</Label
+            />)</ShadcnLabel
           >
-          <Select :default-value="'null'">
-            <SelectTrigger>
-              <SelectValue placeholder="Select a role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem :value="'null'">
+          <ShadcnSelect :default-value="'null'">
+            <ShadcnSelectTrigger>
+              <ShadcnSelectValue placeholder="ShadcnSelect a role" />
+            </ShadcnSelectTrigger>
+            <ShadcnSelectContent>
+              <ShadcnSelectItem :value="'null'">
                 <NuxtTime
                   class="text-muted-foreground"
                   :datetime="new Date()"
@@ -79,15 +56,15 @@ const aiChatKey = computed(
                   second="numeric"
                 />
                 (+200, -322)
-              </SelectItem>
-            </SelectContent>
-          </Select>
+              </ShadcnSelectItem>
+            </ShadcnSelectContent>
+          </ShadcnSelect>
         </div>
         <div>
-          <Label>Filetype</Label><br />
-          <Popover v-model:open="filetypeSearchIsOpen">
-            <PopoverTrigger as-child>
-              <Button
+          <ShadcnLabel>Filetype</ShadcnLabel><br />
+          <ShadcnPopover v-model:open="filetypeSearchIsOpen">
+            <ShadcnPopoverTrigger as-child>
+              <ShadcnButton
                 variant="outline"
                 role="combobox"
                 :aria-expanded="filetypeSearchIsOpen"
@@ -98,18 +75,18 @@ const aiChatKey = computed(
                     ? filetypeSearchSelectableValues.find(
                         (option) => option.value === filetypeSearchSelectedValue
                       )?.label
-                    : 'Select filetype...'
+                    : 'ShadcnSelect filetype...'
                 }}
                 <ChevronsUpDown class="w-3 h-3 ml-2 opacity-50 shrink-0" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent class="p-0 w-fit">
-              <Command>
-                <CommandInput class="h-9" placeholder="Search filetype..." />
-                <CommandEmpty>Filetype not found.</CommandEmpty>
-                <CommandList>
-                  <CommandGroup>
-                    <CommandItem
+              </ShadcnButton>
+            </ShadcnPopoverTrigger>
+            <ShadcnPopoverContent class="p-0 w-fit">
+              <ShadcnCommand>
+                <ShadcnCommandInput class="h-9" placeholder="Search filetype..." />
+                <ShadcnCommandEmpty>Filetype not found.</ShadcnCommandEmpty>
+                <ShadcnCommandList>
+                  <ShadcnCommandGroup>
+                    <ShadcnCommandItem
                       v-for="option in filetypeSearchSelectableValues"
                       :key="option.value"
                       :value="option.value"
@@ -133,17 +110,17 @@ const aiChatKey = computed(
                           )
                         "
                       />
-                    </CommandItem>
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+                    </ShadcnCommandItem>
+                  </ShadcnCommandGroup>
+                </ShadcnCommandList>
+              </ShadcnCommand>
+            </ShadcnPopoverContent>
+          </ShadcnPopover>
         </div>
       </div>
       <div class="flex flex-col h-full gap-2">
-        <Label for="content">Content of the selected version:</Label>
-        <ScrollArea class="h-[14.45rem] flex-grow border rounded-sm">
+        <ShadcnLabel for="content">Content of the selected version:</ShadcnLabel>
+        <ShadcnScrollArea class="h-[14.45rem] flex-grow border rounded-sm">
           <pre id="content" class="h-full py-2">
   xxx
   xxx
@@ -206,7 +183,7 @@ const aiChatKey = computed(
   xxx
   xxx
           </pre>
-        </ScrollArea>
+        </ShadcnScrollArea>
       </div>
     </fieldset>
   </div>

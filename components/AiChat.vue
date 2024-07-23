@@ -9,46 +9,16 @@ import {
   Delete,
   Loader2,
 } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
-import Input from './ui/input/Input.vue';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { useChat } from '@ai-sdk/vue';
-import { Label } from '@/components/ui/label';
-// import type { Message } from '@ai-sdk/vue';
+import { useChat } from '@ai-sdk/vue'; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
 import { toast } from 'vue-sonner';
+// import type { Message } from '@ai-sdk/vue';
 
-const { messages: currentAiChatPlaygroundMessagesBackup } = useAiChatPlayground();
 const { user } = useUserSession();
-
-// improves ux
+const { messages: currentAiChatPlaygroundMessagesBackup } = useAiChatPlayground();
 const { generateMarkdownFromUrl, loadPersistedChatMessages } = useAPI();
 
 /* CHAT AI */
-const { selectedAiChat } = useSelectedAiChat();
+const { selectedAiChat, selectedAiChatIsPlayground } = useSelectedAiChat();
 const selectedModelApiPath = useSelectedAiModelApiPath();
 let {
   messages: chatMessages,
@@ -71,13 +41,7 @@ watch(chatError, () => {
   }
 });
 
-// Is called way too often. Using useChat id instead => didn't work out, would be a pain to handle the rerendering, because useChat can only be used in setup scripts...
-/* watch(chatMessages, () => {
-  if (chatMessages.value.length > 0) {
-    if (LOG_FRONTEND) console.info("Setting chat messages...");
-    currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
-  }
-}); */
+// NOTE: Listening to chatMessages would be way more inefficient, since that would cause the callback function to be called on every token, the AI answers.
 const waitForAiResponseToComplete = async (condition: Ref<boolean | undefined>) => {
   return new Promise<void>((resolve) => {
     const unwatch = watch(
@@ -94,15 +58,42 @@ const waitForAiResponseToComplete = async (condition: Ref<boolean | undefined>) 
 };
 
 watch(() => chatMessages.value.length, async (newLength, oldLength) => {
-    // if (LOG_FRONTEND) console.info(`Array length changed from ${oldLength} to ${newLength}`);
+    const aiIsDoneResponding = waitForAiResponseToComplete(chatResponseIsLoading);
 
-    await waitForAiResponseToComplete(chatResponseIsLoading);
+    if (chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant') {
+      toast.promise(aiIsDoneResponding, {
+        loading: 'Fetching AI response...',
+        success: (data: any) => 'AI response fetched!',
+        error: (data: any) => 'Failed to fetch AI response!',
+      });
+    }
 
-    if (LOG_FRONTEND) console.info('Setting message backup...');
+    await aiIsDoneResponding;
 
-    currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
+    if (LOG_FRONTEND) console.info('Setting chat history messages backup...');
+    console.log(selectedAiChatIsPlayground)
+    if (selectedAiChatIsPlayground) currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
   }
 );
+
+// Uncaught (in promise) Maximum recursive updates exceeded in component <Toaster>.
+// This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself.
+// Possible sources include component template, render function, updated hook or watcher source function.
+
+/* let toastIdAiIsResponding: string | number;
+let toastIdAiIsNotResponding: string | number;
+watch(chatResponseIsLoading, (newValue) => {
+  if (!newValue) {
+    if (LOG_FRONTEND) console.info('AI is done responding...');
+    toastIdAiIsNotResponding = toast.success('AI is done responding!');
+    toast.dismiss(toastIdAiIsResponding);
+    return;
+  }
+
+  if (LOG_FRONTEND) console.info('AI is responding...');
+  toastIdAiIsResponding = toast.info('AI is responding...');
+  toast.dismiss(toastIdAiIsNotResponding);
+}); */
 
 /* SPEECH RECOGNITION */
 const {
@@ -136,27 +127,6 @@ if (isSpeechRecognitionSupported.value && IS_CLIENT) {
   });
 }
 
-/* LOADING INDICATOR */
-
-// Uncaught (in promise) Maximum recursive updates exceeded in component <Toaster>.
-// This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself.
-// Possible sources include component template, render function, updated hook or watcher source function.
-
-/* let toastIdAiIsResponding: string | number;
-let toastIdAiIsNotResponding: string | number;
-watch(chatResponseIsLoading, (newValue) => {
-  if (!newValue) {
-    if (LOG_FRONTEND) console.info('AI is done responding...');
-    toastIdAiIsNotResponding = -1 // toast.success('AI is done responding!');
-    // toast.dismiss(toastIdAiIsResponding);
-    return;
-  }
-
-  if (LOG_FRONTEND) console.info('AI is responding...');
-  toastIdAiIsResponding =  -1 // toast.info('AI is responding...');
-  // toast.dismiss(toastIdAiIsNotResponding);
-}); */
-
 /* CONVERT HTML TO MARKDOWN */
 let urlToFetchHtmlFrom = ref('');
 
@@ -164,17 +134,25 @@ onMounted(async () => {
   const messages = await loadPersistedChatMessages(user.value?.id ?? -1, selectedAiChat.value.id);
   setChatMessages(messages);
 })
+
+// Send Message on CTRL + ENTER
+function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
+  if (currentChatMessage.value.trim() === '') return;
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+    handleChatMessageSubmit();
+  }
+}
 </script>
 
 <template>
   <div
     class="relative flex flex-col h-full min-h-[60vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 w-[100%-2rem] order-1 2xl:order-2"
   >
-    <Badge variant="outline" class="absolute z-10 right-3 top-3 bg-background">
+    <ShadcnBadge variant="outline" class="absolute z-10 right-3 top-3 bg-background">
       {{ selectedAiChat.name }}
-    </Badge>
+    </ShadcnBadge>
 
-    <ScrollArea class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
+    <ShadcnScrollArea class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
       <div
         v-for="m in chatMessages"
         :key="m.id"
@@ -190,7 +168,8 @@ onMounted(async () => {
           :id="`message-${m.id}`"
           :data-message-created-at="m.createdAt"
         >
-          <!-- <Button class="absolute bottom-[-70%] right-[-1rem] px-2 py-1 border rounded-md w-fit bg-background border-slate-200 dark:border-border" variant="ghost" size="icon" @click="respondToMessage(`message-${m.id}`)">respond</Button> -->
+          <!-- TODO: listen to message -->
+          <!-- <ShadcnButton class="absolute bottom-[-70%] right-[-1rem] px-2 py-1 border rounded-md w-fit bg-background border-slate-200 dark:border-border" variant="ghost" size="icon" @click="respondToMessage(`message-${m.id}`)">respond</ShadcnButton> -->
           <ClientOnly>
             <MDC
               class="overflow-x-auto break-words whitespace-pre-wrap"
@@ -214,7 +193,7 @@ onMounted(async () => {
         </div>
       </div>
 
-      <!-- Input draft -->
+      <!-- User Input Draft -->
       <div
         class="flex justify-end mt-8 overflow-auto"
         v-if="currentChatMessage.trim() !== ''"
@@ -226,8 +205,7 @@ onMounted(async () => {
         </div>
       </div>
 
-      <!-- v-if="chatResponseIsLoading" -->
-      <!-- TODO: fix section not disappearing on chatResponseIsLoading change (v-if is server-side and v-show client-side) -->
+      <!-- NOTE: v-if is server-side and v-show client-side -->
       <div
         v-show="chatResponseIsLoading"
         class="flex flex-wrap items-center gap-2 px-4 py-2 border border-blue-200 rounded-lg bg-background"
@@ -241,11 +219,11 @@ onMounted(async () => {
         class="flex flex-wrap items-center w-full p-4 mt-8 font-black uppercase border-2 rounded-md text-ellipsis border-destructive"
       >
         <p class="flex-grow">Something went wrong!</p>
-        <Button variant="outline" @click="async () => reloadLastChatMessage"
-          >Try again</Button
+        <ShadcnButton variant="outline" @click="async () => reloadLastChatMessage"
+          >Try again</ShadcnButton
         >
       </div>
-    </ScrollArea>
+    </ShadcnScrollArea>
 
     <form
       @submit.prevent="() => {
@@ -254,39 +232,40 @@ onMounted(async () => {
       }"
       class="relative flex-shrink-0 overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring"
     >
-      <Label for="message" class="sr-only"> Message </Label>
-      <Textarea
+      <ShadcnLabel for="message" class="sr-only"> Message </ShadcnLabel>
+      <ShadcnTextarea
         v-model="currentChatMessage"
         id="message"
         placeholder="Type your message here..."
         class="p-3 border-0 shadow-none resize-none max-h-28 focus-visible:ring-0"
+        @keydown="handleInputFieldKeyboardEvents"
       />
       <div class="flex items-center p-3 pt-0">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button type="button" variant="ghost" size="icon" disabled>
+        <ShadcnTooltipProvider>
+          <ShadcnTooltip>
+            <ShadcnTooltipTrigger as-child>
+              <ShadcnButton type="button" variant="ghost" size="icon" disabled>
                 <Paperclip class="size-4" />
                 <span class="sr-only">Attach file</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top"> Attach File </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <Popover>
-              <PopoverTrigger as-child>
-                <TooltipTrigger as-child>
-                  <Button type="button" variant="ghost" size="icon">
+              </ShadcnButton>
+            </ShadcnTooltipTrigger>
+            <ShadcnTooltipContent side="top"> Attach File </ShadcnTooltipContent>
+          </ShadcnTooltip>
+          <ShadcnTooltip>
+            <ShadcnPopover>
+              <ShadcnPopoverTrigger as-child>
+                <ShadcnTooltipTrigger as-child>
+                  <ShadcnButton type="button" variant="ghost" size="icon">
                     <Link class="size-4" />
                     <span class="sr-only">URL context</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top"> URL context </TooltipContent>
-              </PopoverTrigger>
-              <PopoverContent>
+                  </ShadcnButton>
+                </ShadcnTooltipTrigger>
+                <ShadcnTooltipContent side="top"> URL context </ShadcnTooltipContent>
+              </ShadcnPopoverTrigger>
+              <ShadcnPopoverContent>
                 <div class="grid gap-2 mb-1">
-                  <Label for="url">URL</Label>
-                  <Input
+                  <ShadcnLabel for="url">URL</ShadcnLabel>
+                  <ShadcnInput
                     id="url"
                     type="url"
                     name="url"
@@ -295,7 +274,7 @@ onMounted(async () => {
                     required
                   />
                 </div>
-                <Button
+                <ShadcnButton
                   :disabled="urlToFetchHtmlFrom.trim() === ''"
                   type="button"
                   variant="outline"
@@ -313,13 +292,13 @@ onMounted(async () => {
                   "
                 >
                   Add URL for further context
-                </Button>
-              </PopoverContent>
-            </Popover>
-          </Tooltip>
-          <Tooltip v-if="isSpeechRecognitionSupported">
-            <TooltipTrigger as-child>
-              <Button
+                </ShadcnButton>
+              </ShadcnPopoverContent>
+            </ShadcnPopover>
+          </ShadcnTooltip>
+          <ShadcnTooltip v-if="isSpeechRecognitionSupported">
+            <ShadcnTooltipTrigger as-child>
+              <ShadcnButton
                 type="button"
                 variant="ghost"
                 size="icon"
@@ -341,15 +320,15 @@ onMounted(async () => {
               >
                 <Mic class="size-4" />
                 <span class="sr-only">Use Microphone</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top"> Use Microphone </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <AlertDialog>
-              <AlertDialogTrigger as-child>
-                <TooltipTrigger as-child>
-                  <Button
+              </ShadcnButton>
+            </ShadcnTooltipTrigger>
+            <ShadcnTooltipContent side="top"> Use Microphone </ShadcnTooltipContent>
+          </ShadcnTooltip>
+          <ShadcnTooltip>
+            <ShadcnAlertDialog>
+              <ShadcnAlertDialogTrigger as-child>
+                <ShadcnTooltipTrigger as-child>
+                  <ShadcnButton
                     type="button"
                     variant="ghost"
                     size="icon"
@@ -359,38 +338,40 @@ onMounted(async () => {
                   >
                     <Trash2 class="size-4" />
                     <span class="sr-only">Clear Chat</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top"> Clear </TooltipContent>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle
+                  </ShadcnButton>
+                </ShadcnTooltipTrigger>
+                <ShadcnTooltipContent side="top"> Clear </ShadcnTooltipContent>
+              </ShadcnAlertDialogTrigger>
+              <ShadcnAlertDialogContent>
+                <ShadcnAlertDialogHeader>
+                  <ShadcnAlertDialogTitle
                     >Are you sure, that you want to clear the
-                    chat?</AlertDialogTitle
+                    chat?</ShadcnAlertDialogTitle
                   >
-                  <AlertDialogDescription>
+                  <ShadcnAlertDialogDescription>
                     Chat messages can not be recovered!
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
+                  </ShadcnAlertDialogDescription>
+                </ShadcnAlertDialogHeader>
+                <ShadcnAlertDialogFooter>
+                  <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
+                  <ShadcnAlertDialogAction
                     @click="
                       () => {
                         chatMessages = [];
                         setChatMessages(chatMessages);
+                        chatResponseIsLoading = false;
+                        // TODO: make proper reset function, chat id needs to be reset too etc. (useSelectedAiChat and usePlaygroundAiChat need to be overworked)
                       }
                     "
-                    >Continue</AlertDialogAction
+                    >Continue</ShadcnAlertDialogAction
                   >
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button
+                </ShadcnAlertDialogFooter>
+              </ShadcnAlertDialogContent>
+            </ShadcnAlertDialog>
+          </ShadcnTooltip>
+          <ShadcnTooltip>
+            <ShadcnTooltipTrigger as-child>
+              <ShadcnButton
                 type="button"
                 variant="ghost"
                 size="icon"
@@ -399,18 +380,18 @@ onMounted(async () => {
               >
                 <RefreshCcw class="size-4" />
                 <span class="sr-only">Refresh Last Response</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
+              </ShadcnButton>
+            </ShadcnTooltipTrigger>
+            <ShadcnTooltipContent side="top">
               Refresh (needed if ai is stuck)
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </ShadcnTooltipContent>
+          </ShadcnTooltip>
+        </ShadcnTooltipProvider>
         <div class="flex items-center gap-1 ml-auto">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger as-child>
-                <Button
+          <ShadcnTooltipProvider>
+            <ShadcnTooltip>
+              <ShadcnTooltipTrigger as-child>
+                <ShadcnButton
                   type="button"
                   variant="outline"
                   size="icon"
@@ -418,12 +399,12 @@ onMounted(async () => {
                   :disabled="currentChatMessage.trim() === ''"
                 >
                   <Delete class="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top"> Clear Input </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <Button
+                </ShadcnButton>
+              </ShadcnTooltipTrigger>
+              <ShadcnTooltipContent side="top"> Clear Input </ShadcnTooltipContent>
+            </ShadcnTooltip>
+          </ShadcnTooltipProvider>
+          <ShadcnButton
             type="submit"
             size="sm"
             class="gap-1.5"
@@ -433,7 +414,7 @@ onMounted(async () => {
           >
             Send Message
             <CornerDownLeft class="size-3.5" />
-          </Button>
+          </ShadcnButton>
         </div>
       </div>
     </form>
