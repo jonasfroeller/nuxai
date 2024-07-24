@@ -36,22 +36,23 @@ const { width: windowWidth } = useWindowSize()
 
 <template>
   <div class="flex justify-center">
-    <DropdownMenu>
-      <DropdownMenuTrigger v-show="(windowWidth <= 700) && (layout === 'navigation')"><Menu /></DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem v-for="route in visibleRoutes">
-          <NuxtLink
-            :to="route.path"
-            :key="route.path"
-            activeClass="underline"
-          >
-          <p :key="route.path">{{ route.name }}</p>
-          </NuxtLink>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div v-if="(windowWidth <= 700) && (layout === 'navigation')">
+      <DropdownMenu>
+        <DropdownMenuTrigger><Menu /></DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem v-for="route in visibleRoutes" :key="route.path">
+            <NuxtLink
+              :to="route.path"
+              activeClass="underline"
+            >
+            <p :key="route.path">{{ route.name }}</p>
+            </NuxtLink>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   
-    <ul v-bind:class="{ navigation: layout === 'navigation' }" v-show="(windowWidth > 700) || (layout !== 'navigation')">
+    <ul v-bind:class="{ navigation: layout === 'navigation' }" v-if="(windowWidth > 700) || (layout !== 'navigation')">
       <NuxtLink
         v-for="route in visibleRoutes"
         :to="route.path"
