@@ -8,9 +8,9 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8 lg:pt-32">
+  <div class="px-4 pt-32 mx-auto text-center max-w-7xl">
     <h1
-      class="max-w-4xl mx-auto text-5xl font-medium tracking-tight font-display sm:text-7xl"
+      class="max-w-4xl mx-auto text-3xl font-medium tracking-tight font-display sm:text-7xl"
     >
       Chat
       <span class="relative text-blue-600 whitespace-nowrap">
@@ -28,7 +28,7 @@ definePageMeta({
       </span>
     </h1>
     <blockquote
-      class="max-w-2xl mx-auto mt-12 text-lg tracking-tight text-slate-600"
+      class="max-w-2xl mx-auto mt-6 text-lg tracking-tight sm:mt-12 text-slate-600"
     >
       You have to sign up to use the service, so that it doesn't get abused.
       Your password and email will be encrypted.

@@ -2,19 +2,21 @@
 import { Button } from '@/components/ui/button';
 
 const { loggedIn, user, clear } = useUserSession();
+const { currentRoute } = useRouter();
 </script>
 
 <template>
   <header class="sticky top-0 left-0 z-40 border-b bg-background">
-    <nav class="flex items-center justify-between gap-2 px-8 py-4 pl-[5rem]">
+    <nav class="flex items-center justify-between gap-2 px-4 py-4" :class="{ 'pl-[5rem]': ['/', '/dashboard', '/chat'].includes(currentRoute.path) }">
       <AppLinks layout="navigation" />
       <div class="flex items-center gap-2">
         <Button
           variant="outline"
           v-if="loggedIn"
+          class="truncate"
           @click="clear().finally(async () => await navigateTo('/home'))"
         >
-          Sign Out {{ user?.primary_email }}
+          Sign Out {{ user?.primary_email.substring(0, 15) }}{{ user?.primary_email && user?.primary_email.length > 15 ? '...' : '' }}
         </Button>
         <ThemeToggle />
       </div>
