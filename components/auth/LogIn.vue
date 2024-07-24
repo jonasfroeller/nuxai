@@ -16,6 +16,7 @@ import {
   validatePasswordInput,
 } from '~/lib/types/input.validation';
 import { toast } from 'vue-sonner';
+const { console } = useLogger();
 
 const userStore = useAuthStore();
 const { fetch } = useUserSession();
@@ -36,8 +37,7 @@ async function signIn() {
   const { error } = await userStore.signIn(email.value, password.value);
 
   if (error.value) {
-    if (LOG_FRONTEND)
-      console.info('error:', error.value?.message, error.value.data);
+    console.info('error:', error.value?.message, error.value.data);
     emailErrors.value = error.value.data.data.issues
       .filter((issue: any) => issue.path[0] === 'email')
       .map((issue: any) => issue.message);

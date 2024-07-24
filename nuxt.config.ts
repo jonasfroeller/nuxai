@@ -9,6 +9,10 @@ export default defineNuxtConfig({
     },
   },
 
+  vite: {
+    logLevel: 'warn', // 'info' | 'warn' | 'error' | 'silent'
+  },
+
   routeRules: {
     '/api/**': {
       cors: true,
@@ -61,6 +65,11 @@ export default defineNuxtConfig({
         sameSite: 'lax',
       },
     },
+    public: {
+      IS_SERVERLESS: process.env.IS_SERVERLESS,
+      LOG_SQL_QUERIES: process.env.LOG_SQL_QUERIES,
+      LOG_BACKEND: process.env.LOG_BACKEND,
+    }
   },
 
   app: {

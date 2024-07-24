@@ -2,6 +2,7 @@
 import { RefreshCcw, Pen, Trash2, Search } from 'lucide-vue-next';
 import type { AllowedAiModels } from '~/lib/types/ai.models';
 import type { MinimalChat, FullyFeaturedChat } from '~/lib/types/chat';
+const { console } = useLogger();
 
 const { persistChatConversationEdit, persistChatConversationDelete } = useAPI();
 const { user } = useUserSession();
@@ -26,7 +27,7 @@ function setSelectedChat(
     selectedAiChat.value.model = model;
   }
 
-  if (LOG_FRONTEND) console.info('setSelectedChat', selectedAiChat.value);
+  console.info('setSelectedChat', selectedAiChat.value);
 }
 
 const editChat = (id: number, name: string) => {

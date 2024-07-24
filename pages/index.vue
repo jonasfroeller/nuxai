@@ -48,6 +48,8 @@ const { selectedAiChat } = useSelectedAiChat();
 const aiChatKey = computed(
   () => `${selectedModelApiPath.value}?=${selectedAiChat.value.id}`
 );
+
+// TODO: fix `[Vue warn]: Hydration node mismatch` on some Tooltip
 </script>
 
 <template>

@@ -12,11 +12,12 @@ import {
 import { useChat, type Message } from '@ai-sdk/vue'; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
 import { toast } from 'vue-sonner';
 // import type { Message } from '@ai-sdk/vue';
+const { console } = useLogger();
 
 const { user } = useUserSession();
 const { messages: currentAiChatPlaygroundMessagesBackup } =
   useAiChatPlayground();
-const { generateMarkdownFromUrl, loadPersistedChatMessages } = useAPI();
+const { generateMarkdownFromUrl } = useAPI();
 
 /* CHAT AI */
 const { selectedAiChat, selectedAiChatIsPlayground } = useSelectedAiChat();
@@ -67,22 +68,23 @@ watch(
       chatResponseIsLoading
     );
 
-    if (
+    // TODO: only trigger, if message is new and not also if it is received from database
+    /* if (
       chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant'
     ) {
-      toast.promise(aiIsDoneResponding, { // TODO: only trigger, if message is new and not also if it is received from database
+      toast.promise(aiIsDoneResponding, {
         loading: 'Fetching AI response...',
         success: (data: any) => 'AI response fetched!',
         error: (data: any) => 'Failed to fetch AI response!',
       });
-    }
+    } */
 
     await aiIsDoneResponding;
 
-    if (LOG_FRONTEND) console.info('Setting chat history messages backup...');
-    console.log(selectedAiChatIsPlayground);
-    if (selectedAiChatIsPlayground)
+    console.info('Setting chat history messages backup...');
+    if (selectedAiChatIsPlayground) {
       currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
+    }
   }
 );
 
@@ -94,13 +96,13 @@ watch(
 let toastIdAiIsNotResponding: string | number;
 watch(chatResponseIsLoading, (newValue) => {
   if (!newValue) {
-    if (LOG_FRONTEND) console.info('AI is done responding...');
+    console.info('AI is done responding...');
     toastIdAiIsNotResponding = toast.success('AI is done responding!');
     toast.dismiss(toastIdAiIsResponding);
     return;
   }
 
-  if (LOG_FRONTEND) console.info('AI is responding...');
+  console.info('AI is responding...');
   toastIdAiIsResponding = toast.info('AI is responding...');
   toast.dismiss(toastIdAiIsNotResponding);
 }); */
@@ -162,30 +164,19 @@ onChange(async (uploadedFiles) => {
 })
 
 function appendFileUploadToInput(type: string, name: string, text: string) {
-  if (LOG_FRONTEND) console.info('Appending file upload to input...');
+  console.info('Appending file upload to input...');
   
   let prettierFileContent = `\`\`\`${type}:${name}\n${text}\n\`\`\``;
   currentChatMessage.value = prettierFileContent + currentChatMessage.value;
 }
 
 // Load data
-
-/* async function loadChatMessages() {
-  const messages = await loadPersistedChatMessages(
-    user.value?.id ?? -1,
-    selectedAiChat.value.id
-  );
-
-  console.log(messages, user.value?.id, selectedAiChat.value.id);
-
-  setChatMessages(messages);
-} */
-
 async function loadChatMessages(user_id: number, chat_id: number) {
   if (user_id !== -1) {
-    const data = await useFetch(`/api/users/${user_id}/chats/${chat_id}/messages`);
-    if (data.data.value?.chatMessages && data.data.value?.chatMessages.length > 0) {
-      const chatMessages = data.data.value.chatMessages; 
+    const data = await $fetch(`/api/users/${user_id}/chats/${chat_id}/messages`);
+
+    if (data?.chatMessages && data.chatMessages.length > 0) {
+      const chatMessages = data.chatMessages; 
       const messages = chatMessages.map(({ id, message, actor }) => (
         {
           id: `${String(id)}-${String(Date.now())}`,
@@ -202,10 +193,6 @@ async function loadChatMessages(user_id: number, chat_id: number) {
 onMounted(async () => {
   await loadChatMessages(user.value?.id ?? -1, selectedAiChat.value.id);
 });
-
-/* onRenderTriggered(async () => {
-  await loadChatMessages();
-}) */
 
 // Send Message on CTRL + ENTER
 function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
@@ -394,10 +381,10 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
                 @click="
                   () => {
                     if (isListeningToSpeech) {
-                      if (LOG_FRONTEND) console.info('stopping listening');
+                      console.info('stopping listening');
                       stopSpeechRecognition();
                     } else {
-                      if (LOG_FRONTEND) console.info('starting listening');
+                      console.info('starting listening');
                       startSpeechRecognition();
                     }
                   }

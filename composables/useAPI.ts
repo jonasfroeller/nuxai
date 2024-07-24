@@ -1,6 +1,7 @@
-import type { Message } from 'ai';
 import { toast } from 'vue-sonner';
 import type { FullyFeaturedChat /* , MinimalChat */ } from '~/lib/types/chat';
+const { console } = useLogger();
+
 /* import type { UseFetchOptions } from '#app'; */
 
 // TODO: improve => return data, isLoading etc. too.
@@ -108,7 +109,7 @@ export const useAPI = () => {
     const messages = messagesRef.value;
 
     if (!messages) {
-      if (LOG_FRONTEND) console.error('No messages to persist!');
+      console.error('No messages to persist!');
       return;
     }
 
@@ -126,63 +127,11 @@ export const useAPI = () => {
         error: (data: any) => 'Failed to persist chat messages!',
       };
 
-      if (LOG_FRONTEND) console.info('Persisting messages...', messages);
+      console.info('Persisting messages...', messages);
 
       await handleFetch(url, options, toastMessages);
       messagesRef.value = [];
     }
-  };
-
-  const loadPersistedChatMessages = async ( // TODO: fix me, I am broken
-    user_id: number,
-    chat_id: number
-  ) => {
-    if (user_id !== -1) {
-      const url = `/api/users/${user_id}/chats/${chat_id}/messages`;
-      const options = {
-        lazy: true,
-      };
-
-      /* const toastMessages = { // would require to fetch two times..., TODO: different solution
-        loading: 'Loading chat messages...',
-        success: (data: any) => 'Chat messages loaded!',
-        error: (data: any) => 'Failed to load chat messages!',
-      }; */
-
-      const data = await handleFetch<{
-        // TODO: improved typing. move db schema and relations in both client and server-side code
-        chatMessages:
-        | {
-          id: number;
-          created_at: Date | null;
-          updated_at: Date | null;
-          chat_user_id: number;
-          message: string;
-          actor: string;
-          chat_conversation_id: number;
-        }[]
-        | null;
-      }>(url, options);
-
-      if (data.chatMessages && data.chatMessages.length > 0) {
-        const chatMessages = data.chatMessages;
-
-        const messages = chatMessages.map(
-          ({ id, message, actor }) =>
-            ({
-              id: `${String(id)}-${String(Date.now())}`,
-              content: message,
-              role: actor,
-            }) as Message
-        );
-
-        return messages;
-      }
-
-      return [];
-    }
-
-    return [];
   };
 
   const persistChatConversationEdit = async (
@@ -232,7 +181,6 @@ export const useAPI = () => {
   return {
     generateMarkdownFromUrl,
     persistChatConversation,
-    loadPersistedChatMessages,
     persistChatConversationEdit,
     persistChatConversationDelete,
   };
