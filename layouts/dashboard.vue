@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>
+  <div class="relative">
     <DynamicHeader />
     <main class="border-t">
       <slot />

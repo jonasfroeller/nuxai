@@ -40,6 +40,7 @@ import {
 definePageMeta({
   name: 'Dashboard',
   middleware: ['protected'],
+  layout: 'dashboard',
   alias: ['/dashboard', '/chat'],
 });
 
@@ -48,6 +49,8 @@ const { selectedAiChat } = useSelectedAiChat();
 const aiChatKey = computed(
   () => `${selectedModelApiPath.value}?=${selectedAiChat.value.id}`
 );
+
+const { headerNavigationSize } = useHeaderNavigation();
 
 // TODO: fix `[Vue warn]: Hydration node mismatch` on some Tooltip
 </script>
@@ -179,7 +182,8 @@ const aiChatKey = computed(
     </aside>
     <div class="flex flex-col">
       <header
-        class="sticky top-[4.8rem] z-20 flex h-[53px] items-center gap-1 border-b bg-background px-4 justify-between"
+        class="sticky left-0 z-20 flex items-center justify-between gap-1 py-2 border-b bg-background"
+        :style="{ top: headerNavigationSize.height + 'px' }"
       >
         <div class="flex items-center gap-2">
           <h1 class="text-xl font-semibold">Configuration Generator</h1>

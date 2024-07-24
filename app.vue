@@ -2,7 +2,7 @@
 import { ConfigProvider } from "radix-vue";
 import { Toaster } from '@/components/ui/sonner';
 
-const main_layout = 'main';
+// const main_layout = 'main';
 
 /* useHead({
 }) */
@@ -30,7 +30,7 @@ const useSsrSaveId = () => useId();
       <div>
         <!-- needed for transitions to work properly -->
         <NuxtRouteAnnouncer />
-        <NuxtLayout :name="main_layout">
+        <NuxtLayout> <!-- :name="main_layout" -->
           <NuxtPage />
         </NuxtLayout>
       </div>
