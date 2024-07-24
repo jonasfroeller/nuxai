@@ -7,7 +7,7 @@ definePageMeta({
 
 <template>
   <div
-    class="fixed transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+    class="flex items-center justify-center h-screen max-h-full px-2 pb-24 my-2"
   >
     <SignUp />
   </div>
