@@ -1,18 +1,6 @@
-import { chat_user, chat_user_oauth_account } from '../schema';
+import { chat_user, chat_user_oauth_account, type OauthAccountToCreate } from '../../../lib/types/database.tables/schema';
 import { and, eq } from 'drizzle-orm';
 import { createEmptyUser } from './users';
-
-type NewOauthAccount = typeof chat_user_oauth_account.$inferInsert;
-// type GetOauthAccount = typeof chat_user_oauth_account.$inferSelect;
-
-// type ReadOauthAccount = Omit<GetOauthAccount, /* "id" | "chat_user_id" | */ "provider" | "created_at" | "updated_at">;
-interface OauthAccountToCreate
-  extends Omit<
-    NewOauthAccount,
-    'id' | 'created_at' | 'updated_at' | 'chat_user_id'
-  > {
-  chat_user_id?: number /* so that a oauth account can be linked to an existing user */;
-}
 
 export const createOauthAccount = async (account: OauthAccountToCreate) => {
   /* TODO: if chat_user_id user exists, link account to user (use chat_user_id?) */

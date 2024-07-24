@@ -1,17 +1,6 @@
-import { chat_conversation_message } from '../schema';
+import { chat_conversation_message, type ChatConversationMessageToCreate, type GetChatConversation, type GetChatConversationMessage } from '../../../lib/types/database.tables/schema';
 import { eq } from 'drizzle-orm';
-import type { GetChatConversation } from './chatConversations';
 // import { ENCRYPTION_SECRET } from "~/server/utils/globals"; // TODO: maybe encrypt chat conversations
-
-type NewChatConversationMessage = typeof chat_conversation_message.$inferInsert;
-type GetChatConversationMessage = typeof chat_conversation_message.$inferSelect;
-
-// type ReadChatConversationMessage = GetChatConversationMessage;
-interface ChatConversationMessageToCreate
-  extends Omit<
-    NewChatConversationMessage,
-    'id' | 'created_at' | 'updated_at'
-  > {}
 
 export const createChatConversationMessages = async (
   messages: ChatConversationMessageToCreate[]

@@ -1,5 +1,5 @@
+import type { ChatConversationToCreate } from '~/lib/types/database.tables/schema';
 import {
-  type ChatConversationToCreate,
   createChatConversation,
   readAllChatConversationsOfUser,
 } from '~/server/database/repositories/chatConversations';

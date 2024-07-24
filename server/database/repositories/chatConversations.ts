@@ -1,13 +1,5 @@
-import { chat_conversation } from '../schema';
+import { chat_conversation, type GetUser, type ChatConversationToCreate, type GetChatConversation } from '../../../lib/types/database.tables/schema';
 import { eq } from 'drizzle-orm';
-import type { GetUser } from './users';
-
-type NewChatConversation = typeof chat_conversation.$inferInsert;
-export type GetChatConversation = typeof chat_conversation.$inferSelect;
-
-// type ReadChatConversation = GetChatConversation;
-export interface ChatConversationToCreate
-  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> {}
 
 export async function createChatConversation(
   conversation: ChatConversationToCreate

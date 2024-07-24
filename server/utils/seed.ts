@@ -3,7 +3,7 @@ import {
   chat_user_oauth_account,
   chat_conversation,
   chat_conversation_message /* , POSSIBLE_OAUTH_PROVIDERS */,
-} from '../database/schema';
+} from '../../lib/types/database.tables/schema';
 import { IS_DEV } from './globals'; // needed, if run as package.json script
 
 // const enums = [POSSIBLE_OAUTH_PROVIDERS]

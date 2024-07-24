@@ -1,13 +1,5 @@
-import { chat_user, chat_user_oauth_account } from '../schema';
+import { chat_user, chat_user_oauth_account, type GetUser, type UserToCreate } from '../../../lib/types/database.tables/schema';
 import { and, eq, like, sql } from 'drizzle-orm';
-
-type NewUser = typeof chat_user.$inferInsert;
-export type GetUser = typeof chat_user.$inferSelect;
-
-// type ReadUser = Omit<GetUser, "hashed_password">;
-interface UserToCreate extends Omit<NewUser, 'id' | 'hashed_password'> {
-  password: string;
-}
 
 /* TODO: check if user has access to CRUD operations (make sure everything here is LGTM) */
 

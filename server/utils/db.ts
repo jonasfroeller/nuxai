@@ -1,5 +1,5 @@
-import * as schema from '../database/schema';
-import * as relations from '../database/relations';
+import * as schema from '../../lib/types/database.tables/schema';
+import * as relations from '../../lib/types/database.tables/relations';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { Client as NeonPostgres } from '@neondatabase/serverless';
@@ -19,13 +19,13 @@ export const databaseMap = {
 
 export const db = IS_SERVERLESS
   ? neonDrizzle(new NeonPostgres(connectionString), {
-      schema: databaseMap,
-      logger: LOG_SQL_QUERIES,
-    })
+    schema: databaseMap,
+    logger: LOG_SQL_QUERIES,
+  })
   : drizzle(postgres(connectionString), {
-      schema: databaseMap,
-      logger: LOG_SQL_QUERIES,
-    });
+    schema: databaseMap,
+    logger: LOG_SQL_QUERIES,
+  });
 
 export function encryptColumn(value: any) {
   return sql<string>`encode(encrypt(${value}, ${ENCRYPTION_SECRET}, 'aes'), 'hex')`;
