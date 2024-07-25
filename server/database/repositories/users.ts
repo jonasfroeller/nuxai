@@ -1,3 +1,4 @@
+import { generateUUID } from '~/lib/utils';
 import { chat_user, chat_user_oauth_account, type GetUser, type UserToCreate } from '../../../lib/types/database.tables/schema';
 import { and, eq, like, sql } from 'drizzle-orm';
 
@@ -27,16 +28,6 @@ export const createUser = async (user: UserToCreate) => {
   if (!createdUser) return null;
   return createdUser[0];
 };
-
-function generateUUID() {
-  let dt = new Date().getTime();
-  const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (dt + Math.random() * 16) % 16 | 0;
-    dt = Math.floor(dt / 16);
-    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-  });
-  return uuid;
-}
 
 // Needed for Oauth, if no user exists yet.
 export const createEmptyUser = async () => {

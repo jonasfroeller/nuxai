@@ -44,7 +44,7 @@ definePageMeta({
   alias: ['/dashboard', '/chat'],
 });
 
-const { selectedChatKey } = useSelectedAiChat(); // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
+const { selectedAiChatKey } = useSelectedAiChat();
 const { headerNavigationSize } = useHeaderNavigation();
 
 // TODO: fix `[Vue warn]: Hydration node mismatch` on some Tooltip
@@ -196,7 +196,7 @@ const { headerNavigationSize } = useHeaderNavigation();
                   Configure the settings for the model
                 </DrawerDescription>
               </DrawerHeader>
-              <AiModelConfiguration :key="selectedChatKey" />
+              <AiModelConfiguration />
             </DrawerContent>
           </Drawer>
         </div>
@@ -214,8 +214,6 @@ const { headerNavigationSize } = useHeaderNavigation();
       <main
         class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 2xl:grid-cols-[33%,1fr]"
       >
-        <!-- <ClientOnly> -->
-        <!-- TODO: fix tab hydration warning -->
         <Tabs default-value="chat" class="h-screen max-h-[calc(100%-3rem)]">
           <TabsList class="flex justify-start w-full bg-muted/50">
             <TabsTrigger value="chats"> All Chats </TabsTrigger>
@@ -225,12 +223,10 @@ const { headerNavigationSize } = useHeaderNavigation();
             <AiChats />
           </TabsContent>
           <TabsContent value="chat" class="h-full">
-            <AiChatInformation :key="selectedChatKey" />
+            <AiChatInformation /> <!-- FILES OF CHAT -->
           </TabsContent>
         </Tabs>
-        <AiChat :key="selectedChatKey" />
-        <!-- <DevOnly>{{ selectedChatKey }}</DevOnly> -->
-        <!-- </ClientOnly> -->
+        <AiChat :key="selectedAiChatKey" /> <!-- MESSAGES OF CHAT (needs key, to rerender chat, so that useChat gets a new ID, useChat can not be put anywhere als then the setup script, because some functionality depends on that environment) -->
       </main>
     </div>
   </div>

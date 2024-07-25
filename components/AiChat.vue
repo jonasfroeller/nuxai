@@ -15,13 +15,11 @@ import { toast } from 'vue-sonner';
 const { console } = useLogger();
 
 const { user } = useUserSession();
-const { messages: currentAiChatPlaygroundMessagesBackup } =
-  useAiChatPlayground();
+const { aiPlaygroundChatMessages: currentAiChatPlaygroundMessagesBackup, resetAiPlaygroundChat } = useAiChatPlayground();
 const { generateMarkdownFromUrl } = useAPI();
 
 /* CHAT AI */
-const { selectedAiChat, selectedAiChatIsPlayground, resetSelectedAiChatToDefaults, selectedChatKey } = useSelectedAiChat();
-const selectedModelApiPath = useSelectedAiModelApiPath();
+const { selectedAiChat, selectedAiChatIsPlayground, selectedAiChatKey, selectedAiChatApiPath } = useSelectedAiChat();
 let {
   messages: chatMessages,
   input: currentChatMessage,
@@ -33,7 +31,7 @@ let {
   /* append: appendChatMessage, */
 } = useChat({
   id: String(selectedAiChat.value.id),
-  api: `${selectedModelApiPath.value}${selectedChatKey.value}`,
+  api: selectedAiChatKey.value,
   keepLastMessageOnError: true,
 });
 
@@ -43,22 +41,36 @@ watch(chatError, () => {
   }
 });
 
-// NOTE: Listening to chatMessages would be way more inefficient, since that would cause the callback function to be called on every token, the AI answers.
-const waitForAiResponseToComplete = async (
-  condition: Ref<boolean | undefined>
-) => {
-  return new Promise<void>((resolve) => {
-    const unwatch = watch(
-      condition,
-      (newValue) => {
-        if (!newValue) {
-          resolve();
-          unwatch();
-        }
-      },
-      { immediate: true }
-    );
+// INFO: Listening to chatMessages would be way more inefficient, since that would cause the callback function to be called on every token, the AI answers.
+const waitForAiResponseToComplete = (condition: Ref<boolean | undefined>) => {
+  let unwatch: (() => void) | null = null;
+
+  const promise = new Promise<void>((resolve, reject) => {
+    try {
+      unwatch = watch(
+        condition,
+        (newValue) => {
+          if (!newValue) {
+            console.info(`Resolved value ${newValue}...`);
+            resolve();
+          }
+        },
+        { immediate: true }
+      );
+    } catch (error) {
+      console.info("Failed to resolve value!");
+      reject(error);
+    }
   });
+
+  promise.finally(() => {
+    if (unwatch) {
+      console.info('Removing watcher...');
+      unwatch();
+    }
+  });
+
+  return promise;
 };
 
 watch(
@@ -69,7 +81,7 @@ watch(
     );
 
     // TODO: only trigger, if message is new and not also if it is received from database
-    /* if (
+    if (
       chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant'
     ) {
       toast.promise(aiIsDoneResponding, {
@@ -77,12 +89,12 @@ watch(
         success: (data: any) => 'AI response fetched!',
         error: (data: any) => 'Failed to fetch AI response!',
       });
-    } */
+    }
 
     await aiIsDoneResponding;
 
     console.info('Setting chat history messages backup...');
-    if (selectedAiChatIsPlayground.value) {
+    if (selectedAiChatIsPlayground.value && chatMessages.value.length > 0) {
       currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
     }
   }
@@ -207,12 +219,6 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
     handleChatMessageSubmit();
   }
 }
-
-// Reset Chat
-function resetPlaygroundChat() {
-  currentAiChatPlaygroundMessagesBackup.value = []; // setChatMessages([]); is done by rerendering the whole component which recreates the useChat composable with a new id
-  resetSelectedAiChatToDefaults();
-}
 </script>
 
 <template>
@@ -230,10 +236,10 @@ function resetPlaygroundChat() {
       <ShadcnScrollArea>
 
       <DevOnly>
-        SELECTED: {{ selectedAiChat }}<br />
-        {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }} / {{ selectedAiChatIsPlayground }}<br>
-        {{ selectedChatKey }}<br>
-        {{ JSON.stringify(chatMessages) }}
+        SELECTED: {{ selectedAiChat }} | {{ selectedAiChatKey }}<br />
+        messages: {{ JSON.stringify(chatMessages) }}<br>
+        <hr>
+        PLAYGROUND: {{ selectedAiChatIsPlayground }} | {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}<br>
       </DevOnly>
 
       <div
@@ -304,7 +310,13 @@ function resetPlaygroundChat() {
         <p class="flex-grow">Something went wrong!</p>
         <ShadcnButton
           variant="outline"
-          @click="async () => reloadLastChatMessage"
+          @click="async () => {
+            await reloadLastChatMessage().then(() => {
+              toast.success('Chat message reloaded!');
+            }).catch(() => {
+              toast.error('Failed to reload chat message!');
+            })
+          }"
           >Try again</ShadcnButton
         >
       </div>
@@ -427,7 +439,7 @@ function resetPlaygroundChat() {
                     variant="ghost"
                     size="icon"
                     :disabled="
-                      chatResponseIsLoading || chatMessages.length === 0
+                      chatResponseIsLoading || chatMessages.length === 0 || !selectedAiChatIsPlayground
                     "
                   >
                     <Trash2 class="size-4" />
@@ -449,7 +461,7 @@ function resetPlaygroundChat() {
                 <ShadcnAlertDialogFooter>
                   <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
                   <ShadcnAlertDialogAction
-                    @click="resetPlaygroundChat"
+                    @click="resetAiPlaygroundChat"
                     >Continue</ShadcnAlertDialogAction
                   >
                 </ShadcnAlertDialogFooter>
@@ -462,7 +474,7 @@ function resetPlaygroundChat() {
                 type="button"
                 variant="ghost"
                 size="icon"
-                @click="async () => reloadLastChatMessage"
+                @click="reloadLastChatMessage"
                 :disabled="chatResponseIsLoading || chatMessages.length === 0"
               >
                 <RefreshCcw class="size-4" />

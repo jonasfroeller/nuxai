@@ -96,16 +96,16 @@ export const useAPI = () => {
       toastMessages
     );
 
-    await persistChatConversationMessages(user_id, response.chat.id);
+    await persistChatConversationMessagesOfPlayground(user_id, response.chat.id);
 
     return response.chat.id;
   };
 
-  const persistChatConversationMessages = async (
+  const persistChatConversationMessagesOfPlayground = async (
     user_id: number,
     chat_id: number /* , messages: Message[] */
   ) => {
-    const { messages: messagesRef } = useAiChatPlayground();
+    const { aiPlaygroundChatMessages: messagesRef } = useAiChatPlayground();
     const messages = messagesRef.value;
 
     if (!messages) {

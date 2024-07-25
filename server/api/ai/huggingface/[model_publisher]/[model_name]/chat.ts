@@ -74,7 +74,7 @@ export default defineLazyEventHandler(async () => {
 
     const model_name = getRouterParam(event, 'model_name');
     const model_publisher = getRouterParam(event, 'model_publisher');
-    // if (LOG_BACKEND) console.info(`Fetching model: ${model_publisher}/${model_name}...`);
+    if (LOG_BACKEND) console.info(`Fetching model: ${model_publisher}/${model_name}...`);
     const { messages } = await readBody(event); // complete chat history
 
     const userMessage = messages[messages.length - 1]; // { role: 'user', content: 'message' }

@@ -8,8 +8,18 @@ const {
   selectedAiChatIsPlayground,
   resetSelectedAiChatToDefaults,
 } = useSelectedAiChat();
-const selectedModel = useSelectedAiModel();
+const { resetAiPlaygroundChat } = useAiChatPlayground();
 const { persistChatConversation } = useAPI();
+
+watch(
+  () => selectedAiChat.value.model,
+  (newModel) => {
+    if (newModel) {
+      console.log('Model changed:', newModel);
+      resetAiPlaygroundChat();
+    }
+  }
+);
 </script>
 
 <template>
@@ -19,7 +29,7 @@ const { persistChatConversation } = useAPI();
       <div class="grid gap-3">
         <ShadcnLabel for="model">Model</ShadcnLabel>
         <ShadcnSelect
-          v-model="selectedModel"
+          v-model="selectedAiChat.model"
           default-value="OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5"
         >
           <ShadcnSelectTrigger
@@ -27,7 +37,7 @@ const { persistChatConversation } = useAPI();
             id="model"
             class="items-start [&_[data-description]]:hidden"
           >
-            <ShadcnSelectValue placeholder="ShadcnSelect a model" />
+            <ShadcnSelectValue placeholder="Select a model" />
           </ShadcnSelectTrigger>
           <ShadcnSelectContent>
             <ShadcnSelectItem :value="model" v-for="model in ALLOWED_AI_MODELS">

@@ -8,8 +8,6 @@ const filetypeSearchSelectableValues = ref([
   { value: 'dockerfile', label: 'Dockerfile' },
   { value: 'yaml', label: 'Yaml' },
 ]);
-
-const { selectedChatKey } = useSelectedAiChat(); // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
 </script>
 
 <template>
@@ -17,7 +15,7 @@ const { selectedChatKey } = useSelectedAiChat(); // TODO: find out, how to recre
     class="relative flex flex-col items-start order-2 h-full gap-8 2xl:order-1"
   >
     <!-- hidden md:flex -->
-    <AiModelConfiguration :key="selectedChatKey" />
+    <AiModelConfiguration />
     <fieldset class="flex flex-col w-full h-full gap-6 p-4 border rounded-lg">
       <legend class="px-1 -ml-1 text-sm font-medium">
         Generated Configuration File
@@ -37,7 +35,7 @@ const { selectedChatKey } = useSelectedAiChat(); // TODO: find out, how to recre
           >
           <ShadcnSelect :default-value="'null'">
             <ShadcnSelectTrigger>
-              <ShadcnSelectValue placeholder="ShadcnSelect a role" />
+              <ShadcnSelectValue placeholder="Select a role" />
             </ShadcnSelectTrigger>
             <ShadcnSelectContent>
               <ShadcnSelectItem :value="'null'">
@@ -71,7 +69,7 @@ const { selectedChatKey } = useSelectedAiChat(); // TODO: find out, how to recre
                     ? filetypeSearchSelectableValues.find(
                         (option) => option.value === filetypeSearchSelectedValue
                       )?.label
-                    : 'ShadcnSelect filetype...'
+                    : 'Select filetype...'
                 }}
                 <ChevronsUpDown class="w-3 h-3 ml-2 opacity-50 shrink-0" />
               </ShadcnButton>
