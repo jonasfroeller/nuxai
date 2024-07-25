@@ -1,4 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
+import type { HTTPMethod } from "nuxt-security";
+
+const corsHandler = {
+  origin: '*',
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'] as HTTPMethod[],
+  preflight: {
+    statusCode: 204
+  },
+}
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: {
@@ -15,7 +26,20 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/api/**': {
-      cors: true,
+      security: {
+        corsHandler
+      }
+    },
+    '/auth/**': {
+      security: {
+        corsHandler
+      }
+    },
+  },
+
+  security: {
+    headers: { // to allow devtools
+      crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
     },
   },
 
@@ -118,6 +142,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@vueuse/nuxt',
     'nuxt-time',
+    "nuxt-security"
   ],
 
   mdc: {

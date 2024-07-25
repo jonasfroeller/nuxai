@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware((to, _from) => {
   const { console } = useLogger();
 
   if (!loggedIn.value) {
-    console.info("Page is protected: not logged in");
+    console.info("Page is protected: Your are not logged in!");
     return navigateTo('/login');
   }
 });

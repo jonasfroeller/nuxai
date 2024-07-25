@@ -5,6 +5,7 @@ import {
   experimental_buildLlama2Prompt,
 } from 'ai/prompts';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
+import { validateAiModelName, validateChatIdQuery } from '~/server/utils/validate';
 
 async function persistChatMessage(
   user_id: number,
@@ -68,14 +69,53 @@ export default defineLazyEventHandler(async () => {
 
   return defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event);
-    const chat_id_as_string = getQuery(event).chat_id;
-    if (LOG_BACKEND) console.info('chat_id_as_string', chat_id_as_string);
-    const chat_id = Number(chat_id_as_string);
 
-    const model_name = getRouterParam(event, 'model_name');
-    const model_publisher = getRouterParam(event, 'model_publisher');
+    /* VALIDATE QUERY */
+    const maybeChatId = await validateChatIdQuery(event);
+    if (maybeChatId.statusCode !== 200) {
+      return sendError(
+        event,
+        createError({
+          statusCode: maybeChatId.statusCode,
+          statusMessage: maybeChatId.statusMessage,
+          data: maybeChatId.data,
+        })
+      );
+    }
+    const chat_id = maybeChatId.data?.chat_id;
+
+    /* VALIDATE PARAMS */
+    const maybeModelName = await validateAiModelName(event);
+    if (maybeModelName.statusCode !== 200) {
+      return sendError(
+        event,
+        createError({
+          statusCode: maybeModelName.statusCode,
+          statusMessage: maybeModelName.statusMessage,
+          data: maybeModelName.data,
+        })
+      );
+    }
+    const model_name = maybeModelName.data?.model_name;
+    const model_publisher = maybeModelName.data?.model_publisher;
+
     if (LOG_BACKEND) console.info(`Fetching model: ${model_publisher}/${model_name}...`);
-    const { messages } = await readBody(event); // complete chat history
+
+    const body = await readValidatedBody(event, (body) => // complete chat history
+      ChatConversationMessagesToCreateSchema.safeParse(body)
+    );
+    if (!body.success || !body.data) {
+      return sendError(
+        event,
+        createError({
+          statusCode: 400,
+          statusMessage: 'Bad Request. Invalid body(message | messages).',
+          data: body.error,
+        })
+      );
+    }
+    const validatedBody = body.data;
+    const { messages } = validatedBody;
 
     const userMessage = messages[messages.length - 1]; // { role: 'user', content: 'message' }
     if (LOG_BACKEND) console.info(userMessage);
@@ -98,15 +138,13 @@ export default defineLazyEventHandler(async () => {
         );
       }
 
-      let inputs = messages;
+      let inputs = String(messages);
       if (model_publisher === 'OpenAssistant' || model_publisher === '01-ai') {
         inputs = experimental_buildOpenAssistantPrompt(messages); // basically convertToCoreMessages from 'ai'
         // if (LOG_BACKEND) console.info('using custom prompt builder for OpenAssistant');
       } else if (model_publisher === 'mistralai') {
         inputs = experimental_buildLlama2Prompt(messages);
         // if (LOG_BACKEND) console.info('using custom prompt builder for Llama2');
-      } else {
-        inputs = messages;
       }
 
       // if (LOG_BACKEND) console.info('---');

@@ -2,12 +2,21 @@ import { deleteChatConversation } from '~/server/database/repositories/chatConve
 
 // Delete chat conversation
 export default defineEventHandler(async (event) => {
-  const user_id = getRouterParam(event, 'user_id');
-  const chat_id = getRouterParam(event, 'chat_id');
+  /* VALIDATE PARAMS */
+  const maybeChatId = await validateChatId(event);
+  if (maybeChatId.statusCode !== 200) {
+    return sendError(
+      event,
+      createError({
+        statusCode: maybeChatId.statusCode,
+        statusMessage: maybeChatId.statusMessage,
+        data: maybeChatId.data,
+      })
+    );
+  }
+  const chat_id = maybeChatId.data?.chat_id;
 
-  /* TODO: validation */
-
-  const deletedChat = await deleteChatConversation(Number(chat_id));
+  const deletedChat = await deleteChatConversation(chat_id);
 
   return {
     chat: deletedChat,

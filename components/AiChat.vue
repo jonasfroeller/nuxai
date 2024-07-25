@@ -461,7 +461,7 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
                 <ShadcnAlertDialogFooter>
                   <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
                   <ShadcnAlertDialogAction
-                    @click="resetAiPlaygroundChat"
+                    @click="resetAiPlaygroundChat('OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5')"
                     >Continue</ShadcnAlertDialogAction
                   >
                 </ShadcnAlertDialogFooter>

@@ -2,17 +2,47 @@ import { updateChatConversation } from '~/server/database/repositories/chatConve
 
 // Update chat conversation
 export default defineEventHandler(async (event) => {
-  const user_id = getRouterParam(event, 'user_id');
-  const chat_id = getRouterParam(event, 'chat_id');
+  /* VALIDATE PARAMS */
+  const maybeChatId = await validateChatId(event);
+  if (maybeChatId.statusCode !== 200) {
+    return sendError(
+      event,
+      createError({
+        statusCode: maybeChatId.statusCode,
+        statusMessage: maybeChatId.statusMessage,
+        data: maybeChatId.data,
+      })
+    );
+  }
+  const chat_id = maybeChatId.data?.chat_id;
 
-  /* TODO: validation */
+  /* VALIDATE BODY */
+  const body = await readValidatedBody(event, (body) =>
+    ChatConversationAttributesToUpdateSchema.safeParse(body)
+  );
+  if (!body.success || !body.data) {
+    return sendError(
+      event,
+      createError({
+        statusCode: 400,
+        statusMessage: 'Bad Request. Invalid body(name).',
+        data: body.error,
+      })
+    );
+  }
+  const validatedBody = body.data;
+  const { name } = validatedBody;
 
-  const { name } = await readBody(event);
+  if (LOG_BACKEND) console.info('Renaming chat to', validatedBody.name);
+
+  /* CREATE NEW CHAT CONVERSATION */
 
   const updatedChatConversation = await updateChatConversation(
-    Number(chat_id),
-    { name }
+    chat_id,
+    { name },
   );
+
+  if (LOG_BACKEND) console.info('updatedChatConversation:', updatedChatConversation);
 
   return {
     chat: updatedChatConversation,

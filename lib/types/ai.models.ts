@@ -123,6 +123,18 @@ const allowedModelsConst = [
   'mistralai/Mistral-7B-Instruct-v0.1',
 ] as const;
 
+export enum AllowedAiModelPublishersEnum {
+  OpenAssistant = 'OpenAssistant',
+  Yi15 = '01-ai',
+  Mistral = 'mistralai',
+}
+
+export enum AllowedAiModelNamesEnum {
+  OpenAssistant = 'oasst-sft-4-pythia-12b-epoch-3.5',
+  Yi15 = 'Yi-1.5-34B-Chat',
+  Mistral = 'Mistral-7B-Instruct-v0.1',
+}
+
 export enum AllowedAiModelsEnum {
   OpenAssistant = 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
   Yi15 = '01-ai/Yi-1.5-34B-Chat',

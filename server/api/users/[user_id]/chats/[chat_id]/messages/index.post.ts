@@ -1,24 +1,46 @@
-import type { Message } from 'ai';
 import { createChatConversationMessages } from '~/server/database/repositories/chatConversationMessages';
 
 // Read all messages of chat conversation
 export default defineEventHandler(async (event) => {
-  const user_id = getRouterParam(event, 'user_id');
-  const chat_id = getRouterParam(event, 'chat_id');
+  /* VALIDATE PARAMS */
+  const maybeChatId = await validateChatId(event);
+  if (maybeChatId.statusCode !== 200) {
+    return sendError(
+      event,
+      createError({
+        statusCode: maybeChatId.statusCode,
+        statusMessage: maybeChatId.statusMessage,
+        data: maybeChatId.data,
+      })
+    );
+  }
+  const user_id = maybeChatId.data?.user_id;
+  const chat_id = maybeChatId.data?.chat_id;
 
-  /* TODO: validation */
+  /* VALIDATE BODY */
+  const body = await readValidatedBody(event, (body) =>
+    ChatConversationMessagesToCreateUniversalSchema.safeParse(body)
+  );
+  if (!body.success || !body.data) {
+    return sendError(
+      event,
+      createError({
+        statusCode: 400,
+        statusMessage: 'Bad Request. Invalid body(message | messages).',
+        data: body.error,
+      })
+    );
+  }
+  const validatedBody = body.data;
 
-  const data = await readBody(event);
-  const { messages: rawMessages } = data;
-
-  if (!Array.isArray(rawMessages)) {
-    const { message, actor } = data;
+  if (validatedBody && "message" in validatedBody && !Array.isArray(validatedBody.message)) {
+    const { message, actor } = validatedBody.message;
 
     const conversationMessageToCreate = {
-      message: String(message),
-      actor: String(actor),
-      chat_user_id: Number(user_id),
-      chat_conversation_id: Number(chat_id),
+      message: message,
+      actor: actor,
+      chat_user_id: user_id,
+      chat_conversation_id: chat_id,
     };
 
     const createdMessage = await createChatConversationMessages([
@@ -28,18 +50,26 @@ export default defineEventHandler(async (event) => {
     return {
       chatMessage: createdMessage,
     };
+  } else if (validatedBody && "messages" in validatedBody) {
+    const messages = (validatedBody.messages).map(({ content, role }) => ({
+      message: content,
+      actor: role,
+      chat_user_id: user_id,
+      chat_conversation_id: chat_id,
+    }));
+
+    const createdMessages = await createChatConversationMessages(messages);
+
+    return {
+      chatMessages: createdMessages,
+    };
   }
 
-  const messages = (rawMessages as Message[]).map(({ content, role }) => ({
-    message: content,
-    actor: role,
-    chat_user_id: Number(user_id),
-    chat_conversation_id: Number(chat_id),
-  }));
-
-  const createdMessages = await createChatConversationMessages(messages);
-
-  return {
-    chatMessages: createdMessages,
-  };
+  return sendError(
+    event,
+    createError({
+      statusCode: 400,
+      statusMessage: 'Bad Request. Invalid body(message | messages).',
+    })
+  );
 });

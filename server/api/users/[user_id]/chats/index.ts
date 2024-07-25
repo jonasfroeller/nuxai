@@ -5,75 +5,45 @@ import {
 } from '~/server/database/repositories/chatConversations';
 
 export default defineEventHandler(async (event) => {
+  /* 0. VALIDATE METHOD */
   assertMethod(event, ['POST', 'GET']);
 
+  /* 1. GET METHOD AND QUERY PARAMETERS */
   const method = event.node.req.method;
-  const has_user_id = getRouterParam(event, 'user_id');
 
-  if (!has_user_id)
+  const maybeUserId = await validateUserId(event);
+  if (maybeUserId.statusCode !== 200) {
     return sendError(
       event,
       createError({
-        statusCode: 400,
-        statusMessage: 'Bad Request',
-        data: 'Missing user_id',
+        statusCode: maybeUserId.statusCode,
+        statusMessage: maybeUserId.statusMessage,
+        data: maybeUserId.data,
       })
     );
+  }
+  const user_id = maybeUserId.data?.user_id;
 
-  const paramValidationResults = await getValidatedRouterParams(
-    event,
-    (params) => {
-      // @ts-ignore
-      const user_id = Number(params?.user_id); // => NaN if not a number
-
-      return UserIdSchema.safeParse({
-        // check if user_id is a valid user_id
-        user_id,
-      });
-    }
-  );
-
-  if (!paramValidationResults.success || !paramValidationResults.data)
-    return sendError(
-      event,
-      createError({
-        statusCode: 400,
-        statusMessage: 'Bad Request',
-        data: paramValidationResults.error,
-      })
-    );
-  const user_id = paramValidationResults.data!.user_id;
-
-  const session = await requireUserSession(event);
-  if (session.user.id !== user_id)
-    return sendError(
-      event,
-      createError({ statusCode: 401, statusMessage: 'Unauthorized' })
-    );
-
+  /* 2. VALIDATE BODY(model, name) */
   if (method === 'POST') {
-    // Create new Chat conversation
-    if (LOG_BACKEND) console.info('creating new chat...');
-
-    const result = await readValidatedBody(event, (body) =>
+    const body = await readValidatedBody(event, (body) =>
       ChatConversationToCreateSchema.safeParse(body)
     );
-
-    if (LOG_BACKEND) console.info('result', JSON.stringify(result));
-    if (!result.success || !result.data)
+    if (!body.success || !body.data) {
       return sendError(
         event,
         createError({
           statusCode: 400,
-          statusMessage: 'Bad Request',
-          data: result.error,
+          statusMessage: 'Bad Request. Invalid body(model, name).',
+          data: body.error,
         })
       );
-    const body = result.data!;
+    }
+    const validatedBody = body.data;
+    const { model, name } = validatedBody;
 
-    if (LOG_BACKEND) console.info('body', body);
-
-    const { model, name } = body;
+    /* 3.1 CREATE NEW CHAT(model, name) */
+    if (LOG_BACKEND) console.info(`creating new chat (${validatedBody})...`);
 
     const chatToCreate: ChatConversationToCreate = {
       chat_user_id: user_id,
@@ -87,8 +57,8 @@ export default defineEventHandler(async (event) => {
       chat: createdChatConversation,
     };
   } else {
-    // Read all chat conversations of user
-    if (LOG_BACKEND) console.info('fetching chat information...');
+    /* 3.2 READ ALL CHATS */
+    if (LOG_BACKEND) console.info(`fetching all chats of user ${user_id}...`);
 
     const fetchedChatConversations =
       await readAllChatConversationsOfUser(user_id);

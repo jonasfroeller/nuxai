@@ -27,8 +27,8 @@ export const useSelectedAiChat = () => {
     } as MinimalChat;
   }
 
-  const resetSelectedAiChatToDefaults = (model: AllowedAiModels = 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5') => {
-    selectedAiChat.value = selectedAiChatDefaults(new Date(), model);
+  const resetSelectedAiChatToDefaults = (model: AllowedAiModels | undefined = undefined) => { // somehow setting this to 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5' instead of undefined causes some weird errors sometimes
+    selectedAiChat.value = selectedAiChatDefaults(new Date(), model ?? 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5');
     aiChatReCreationTrigger.value = generateUUID();
   };
 

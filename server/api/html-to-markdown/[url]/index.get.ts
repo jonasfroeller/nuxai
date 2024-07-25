@@ -5,17 +5,20 @@ import remarkStringify from 'remark-stringify'; // stringify Markdown
 import { fetch } from 'undici';
 import { unified } from 'unified'; // HTML and Markdown Utilities
 
-export default defineEventHandler(async (event) => {
-  const urlToFetch = getRouterParam(event, 'url'); // encodedURIComponent
-
-  if (!urlToFetch)
+export default defineCachedEventHandler(async (event) => {
+  /* VALIDATE PARAMS */
+  const maybeUrl = await validateUrl(event);
+  if (maybeUrl.statusCode !== 200) {
     return sendError(
       event,
-      createError({ statusCode: 400, statusMessage: 'Bad Request' })
+      createError({
+        statusCode: maybeUrl.statusCode,
+        statusMessage: maybeUrl.statusMessage,
+        data: maybeUrl.data,
+      })
     );
-
-  const decodedUrl = decodeURIComponent(urlToFetch);
-  const url = new URL(decodedUrl);
+  }
+  const url = maybeUrl.data.url;
 
   const markdown = await fetch(url)
     .then((res) => {

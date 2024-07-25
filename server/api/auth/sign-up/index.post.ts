@@ -20,9 +20,9 @@ export default defineEventHandler(async (event) => {
   }
 
   /* 1. VALIDATE INPUT */
-  const result = await readValidatedBody(event, (body) =>
-    UserLogInSchema.safeParse(body)
-  );
+  const result = await readValidatedBody(event, (body) => {
+    return UserLogInSchema.safeParse(body)
+  });
 
   if (LOG_BACKEND) console.info('result', JSON.stringify(result));
   if (!result.success || !result.data)
@@ -39,15 +39,6 @@ export default defineEventHandler(async (event) => {
   if (LOG_BACKEND) console.info('body', body);
 
   const { email, password } = body;
-
-  if (!email || !password) {
-    /* TODO: improve with zod, also add feedback before on frontend using zod */
-    if (LOG_BACKEND) console.warn('missing email or password');
-    return sendError(
-      event,
-      createError({ statusCode: 400, statusMessage: 'Bad Request' })
-    );
-  }
 
   /* 2. CHECK IF USER EXISTS */
 
