@@ -16,7 +16,7 @@ watch(
   (newModel) => {
     if (newModel) {
       console.log('Model changed:', newModel);
-      resetAiPlaygroundChat();
+      resetAiPlaygroundChat(newModel);
     }
   }
 );

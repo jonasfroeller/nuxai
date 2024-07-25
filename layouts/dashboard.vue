@@ -2,7 +2,7 @@
 
 <template>
   <div class="relative">
-    <DynamicHeader />
+    <DynamicHeader class="pl-[5rem]" />
     <main class="border-t">
       <slot />
     </main>

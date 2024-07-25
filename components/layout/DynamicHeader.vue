@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
+import type { HTMLAttributes } from 'vue'
+
+const props = defineProps<{
+  class?: HTMLAttributes['class']
+}>()
 
 const { loggedIn, user, clear } = useUserSession();
-const { currentRoute } = useRouter();
-
 const { headerNavigationElement } = useHeaderNavigation(); // don't bind using :ref (VNodeRef and not Element)
 </script>
 
 <template>
   <header ref="headerNavigationElement" class="sticky top-0 left-0 z-40 border-b bg-background">
-    <nav class="flex items-center justify-between gap-2 px-4 py-4" :class="{ 'pl-[5rem]': ['/', '/dashboard', '/chat'].includes(currentRoute.path) }">
+    <nav class="flex items-center justify-between gap-2 px-4 py-4" :class="props.class">
       <AppLinks layout="navigation" />
       <div class="flex items-center gap-2">
         <Button

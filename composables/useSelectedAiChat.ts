@@ -1,5 +1,5 @@
 import type { MinimalChat } from '~/lib/types/chat';
-import type { AllowedAiModelPaths } from '~/lib/types/ai.models';
+import type { AllowedAiModelPaths, AllowedAiModels } from '~/lib/types/ai.models';
 import { generateUUID } from '~/lib/utils';
 
 function createChatName(time: Date) {
@@ -19,16 +19,16 @@ export const useSelectedAiChat = () => {
   const selectedAiChatId = computed(() => selectedAiChat?.value?.id ?? -1);
   const selectedAiChatKey = computed(() => `${selectedAiChatApiPath.value}?chat_id=${selectedAiChat.value.id}&isPlayground=${selectedAiChatIsPlayground.value}&isRecreated=${aiChatReCreationTrigger.value}`);
 
-  function selectedAiChatDefaults(time: Date) {
+  function selectedAiChatDefaults(time: Date, model: AllowedAiModels = 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5') {
     return {
       id: -1,
       name: createChatName(time),
-      model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
+      model,
     } as MinimalChat;
   }
 
-  const resetSelectedAiChatToDefaults = () => {
-    selectedAiChat.value = selectedAiChatDefaults(new Date());
+  const resetSelectedAiChatToDefaults = (model: AllowedAiModels = 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5') => {
+    selectedAiChat.value = selectedAiChatDefaults(new Date(), model);
     aiChatReCreationTrigger.value = generateUUID();
   };
 
@@ -55,9 +55,9 @@ export const useAiChatPlayground = () => {
     aiPlaygroundChatName.value = selectedAiChat.value.name;
   }
 
-  function resetAiPlaygroundChat() {
+  function resetAiPlaygroundChat(model: AllowedAiModels = 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5') {
     aiPlaygroundChatMessages.value = []; // setChatMessages([]); is done by rerendering the whole component which recreates the useChat composable with a new id
-    resetSelectedAiChatToDefaults();
+    resetSelectedAiChatToDefaults(model);
   }
 
   return {
