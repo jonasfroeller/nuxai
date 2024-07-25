@@ -24,7 +24,7 @@ export default defineNuxtConfig({
       dirs: ['./server/utils'],
     },
     experimental: { // Scalar support is currently available in nightly channel. (https://nitro.unjs.io/config#experimental, https://nuxt.com/modules/scalar)
-      openAPI: true, /* { // enables /_nitro/scalar and /_nitro/swagger and /_nitro/openapi.json
+      openAPI: true, /* { // enables /_nitro/scalar and /_nitro/swagger and /_nitro/openapi.json (currently only in dev mode)
         meta: {
           title: 'Nuxai API Documentation',
           description: 'Chat with different AI models using this REST-API.',
