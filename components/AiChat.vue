@@ -20,7 +20,7 @@ const { messages: currentAiChatPlaygroundMessagesBackup } =
 const { generateMarkdownFromUrl } = useAPI();
 
 /* CHAT AI */
-const { selectedAiChat, selectedAiChatIsPlayground } = useSelectedAiChat();
+const { selectedAiChat, selectedAiChatIsPlayground, resetSelectedAiChatToDefaults, selectedChatKey } = useSelectedAiChat();
 const selectedModelApiPath = useSelectedAiModelApiPath();
 let {
   messages: chatMessages,
@@ -33,7 +33,7 @@ let {
   /* append: appendChatMessage, */
 } = useChat({
   id: String(selectedAiChat.value.id),
-  api: `${selectedModelApiPath.value}?chat_id=${selectedAiChat.value.id}`,
+  api: `${selectedModelApiPath.value}${selectedChatKey.value}`,
   keepLastMessageOnError: true,
 });
 
@@ -82,7 +82,7 @@ watch(
     await aiIsDoneResponding;
 
     console.info('Setting chat history messages backup...');
-    if (selectedAiChatIsPlayground) {
+    if (selectedAiChatIsPlayground.value) {
       currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
     }
   }
@@ -173,6 +173,12 @@ function appendFileUploadToInput(type: string, name: string, text: string) {
 // Load data
 async function loadChatMessages(user_id: number, chat_id: number) {
   if (user_id !== -1) {
+
+    if (chat_id === -1) { // load playground, if no chat is selected
+      chatMessages.value = currentAiChatPlaygroundMessagesBackup.value
+      return;
+    }
+
     const data = await $fetch(`/api/users/${user_id}/chats/${chat_id}/messages`);
 
     if (data?.chatMessages && data.chatMessages.length > 0) {
@@ -201,6 +207,12 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
     handleChatMessageSubmit();
   }
 }
+
+// Reset Chat
+function resetPlaygroundChat() {
+  currentAiChatPlaygroundMessagesBackup.value = []; // setChatMessages([]); is done by rerendering the whole component which recreates the useChat composable with a new id
+  resetSelectedAiChatToDefaults();
+}
 </script>
 
 <template>
@@ -216,6 +228,14 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
 
     <div class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
       <ShadcnScrollArea>
+
+      <DevOnly>
+        SELECTED: {{ selectedAiChat }}<br />
+        {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }} / {{ selectedAiChatIsPlayground }}<br>
+        {{ selectedChatKey }}<br>
+        {{ JSON.stringify(chatMessages) }}
+      </DevOnly>
+
       <div
         v-for="m in chatMessages"
         :key="m.id"
@@ -429,14 +449,7 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
                 <ShadcnAlertDialogFooter>
                   <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
                   <ShadcnAlertDialogAction
-                    @click="
-                      () => {
-                        chatMessages = [];
-                        setChatMessages(chatMessages);
-                        chatResponseIsLoading = false;
-                        // TODO: make proper reset function, chat id needs to be reset too etc. (useSelectedAiChat and usePlaygroundAiChat need to be overworked)
-                      }
-                    "
+                    @click="resetPlaygroundChat"
                     >Continue</ShadcnAlertDialogAction
                   >
                 </ShadcnAlertDialogFooter>

@@ -9,11 +9,7 @@ const filetypeSearchSelectableValues = ref([
   { value: 'yaml', label: 'Yaml' },
 ]);
 
-const selectedModelApiPath = useSelectedAiModelApiPath(); // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
-const { selectedAiChat } = useSelectedAiChat();
-const aiChatKey = computed(
-  () => `${selectedModelApiPath.value}?=${selectedAiChat.value.id}`
-);
+const { selectedChatKey } = useSelectedAiChat(); // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
 </script>
 
 <template>
@@ -21,7 +17,7 @@ const aiChatKey = computed(
     class="relative flex flex-col items-start order-2 h-full gap-8 2xl:order-1"
   >
     <!-- hidden md:flex -->
-    <AiModelConfiguration :key="aiChatKey" />
+    <AiModelConfiguration :key="selectedChatKey" />
     <fieldset class="flex flex-col w-full h-full gap-6 p-4 border rounded-lg">
       <legend class="px-1 -ml-1 text-sm font-medium">
         Generated Configuration File

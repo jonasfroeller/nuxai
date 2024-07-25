@@ -44,12 +44,7 @@ definePageMeta({
   alias: ['/dashboard', '/chat'],
 });
 
-const selectedModelApiPath = useSelectedAiModelApiPath(); // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
-const { selectedAiChat } = useSelectedAiChat();
-const aiChatKey = computed(
-  () => `${selectedModelApiPath.value}?=${selectedAiChat.value.id}`
-);
-
+const { selectedChatKey } = useSelectedAiChat(); // TODO: find out, how to recreate useChat on selectedModelApiPath => this wouldn't be needed anymore
 const { headerNavigationSize } = useHeaderNavigation();
 
 // TODO: fix `[Vue warn]: Hydration node mismatch` on some Tooltip
@@ -201,7 +196,7 @@ const { headerNavigationSize } = useHeaderNavigation();
                   Configure the settings for the model
                 </DrawerDescription>
               </DrawerHeader>
-              <AiModelConfiguration :key="aiChatKey" />
+              <AiModelConfiguration :key="selectedChatKey" />
             </DrawerContent>
           </Drawer>
         </div>
@@ -230,15 +225,13 @@ const { headerNavigationSize } = useHeaderNavigation();
             <AiChats />
           </TabsContent>
           <TabsContent value="chat" class="h-full">
-            <AiChatInformation :key="aiChatKey" />
+            <AiChatInformation :key="selectedChatKey" />
           </TabsContent>
         </Tabs>
-        <AiChat :key="aiChatKey" />
+        <AiChat :key="selectedChatKey" />
+        <!-- <DevOnly>{{ selectedChatKey }}</DevOnly> -->
         <!-- </ClientOnly> -->
       </main>
-      <DevOnly>
-        <div class="text-center">{{ aiChatKey }}</div>
-      </DevOnly>
     </div>
   </div>
 </template>
