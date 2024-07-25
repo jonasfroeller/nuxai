@@ -20,7 +20,7 @@ function setSelectedChat(
   force: boolean = false
 ) {
   if (selectedAiChat.value.id === id && force === false) {
-    resetSelectedAiChatToDefaults();
+    resetSelectedAiChatToDefaults(); // doesn't reset messages
   } else {
     selectedAiChat.value.id = id;
     selectedAiChat.value.name = name;

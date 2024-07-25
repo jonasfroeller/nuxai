@@ -19,7 +19,7 @@ const { aiPlaygroundChatMessages: currentAiChatPlaygroundMessagesBackup, resetAi
 const { generateMarkdownFromUrl } = useAPI();
 
 /* CHAT AI */
-const { selectedAiChat, selectedAiChatIsPlayground, selectedAiChatKey, selectedAiChatApiPath } = useSelectedAiChat();
+const { selectedAiChat, selectedAiChatIsPlayground, selectedAiChatKey } = useSelectedAiChat();
 let {
   messages: chatMessages,
   input: currentChatMessage,

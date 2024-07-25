@@ -6,7 +6,6 @@ const { user } = useUserSession();
 const {
   selectedAiChat,
   selectedAiChatIsPlayground,
-  resetSelectedAiChatToDefaults,
 } = useSelectedAiChat();
 const { resetAiPlaygroundChat } = useAiChatPlayground();
 const { persistChatConversation } = useAPI();
@@ -109,7 +108,7 @@ watch(
           :disabled="selectedAiChatIsPlayground"
           type="button"
           variant="secondary"
-          @click="() => resetSelectedAiChatToDefaults()"
+          @click="() => resetAiPlaygroundChat()"
           >New Playground Chat</ShadcnButton
         >
       </div>
