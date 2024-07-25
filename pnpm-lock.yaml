@@ -55,7 +55,7 @@ importers:
         version: 0.2.1(magicast@0.3.4)(rollup@4.19.0)
       nuxt-posthog:
         specifier: ^1.5.0
-        version: 1.5.0(magicast@0.3.4)(rollup@4.19.0)
+        version: 1.5.1(magicast@0.3.4)(rollup@4.19.0)
       nuxt-time:
         specifier: ^0.1.3
         version: 0.1.3(magicast@0.3.4)(rollup@4.19.0)
@@ -4064,8 +4064,8 @@ packages:
   nuxt-auth-utils@0.2.1:
     resolution: {integrity: sha512-iorn9Eq4QM4ftE+1JL1QTAjDWFh2KWmTpgTHwoaQrMbTQKeEZoR1tftaLrDQbFZMwWVlEi65LwMj5xPDlJsUzw==}
 
-  nuxt-posthog@1.5.0:
-    resolution: {integrity: sha512-myriRE+BnSqcSArYnsHCBWnzGRJBmUWpzoMOkgECwumd9po7XuhWwE+wpgBDwUBfLBfr0b3JQO7H/kR6GVeZJQ==}
+  nuxt-posthog@1.5.1:
+    resolution: {integrity: sha512-mjcHec9+1CSJ1kyqsiPXQZv5Mfe/ve5dzb+2PI6TsACYoWzD6MXCUtKkkm4f54Iqz1lQorfeY6llcg7d+nWjJQ==}
 
   nuxt-time@0.1.3:
     resolution: {integrity: sha512-Ie9KA4DfaebqDaTy+u49VVI8lHHjTlllEqdFgeQuvQItrkDaojXWKLwHfW7ju7tDJlpVIV9K6KpRXWPAWUq7Bw==}
@@ -4545,15 +4545,15 @@ packages:
     resolution: {integrity: sha512-IbyN+9KslkqcXa8AO9fxpk97PA4pzewvpi2B3Dwy9u4zpV32QicaEdgmF3eSQUzdRk7ttDHQejNgAEr4XoeH4A==}
     engines: {node: '>=12'}
 
-  posthog-js@1.148.0:
-    resolution: {integrity: sha512-nydf+aret26YViDBwH7DdN/c8dmCzQGNQ1yredeE47UlbpJ3J/iTgskNdmGJIofFcdSagcwAE/FF7s++YfTtvg==}
+  posthog-js@1.149.2:
+    resolution: {integrity: sha512-4tNtVJkq3wZ5CvfOEp3Jtl/r3ogZb5To+bdu7JoO5QjkpTY9TV1pfo/Ag4keODpAzRDahC8OaCoIr4mY3dSK4g==}
 
   posthog-node@4.0.1:
     resolution: {integrity: sha512-rtqm2h22QxLGBrW2bLYzbRhliIrqgZ0k+gF0LkQ1SNdeD06YE5eilV0MxZppFSxC8TfH0+B0cWCuebEnreIDgQ==}
     engines: {node: '>=15.0.0'}
 
-  preact@10.22.1:
-    resolution: {integrity: sha512-jRYbDDgMpIb5LHq3hkI0bbl+l/TQ9UnkdQ0ww+lp+4MMOdqaUYdFc5qeyP+IV8FAd/2Em7drVPeKdQxsiWCf/A==}
+  preact@10.23.1:
+    resolution: {integrity: sha512-O5UdRsNh4vdZaTieWe3XOgSpdMAmkIYBCT3VhQDlKrzyCm8lUYsk0fmVEvoQQifoOjFRTaHZO69ylrzTW2BH+A==}
 
   prebuild-install@7.1.2:
     resolution: {integrity: sha512-UnNke3IQb6sgarcZIDU3gbMeTp/9SSU1DAIkil7PrqG1vZlBtY5msYccSKSHDqa3hNg436IXK+SNImReuA1wEQ==}
@@ -10193,11 +10193,11 @@ snapshots:
       - rollup
       - supports-color
 
-  nuxt-posthog@1.5.0(magicast@0.3.4)(rollup@4.19.0):
+  nuxt-posthog@1.5.1(magicast@0.3.4)(rollup@4.19.0):
     dependencies:
       '@nuxt/kit': 3.12.4(magicast@0.3.4)(rollup@4.19.0)
       defu: 6.1.4
-      posthog-js: 1.148.0
+      posthog-js: 1.149.2
       posthog-node: 4.0.1
     transitivePeerDependencies:
       - debug
@@ -10762,10 +10762,10 @@ snapshots:
 
   postgres@3.4.4: {}
 
-  posthog-js@1.148.0:
+  posthog-js@1.149.2:
     dependencies:
       fflate: 0.4.8
-      preact: 10.22.1
+      preact: 10.23.1
       web-vitals: 4.2.2
 
   posthog-node@4.0.1:
@@ -10775,7 +10775,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  preact@10.22.1: {}
+  preact@10.23.1: {}
 
   prebuild-install@7.1.2:
     dependencies:
