@@ -18,9 +18,9 @@ export default defineEventHandler(async (event) => {
   const chat_id = maybeChatId.data?.chat_id;
 
   /* VALIDATE BODY */
-  const body = await readValidatedBody(event, (body) =>
-    ChatConversationMessagesToCreateUniversalSchema.safeParse(body)
-  );
+  const body = await readValidatedBody(event, (body) => {
+    return ChatConversationMessagesToCreateUniversalSchema.safeParse(body);
+  });
   if (!body.success || !body.data) {
     return sendError(
       event,
@@ -33,8 +33,8 @@ export default defineEventHandler(async (event) => {
   }
   const validatedBody = body.data;
 
-  if (validatedBody && "message" in validatedBody && !Array.isArray(validatedBody.message)) {
-    const { message, actor } = validatedBody.message;
+  if (validatedBody && "message" in validatedBody && "actor" in validatedBody) {
+    const { message, actor } = validatedBody;
 
     const conversationMessageToCreate = {
       message: message,

@@ -397,8 +397,6 @@ export const ChatConversationMessagesToCreateSchema = z.object({
 });
 
 export const ChatConversationMessagesToCreateUniversalSchema = ChatConversationMessagesToCreateSchema.or(z.object({
-  message: z.object({
-    message: z.string().trim().min(1),
-    actor: z.nativeEnum(Actor),
-  })
+  message: z.string().trim().min(1),
+  actor: z.nativeEnum(Actor),
 }));

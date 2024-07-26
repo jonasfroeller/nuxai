@@ -1,4 +1,4 @@
-import { HuggingFaceStream, StreamingTextResponse } from 'ai';
+import { HuggingFaceStream, type Message, StreamingTextResponse } from 'ai';
 import { HfInference } from '@huggingface/inference';
 import {
   experimental_buildOpenAssistantPrompt,
@@ -15,8 +15,6 @@ async function persistChatMessage(
   event: any
 ) {
   if (chat_id >= 1) {
-    if (LOG_BACKEND) console.info('persisting chat message:', messageText);
-
     const persistChatMessage = await event.$fetch(
       `/api/users/${user_id}/chats/${chat_id}/messages`,
       {
@@ -101,9 +99,9 @@ export default defineLazyEventHandler(async () => {
 
     if (LOG_BACKEND) console.info(`Fetching model: ${model_publisher}/${model_name}...`);
 
-    const body = await readValidatedBody(event, (body) => // complete chat history
-      ChatConversationMessagesToCreateSchema.safeParse(body)
-    );
+    const body = await readValidatedBody(event, (body) => { // complete chat history
+      return ChatConversationMessagesToCreateSchema.safeParse(body)
+    });
     if (!body.success || !body.data) {
       return sendError(
         event,
@@ -118,7 +116,7 @@ export default defineLazyEventHandler(async () => {
     const { messages } = validatedBody;
 
     const userMessage = messages[messages.length - 1]; // { role: 'user', content: 'message' }
-    if (LOG_BACKEND) console.info(userMessage);
+    // if (LOG_BACKEND) console.info("current user message", userMessage);
     await persistUserChatMessage(user.id, chat_id, userMessage.content, event);
 
     try {
@@ -139,11 +137,12 @@ export default defineLazyEventHandler(async () => {
       }
 
       let inputs = String(messages);
+      const minimalMessages = messages as Pick<Message, "content" | "role">[];
       if (model_publisher === 'OpenAssistant' || model_publisher === '01-ai') {
-        inputs = experimental_buildOpenAssistantPrompt(messages); // basically convertToCoreMessages from 'ai'
+        inputs = experimental_buildOpenAssistantPrompt(minimalMessages); // basically convertToCoreMessages from 'ai'
         // if (LOG_BACKEND) console.info('using custom prompt builder for OpenAssistant');
       } else if (model_publisher === 'mistralai') {
-        inputs = experimental_buildLlama2Prompt(messages);
+        inputs = experimental_buildLlama2Prompt(minimalMessages);
         // if (LOG_BACKEND) console.info('using custom prompt builder for Llama2');
       }
 
