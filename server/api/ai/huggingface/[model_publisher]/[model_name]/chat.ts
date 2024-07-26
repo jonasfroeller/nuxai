@@ -6,13 +6,15 @@ import {
 } from 'ai/prompts';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 import { validateAiModelName, validateChatIdQuery } from '~/server/utils/validate';
+import type { User } from '#auth-utils';
+import type { H3Event, EventHandlerRequest } from 'h3';
 
 async function persistChatMessage(
   user_id: number,
   chat_id: number,
   messageText: string,
   actor: 'user' | 'assistant' = 'user',
-  event: any
+  event: H3Event<EventHandlerRequest>
 ) {
   if (chat_id >= 1) {
     const persistChatMessage = await event.$fetch(
@@ -45,9 +47,8 @@ async function persistAiChatMessage(
   user_id: number,
   chat_id: number,
   messageText: string,
-  event: any
+  event: H3Event<EventHandlerRequest>
 ) {
-  // only persists AI messages
   await persistChatMessage(user_id, chat_id, messageText, 'assistant', event);
 }
 
@@ -55,7 +56,7 @@ async function persistUserChatMessage(
   user_id: number,
   chat_id: number,
   messageText: string,
-  event: any
+  event: H3Event<EventHandlerRequest>
 ) {
   await persistChatMessage(user_id, chat_id, messageText, 'user', event);
 }
@@ -65,7 +66,9 @@ export default defineLazyEventHandler(async () => {
   const Hf = new HfInference(apiKey);
 
   return defineEventHandler(async (event) => {
-    const { user } = await requireUserSession(event);
+    /* 0. VALIDATE METHOD */
+    assertMethod(event, ['POST']);
+    const user = event.context.user as User;
 
     /* VALIDATE QUERY */
     const maybeChatId = await validateChatIdQuery(event);
