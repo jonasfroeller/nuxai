@@ -236,10 +236,12 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
       <ShadcnScrollArea>
 
       <DevOnly>
-        SELECTED: {{ selectedAiChat }} | {{ selectedAiChatKey }}<br />
-        messages: {{ JSON.stringify(chatMessages) }}<br>
-        <hr>
-        PLAYGROUND: {{ selectedAiChatIsPlayground }} | {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}<br>
+        <ClientOnly>
+          SELECTED: {{ selectedAiChat }} | {{ selectedAiChatKey }}<br />
+          messages: {{ JSON.stringify(chatMessages) }}<br>
+          <hr>
+          PLAYGROUND: {{ selectedAiChatIsPlayground }} | {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}<br>
+        </ClientOnly>
       </DevOnly>
 
       <div

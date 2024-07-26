@@ -10,23 +10,6 @@ export function useHeaderNavigation() {
         return { width: 0, height: 0 };
     });
 
-    // basically the same thing, just more complex:
-    // const headerNavigationSize = useState('header-navigation-size', () => ref({ width: 0, height: 0 }));
-    /* onMounted(() => {
-        if (headerNavigation.value !== null) {
-            const { width, height } = useElementSize(headerNavigation);
-            headerNavigationSize.value = { width: width.value, height: height.value };
-
-            watch(width, (newWidth) => {
-                headerNavigationSize.value.width = newWidth;
-            });
-
-            watch(height, (newHeight) => {
-                headerNavigationSize.value.height = newHeight;
-            });
-        }
-    }); */
-
     return {
         headerNavigationElement: headerNavigation,
         headerNavigationSize,

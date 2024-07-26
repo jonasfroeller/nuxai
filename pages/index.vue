@@ -47,6 +47,18 @@ definePageMeta({
 const { selectedAiChatKey } = useSelectedAiChat();
 const { headerNavigationSize } = useHeaderNavigation();
 
+type possibleDashboardTabs = "chat" | "chats";
+const selectedDashboardTab = ref<possibleDashboardTabs>("chat");
+const selectedDashboardTabFromLocalStorage = useLocalStorage<possibleDashboardTabs>(localStorageTopicKey('selected-dashboard-tab'), "chat");
+
+watch(selectedDashboardTab, () => {
+  selectedDashboardTabFromLocalStorage.value = selectedDashboardTab.value;
+});
+
+onMounted(() => {
+  selectedDashboardTab.value = selectedDashboardTabFromLocalStorage.value;
+});
+
 // TODO: fix `[Vue warn]: Hydration node mismatch` on some Tooltip
 </script>
 
@@ -214,7 +226,7 @@ const { headerNavigationSize } = useHeaderNavigation();
       <main
         class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 2xl:grid-cols-[33%,1fr]"
       >
-        <Tabs default-value="chat" class="h-screen max-h-[calc(100%-3rem)]">
+        <Tabs v-model="selectedDashboardTab" default-value="chat" class="h-screen max-h-[calc(100%-3rem)]">
           <TabsList class="flex justify-start w-full bg-muted/50">
             <TabsTrigger value="chats"> All Chats </TabsTrigger>
             <TabsTrigger value="chat"> Active Chat Information </TabsTrigger>

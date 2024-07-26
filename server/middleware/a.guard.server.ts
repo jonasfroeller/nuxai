@@ -6,8 +6,6 @@ export default defineEventHandler(async (event) => {
   const url = getRequestURL(event);
   const urlPath = url.pathname;
 
-  if (LOG_BACKEND) console.info('urlPath', urlPath);
-
   let matchingRoute = null;
   const isProtected = protectedRoutes.some((route) => {
     const regex = new RegExp(route);

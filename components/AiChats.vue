@@ -134,71 +134,74 @@ let filteredChats = computed(() => {
           filteredChats?.length !== 0
         "
       >
-        <div class="flex flex-col h-full gap-1">
-          <div
-            class="flex justify-between flex-grow w-full gap-8 p-4 border rounded-sm border-border bg-background"
-            :id="String(chat?.id)"
-            v-for="chat in filteredChats"
-            :key="chat?.id"
-            v-bind:class="{
-              'border border-green-600': selectedAiChat?.id === chat?.id,
-            }"
-          >
-            <div class="flex flex-col gap-1">
-              <div class="flex items-center gap-1">
-                <template v-if="chatToEdit.id === chat.id">
-                  <ShadcnInput
-                    @keydown.enter="saveEdit(chat.id)"
-                    v-model="chatToEdit.name"
-                  />
-                  <ShadcnButton variant="outline" @click="saveEdit(chat.id)"
-                    >Save</ShadcnButton
-                  >
-                </template>
-                <template v-else>
-                  <ShadcnButton
-                    :variant="
-                      selectedAiChat?.id === chat?.id ? 'secondary' : 'outline'
-                    "
-                    @click="setSelectedChat(chat.id, chat.name, chat.model)"
-                    >{{ chat?.name }}</ShadcnButton
-                  >
-                  <ShadcnButton
-                    variant="outline"
-                    @click="editChat(chat.id, chat.name)"
-                    ><Pen class="w-4 h-4"
-                  /></ShadcnButton>
-                </template>
+        <ClientOnly>
+          <div class="flex flex-col h-full gap-1">
+            <div
+              class="flex justify-between flex-grow w-full gap-8 p-4 border rounded-sm border-border bg-background"
+              :id="String(chat?.id)"
+              v-for="chat in filteredChats"
+              :key="chat?.id"
+              v-bind:class="{
+                'border border-green-600': selectedAiChat?.id === chat?.id,
+              }"
+            >
+            <div class="hidden border-green-600"></div>
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-1">
+                  <template v-if="chatToEdit.id === chat.id">
+                    <ShadcnInput
+                      @keydown.enter="saveEdit(chat.id)"
+                      v-model="chatToEdit.name"
+                    />
+                    <ShadcnButton variant="outline" @click="saveEdit(chat.id)"
+                      >Save</ShadcnButton
+                    >
+                  </template>
+                  <template v-else>
+                    <ShadcnButton
+                      :variant="
+                        selectedAiChat?.id === chat?.id ? 'secondary' : 'outline'
+                      "
+                      @click="setSelectedChat(chat.id, chat.name, chat.model)"
+                      >{{ chat?.name }}</ShadcnButton
+                    >
+                    <ShadcnButton
+                      variant="outline"
+                      @click="editChat(chat.id, chat.name)"
+                      ><Pen class="w-4 h-4"
+                    /></ShadcnButton>
+                  </template>
+                </div>
+                <ShadcnButton variant="destructive" @click="deleteChat(chat?.id)"
+                  >delete<Trash2 class="w-4 h-4 ml-1"
+                /></ShadcnButton>
               </div>
-              <ShadcnButton variant="destructive" @click="deleteChat(chat?.id)"
-                >delete<Trash2 class="w-4 h-4 ml-1"
-              /></ShadcnButton>
-            </div>
-            <div class="grid text-right">
-              <span class="truncate text-muted-foreground">{{
-                chat?.model
-              }}</span>
-              <NuxtTime
-                class="text-muted-foreground"
-                :datetime="chat?.created_at ?? new Date()"
-                day="numeric"
-                month="numeric"
-                year="numeric"
-                hour="numeric"
-                minute="numeric"
-              />
-              <NuxtTime
-                class="text-muted-foreground"
-                :datetime="chat?.updated_at ?? new Date()"
-                day="numeric"
-                month="numeric"
-                year="numeric"
-                hour="numeric"
-                minute="numeric"
-              />
+              <div class="grid text-right">
+                <span class="truncate text-muted-foreground">{{
+                  chat?.model
+                }}</span>
+                <NuxtTime
+                  class="text-muted-foreground"
+                  :datetime="chat?.created_at ?? new Date()"
+                  day="numeric"
+                  month="numeric"
+                  year="numeric"
+                  hour="numeric"
+                  minute="numeric"
+                />
+                <NuxtTime
+                  class="text-muted-foreground"
+                  :datetime="chat?.updated_at ?? new Date()"
+                  day="numeric"
+                  month="numeric"
+                  year="numeric"
+                  hour="numeric"
+                  minute="numeric"
+                />
+              </div>
             </div>
           </div>
-        </div>
+        </ClientOnly>
       </ShadcnScrollArea>
       <div class="h-full pt-2 text-center" v-else>
         <p

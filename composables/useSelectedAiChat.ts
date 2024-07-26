@@ -6,6 +6,8 @@ function createChatName(time: Date) {
   return `chat-${time.valueOf()}`;
 }
 
+const localStorageSelectedChatId = useLocalStorage(localStorageTopicKey('selected-ai-chat-id'), -1);
+
 export const useSelectedAiChat = () => {
   const aiChatReCreationTrigger = useState('selected-ai-chat-is-recreated', () => ref<string>(generateUUID()));
   const selectedAiChat = useState('selected-ai-chat', () => reactive<MinimalChat>(selectedAiChatDefaults(new Date())));
@@ -16,7 +18,14 @@ export const useSelectedAiChat = () => {
   const selectedAiChatIsPlayground = computed(
     () => selectedAiChatId.value === -1
   );
-  const selectedAiChatId = computed(() => selectedAiChat?.value?.id ?? -1);
+  const selectedAiChatId = computed(() => {
+    if (IS_CLIENT && localStorageSelectedChatId.value !== selectedAiChat.value.id) {
+      console.log('localStorageSelectedChatId.value', localStorageSelectedChatId.value);
+      localStorageSelectedChatId.value = selectedAiChat.value.id;
+    }
+
+    return selectedAiChat?.value?.id ?? -1;
+  });
   const selectedAiChatKey = computed(() => `${selectedAiChatApiPath.value}?chat_id=${selectedAiChat.value.id}&isPlayground=${selectedAiChatIsPlayground.value}&isRecreated=${aiChatReCreationTrigger.value}`);
 
   function selectedAiChatDefaults(time: Date, model: AllowedAiModels = 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5') {
