@@ -42,8 +42,8 @@ dependencies:
     specifier: ^0.32.0
     version: 0.32.1(@neondatabase/serverless@0.9.4)(postgres@3.4.4)(react@18.3.1)
   lucide-vue-next:
-    specifier: ^0.414.0
-    version: 0.414.0(vue@3.4.34)
+    specifier: ^0.416.0
+    version: 0.416.0(vue@3.4.34)
   nuxt:
     specifier: ^3.12.3
     version: 3.12.4(drizzle-orm@0.32.1)(eslint@8.57.0)(typescript@5.5.4)(vite@5.3.5)(vue-tsc@2.0.29)
@@ -6487,8 +6487,8 @@ packages:
     dependencies:
       yallist: 3.1.1
 
-  /lucide-vue-next@0.414.0(vue@3.4.34):
-    resolution: {integrity: sha512-qKZ1YXZRnxKliuQZJA0btTS24Ab0ZftGYi83nwjbZZtTGwe+RAnZhidJqtbC96a9/YtNjwJzqCjTUURL7+Ly4g==}
+  /lucide-vue-next@0.416.0(vue@3.4.34):
+    resolution: {integrity: sha512-oNjClUpOTRhLGN0UDvtjGAWBJzYj+rJPr3DxR5aXd2eD6tIuEuF7iaofkvT220VGXAVoXKCqmgk826OJ1M6T6A==}
     peerDependencies:
       vue: '>=3.0.1'
     dependencies:
