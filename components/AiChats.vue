@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RefreshCcw, Pen, Trash2, Search } from 'lucide-vue-next';
+import { RefreshCcw, Pen, Trash2, Search, Loader2 } from 'lucide-vue-next';
 import type { AllowedAiModels } from '~/lib/types/ai.models';
 import type { MinimalChat, FullyFeaturedChat } from '~/lib/types/chat';
 const { console } = useLogger();
@@ -126,6 +126,10 @@ let filteredChats = computed(() => {
     </div>
 
     <div class="h-[calc(100%-3rem)]">
+      <div v-show="fetchedChatsStatus === 'pending'" class="flex items-center justify-center gap-2 px-4 py-2 mb-2 border border-blue-200 rounded-lg bg-background">
+        <Loader2 class="w-4 h-4 mr-2 text-blue-500 animate-spin" />
+        <p class="flex-grow">Waiting for response...</p>
+      </div>
       <ShadcnScrollArea
         class="h-full"
         v-if="
