@@ -62,7 +62,6 @@ async function persistUserChatMessage(
 
 export default defineLazyEventHandler(async () => {
   const apiKey = useRuntimeConfig().huggingfaceApiKey;
-  if (!apiKey) throw new Error('Missing OpenAI API key');
   const Hf = new HfInference(apiKey);
 
   return defineEventHandler(async (event) => {
@@ -138,10 +137,10 @@ export default defineLazyEventHandler(async () => {
 
       let inputs = String(messages);
       const minimalMessages = messages as Pick<Message, "content" | "role">[];
-      if (model_publisher === 'OpenAssistant' || model_publisher === '01-ai') {
+      if (model_name === 'oasst-sft-4-pythia-12b-epoch-3.5') {
         inputs = experimental_buildOpenAssistantPrompt(minimalMessages); // basically convertToCoreMessages from 'ai'
         // if (LOG_BACKEND) console.info('using custom prompt builder for OpenAssistant');
-      } else if (model_publisher === 'mistralai') {
+      } else if (model_name === 'Mistral-7B-Instruct-v0.1') {
         inputs = experimental_buildLlama2Prompt(minimalMessages);
         // if (LOG_BACKEND) console.info('using custom prompt builder for Llama2');
       }

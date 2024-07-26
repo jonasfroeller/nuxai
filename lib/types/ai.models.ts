@@ -1,5 +1,5 @@
 export const POSSIBLE_AI_MODELS: PossibleAiModels = {
-  OpenAssistant: {
+  OpenAssistant: { // TODO: add model type Llama2 or OpenAssistant
     'oasst-sft-4-pythia-12b-epoch-3.5': {
       publisher: 'OpenAssistant',
       name: 'oasst-sft-4-pythia-12b-epoch-3.5',
@@ -50,33 +50,6 @@ export const POSSIBLE_AI_MODELS: PossibleAiModels = {
       },
     },
   },
-  '01-ai': {
-    'Yi-1.5-34B-Chat': {
-      publisher: '01-ai',
-      name: 'Yi-1.5-34B-Chat',
-      description: `<strong>Our vision: Make AGI Accessible and Beneficial to Everyone.</strong><br>
-            01.AI vision: AI will effectively enhance human productivity, hence creating significant economic and societal values,
-            <br>realizing 01.AI's aspiration of "Human + AI" that technology empowers and amplifies our humankind.
-            <br>We hope to be able to contribute to this new AI 2.0 ecosystem.<br>
-            (Apache-2.0 License)`,
-      icon: 'mdi:rabbit',
-      type: 'chat',
-      configuration: (inputs: string) => {
-        return {
-          /* https://huggingface.co/01-ai/Yi-1.5-34B-Chat */
-          model: '01-ai/Yi-1.5-34B-Chat',
-          inputs: inputs,
-          parameters: {
-            max_new_tokens: 500,
-            typical_p: 0.2,
-            repetition_penalty: 1.1,
-            truncate: 4094 - 500 /* context length of this model is 4094 */,
-            return_full_text: false,
-          },
-        };
-      },
-    },
-  },
 } as const;
 
 /* TODO: make this work for the type AllowedModelPaths, so that everything is dynamic */
@@ -119,25 +92,21 @@ export type PossibleAiModels = {
 
 const allowedModelsConst = [
   'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
-  '01-ai/Yi-1.5-34B-Chat',
   'mistralai/Mistral-7B-Instruct-v0.1',
 ] as const;
 
 export enum AllowedAiModelPublishersEnum {
   OpenAssistant = 'OpenAssistant',
-  Yi15 = '01-ai',
   Mistral = 'mistralai',
 }
 
 export enum AllowedAiModelNamesEnum {
   OpenAssistant = 'oasst-sft-4-pythia-12b-epoch-3.5',
-  Yi15 = 'Yi-1.5-34B-Chat',
   Mistral = 'Mistral-7B-Instruct-v0.1',
 }
 
 export enum AllowedAiModelsEnum {
   OpenAssistant = 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
-  Yi15 = '01-ai/Yi-1.5-34B-Chat',
   Mistral = 'mistralai/Mistral-7B-Instruct-v0.1',
 }
 
