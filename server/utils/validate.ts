@@ -8,50 +8,106 @@ import type { User } from '#auth-utils';
 interface ValidationSuccess<T> {
   statusCode: 200;
   statusMessage: string;
+  message: string;
   data: T;
 }
 
 interface ValidationError<T> {
   statusCode: 400 | 401;
   statusMessage: string;
+  message: string;
   data: ZodError<T> | null;
 }
 
 type ValidationResult<S, E = S> = ValidationSuccess<S> | ValidationError<E>;
 
-/* VALIDATE QUERY PARAMS(chat_id) */
-export async function validateQueryChatId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatIdQueryType>> {
-  const maybeValidatedParams = await getValidatedQuery(
-    event,
-    (params) => {
-      // @ts-ignore
-      const chat_id = Number(params?.chat_id);
-
-      return ChatIdQuerySchema.safeParse({
-        chat_id,
-      });
-    }
-  );
+async function validateParams<S, E = S>(
+  event: H3Event<EventHandlerRequest>,
+  parseFunction: () => Promise<{ success: boolean, data?: S, error?: ZodError<E> }>,
+  validationSuccessMessage: string,
+  validationErrorMessage: string,
+  logData?: any,
+  unauthorizedCheck?: (user: User, data: S) => boolean,
+  secondValidationStep?: (data: S) => { validationErrorMessage: string, data: S | null, success: boolean }
+): Promise<ValidationResult<S, E>> {
+  const maybeValidatedParams = await parseFunction();
 
   if (!maybeValidatedParams.success) {
     return {
       statusCode: 400,
-      statusMessage: 'Bad Request. Invalid queryParams(chat_id).',
-      data: maybeValidatedParams.error,
+      statusMessage: "Bad Request.",
+      message: validationErrorMessage,
+      data: maybeValidatedParams.error || null,
     };
   }
 
-  if (LOG_BACKEND) console.info(`chat_id: ${maybeValidatedParams.data.chat_id}`);
+  const { validationErrorMessage: secondValidationErrorMessage, data, success } = secondValidationStep ? secondValidationStep(maybeValidatedParams.data!) : { success: true, data: null, validationErrorMessage: '' };
+  if (secondValidationStep) {
+    if (!success || !data) {
+      return {
+        statusCode: 400,
+        statusMessage: "Bad Request.",
+        message: secondValidationErrorMessage,
+        data: null,
+      }
+    }
+
+    return {
+      statusCode: 200,
+      statusMessage: "Successfully validated.",
+      message: validationSuccessMessage,
+      data: data,
+    };
+  }
+
+  if (LOG_BACKEND) console.info("event.context?.params", event.context?.params);
+  if (LOG_BACKEND) console.info("event.context.validated.params", event.context.validated.params);
+  if (LOG_BACKEND) console.info("event.context.validated.query", event.context.validated.query);
+  if (logData && LOG_BACKEND) console.info(logData, maybeValidatedParams.data);
+
+  if (unauthorizedCheck && unauthorizedCheck(event.context.user, maybeValidatedParams.data!)) {
+    return {
+      statusCode: 401,
+      statusMessage: "Unauthorized.",
+      message: "You do not have access to view the information.",
+      data: null,
+    };
+  }
 
   return {
     statusCode: 200,
-    statusMessage: 'Successfully validated queryParams(chat_id).',
-    data: {
-      chat_id: maybeValidatedParams.data.chat_id,
-    }
-  }
+    statusMessage: "Successfully validated.",
+    message: validationSuccessMessage,
+    data: maybeValidatedParams.data!,
+  };
 }
 
+/* VALIDATE QUERY PARAMS */
+/* VALIDATE QUERY PARAMS(chat_id) */
+export async function validateQueryChatId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatIdQueryType>> {
+  return validateParams<ChatIdQueryType, ChatIdQueryType>(
+    event,
+    async () => {
+      const result = await getValidatedQuery(event, (params) => {
+        // @ts-ignore
+        const chat_id = Number(params?.chat_id);
+        event.context.validated.query['chat_id'] = chat_id;
+
+        return ChatIdQuerySchema.safeParse({ chat_id });
+      });
+      if (result.success) {
+        return { success: true, data: { chat_id: result.data.chat_id } };
+      } else {
+        return result;
+      }
+    },
+    'Successfully validated queryParams(chat_id).',
+    'Invalid queryParams(chat_id).',
+    "queryParams(chat_id):"
+  );
+}
+
+/* VALIDATE ROUTE PARAMS */
 /* VALIDATE ROUTE PARAMS(url) */
 export async function validateParamUrl(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<{ url: URL }, UrlType>> {
   const maybeValidatedParams = await getValidatedRouterParams(event, UrlSchema.safeParse);
@@ -59,20 +115,23 @@ export async function validateParamUrl(event: H3Event<EventHandlerRequest>): Pro
   if (!maybeValidatedParams.success) {
     return {
       statusCode: 400,
-      statusMessage: 'Bad Request. Invalid routeParams(url).',
+      statusMessage: 'Bad Request.',
+      message: 'Invalid routeParams(url).',
       data: maybeValidatedParams.error,
     };
   }
 
-  if (LOG_BACKEND) console.info("url:", maybeValidatedParams.data.url); // encodedURIComponent
+  if (LOG_BACKEND) console.info("url:", maybeValidatedParams.data.url);
   const decodedUrl = decodeURIComponent(maybeValidatedParams.data.url);
+  if (LOG_BACKEND) console.info("decoded url:", decodedUrl);
 
   try {
     const url = new URL(decodedUrl);
 
     return {
       statusCode: 200,
-      statusMessage: 'Successfully validated routeParams(user_id).',
+      statusMessage: 'Successfully validated.',
+      message: 'Successfully validated routeParams(user_id).',
       data: {
         url: url,
       }
@@ -80,186 +139,152 @@ export async function validateParamUrl(event: H3Event<EventHandlerRequest>): Pro
   } catch {
     return {
       statusCode: 400,
-      statusMessage: 'Bad Request. Invalid routeParams(url). URL is not conform to official URL format.',
+      statusMessage: 'Bad Request.',
+      message: 'Invalid routeParams(url). URL is not conform to official URL format.',
       data: null,
     };
   }
+
+  // TODO: improve typing, so that the short-form can be used:
+  /* return validateParams<{ url: URL }, UrlType>(
+    event,
+    async () => await getValidatedRouterParams(event, UrlSchema.safeParse),
+    'Successfully validated routeParams(url).',
+    'Invalid routeParams(url).',
+    "url:",
+    undefined,
+    (data) => {
+      try {
+        const url = new URL(decodeURIComponent(String(data.url)));
+        return {
+          success: true,
+          validationErrorMessage: '',
+          data: url,
+        };
+      } catch {
+        return {
+          success: false,
+          validationErrorMessage: 'URL is not conform to official URL format.',
+          data: null,
+        };
+      }
+    }
+  ); */
 }
 
 /* VALIDATE ROUTE PARAMS(user_id) */
 export async function validateParamUserId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<UserIdType>> {
-  const user: User = event.context.user;
-
-  const maybeValidatedParams = await getValidatedRouterParams(
+  return validateParams<UserIdType>(
     event,
-    (params) => {
-      // @ts-ignore
-      const user_id = Number(params?.user_id); // => NaN if not a number, not present
+    async () => {
+      const result = await getValidatedRouterParams(event, (params) => {
+        // @ts-ignore
+        const user_id = Number(params?.user_id); // => NaN if not a number, not present
+        event.context.validated.params['user_id'] = user_id;
 
-      return UserIdSchema.safeParse({
         // check if user_id is a valid user_id
-        user_id,
+        return UserIdSchema.safeParse({ user_id });
       });
-    }
+      if (result.success) {
+        return { success: true, data: { user_id: result.data.user_id } };
+      } else {
+        return result;
+      }
+    },
+    'Successfully validated routeParams(user_id).',
+    'Invalid routeParams(user_id).',
+    "queryParams(user_id):",
+    (user, data) => user.id !== data.user_id // check if user has access to user information (TODO: extend in the future, to allow multiple accounts connected to one account)
   );
-
-  if (!maybeValidatedParams.success) {
-    return {
-      statusCode: 400,
-      statusMessage: 'Bad Request. Invalid routeParams(user_id).',
-      data: maybeValidatedParams.error,
-    };
-  }
-
-  if (LOG_BACKEND) console.info("user_id:", maybeValidatedParams.data.user_id);
-
-  if (user.id !== maybeValidatedParams.data.user_id) { // check if user has access to user information (TODO: extend in the future, to allow multiple accounts connected to one account)
-    return {
-      statusCode: 401,
-      statusMessage: `Unauthorized. You (user_id=${user.id}) do not have access to view the user information of routeParams(user_id=${maybeValidatedParams.data.user_id}).`,
-      data: null
-    };
-  }
-
-  return {
-    statusCode: 200,
-    statusMessage: 'Successfully validated routeParams(user_id).',
-    data: {
-      user_id: maybeValidatedParams.data.user_id,
-    }
-  }
 }
 
 /* VALIDATE ROUTE PARAMS(user_id, chat_id) */
 export async function validateParamChatId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatIdType>> {
-  const user: User = event.context.user;
-
-  const maybeValidatedParams = await getValidatedRouterParams(
+  return validateParams<ChatIdType>(
     event,
-    (params) => {
-      // @ts-ignore
-      const user_id = Number(params?.user_id);
-      // @ts-ignore
-      const chat_id = Number(params?.chat_id);
+    async () => {
+      const result = await getValidatedRouterParams(event, (params) => {
+        // @ts-ignore
+        const user_id = Number(params?.user_id); // => NaN if not a number, not present
+        // @ts-ignore
+        const chat_id = Number(params?.chat_id);
+        event.context.validated.params['user_id'] = user_id;
+        event.context.validated.params['chat_id'] = chat_id;
 
-      return ChatIdSchema.safeParse({
-        user_id,
-        chat_id,
+        return ChatIdSchema.safeParse({ user_id, chat_id });
       });
-    }
+      if (result.success) {
+        return { success: true, data: { user_id: result.data.user_id, chat_id: result.data.chat_id } };
+      } else {
+        return result;
+      }
+    },
+    'Successfully validated routeParams(user_id, chat_id).',
+    `Invalid routeParams(user_id, chat_id). You (user_id=${event.context.validated.params['user_id']}) do not have access to view the user information of routeParams(user_id=${event.context.validated.params['user_id']}, chat_id=${event.context.validated.params['chat_id']}).`,
+    "queryParams(user_id, chat_id):",
+    (user, data) => user.id !== data.user_id // check if user has access to user information (TODO: extend in the future, to allow multiple accounts connected to one account)
   );
-
-  if (!maybeValidatedParams.success) {
-    return {
-      statusCode: 400,
-      statusMessage: 'Bad Request. Invalid routeParams(user_id, chat_id).',
-      data: maybeValidatedParams.error,
-    };
-  }
-
-  if (LOG_BACKEND) console.info(`user_id: ${maybeValidatedParams.data.user_id}, chat_id: ${maybeValidatedParams.data.chat_id}`);
-
-  if (user.id !== maybeValidatedParams.data.user_id) { // check if user has access to user information (TODO: extend in the future, to allow multiple accounts connected to one account)
-    return {
-      statusCode: 401,
-      statusMessage: `Unauthorized. You (user_id=${user.id}) do not have access to view the user information of routeParams(user_id=${maybeValidatedParams.data.user_id}).`,
-      data: null
-    };
-  }
-
-  return {
-    statusCode: 200,
-    statusMessage: 'Successfully validated routeParams(user_id, chat_id).',
-    data: {
-      user_id: maybeValidatedParams.data.user_id,
-      chat_id: maybeValidatedParams.data.chat_id,
-    }
-  }
 }
 
 /* VALIDATE ROUTE PARAMS(user_id, chat_id, message_id) */
 export async function validateParamMessageId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatMessageIdType>> {
-  const user: User = event.context.user;
-
-  const maybeValidatedParams = await getValidatedRouterParams(
+  return validateParams<ChatMessageIdType>(
     event,
-    (params) => {
-      // @ts-ignore
-      const user_id = Number(params?.user_id);
-      // @ts-ignore
-      const chat_id = Number(params?.chat_id);
-      // @ts-ignore
-      const message_id = Number(params?.message_id);
+    async () => {
+      const result = await getValidatedRouterParams(event, (params) => {
+        // @ts-ignore
+        const user_id = Number(params?.user_id); // => NaN if not a number, not present
+        // @ts-ignore
+        const chat_id = Number(params?.chat_id);
+        // @ts-ignore
+        const message_id = Number(params?.message_id);
+        event.context.validated.params['user_id'] = user_id;
+        event.context.validated.params['chat_id'] = chat_id;
+        event.context.validated.params['message_id'] = message_id;
 
-      return ChatMessageIdSchema.safeParse({
-        user_id,
-        chat_id,
-        message_id,
+        return ChatMessageIdSchema.safeParse({ user_id, chat_id, message_id });
       });
-    }
+      if (result.success) {
+        return { success: true, data: { user_id: result.data.user_id, chat_id: result.data.chat_id, message_id: result.data.message_id } };
+      } else {
+        return result;
+      }
+    },
+    'Successfully validated routeParams(user_id, chat_id, message_id).',
+    `Invalid routeParams(user_id, chat_id, message_id). You (user_id=${event.context.validated.params['user_id']}) do not have access to view the user information of routeParams(user_id=${event.context.validated.params['user_id']}, chat_id=${event.context.validated.params['chat_id']}).`,
+    "queryParams(user_id, chat_id, message_id):",
+    (user, data) => user.id !== data.user_id // check if user has access to user information (TODO: extend in the future, to allow multiple accounts connected to one account)
   );
-
-  if (!maybeValidatedParams.success) {
-    return {
-      statusCode: 400,
-      statusMessage: 'Bad Request. Invalid routeParams(user_id, chat_id, message_id).',
-      data: maybeValidatedParams.error,
-    };
-  }
-
-  if (LOG_BACKEND) console.info(`user_id: ${maybeValidatedParams.data.user_id}, chat_id: ${maybeValidatedParams.data.chat_id}, message_id: ${maybeValidatedParams.data.message_id}`);
-
-  if (user.id !== maybeValidatedParams.data.user_id) { // check if user has access to user information (TODO: extend in the future, to allow multiple accounts connected to one account)
-    return {
-      statusCode: 401,
-      statusMessage: `Unauthorized. You (user_id=${user.id}) do not have access to view the user information of routeParams(user_id=${maybeValidatedParams.data.user_id}).`,
-      data: null
-    };
-  }
-
-  return {
-    statusCode: 200,
-    statusMessage: 'Successfully validated routeParams(user_id, chat_id).',
-    data: {
-      user_id: maybeValidatedParams.data.user_id,
-      chat_id: maybeValidatedParams.data.chat_id,
-      message_id: maybeValidatedParams.data.message_id,
-    }
-  }
 }
 
 /* VALIDATE ROUTE PARAMS(model_publisher, model_name) */
+/**
+ * User access validation has to be checked before this!!! (user_id is fetched from query params)
+ */
 export async function validateParamAiModelName(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ModelType>> {
-  const maybeValidatedParams = await getValidatedRouterParams(
+  return validateParams<ModelType>(
     event,
-    (params) => {
-      return ModelSchema.safeParse({
+    async () => {
+      const result = await getValidatedRouterParams(event, (params) => {
         // @ts-ignore
-        model_publisher: params?.model_publisher,
+        const model_publisher = params?.model_publisher;
         // @ts-ignore
-        model_name: params?.model_name,
+        const model_name = params?.model_name;
+        event.context.validated.params['model_publisher'] = model_publisher;
+        event.context.validated.params['model_name'] = model_name;
+
+        return ModelSchema.safeParse({ model_publisher, model_name });
       });
-    }
+      if (result.success) {
+        return { success: true, data: { model_publisher: result.data.model_publisher, model_name: result.data.model_name } };
+      } else {
+        return result;
+      }
+    },
+    'Successfully validated routeParams(model_publisher, model_name).',
+    `Invalid routeParams(model_publisher, model_name).`,
+    "queryParams(model_publisher, model_name):",
   );
-
-  if (!maybeValidatedParams.success) {
-    return {
-      statusCode: 400,
-      statusMessage: 'Bad Request. Invalid routeParams(model_publisher, model_name).',
-      data: maybeValidatedParams.error,
-    };
-  }
-
-  if (LOG_BACKEND) console.info("model_publisher:", maybeValidatedParams.data.model_publisher, "model_name:", maybeValidatedParams.data.model_name);
-
-  return {
-    statusCode: 200,
-    statusMessage: 'Successfully validated routeParams(model_publisher, model_name).',
-    data: {
-      model_publisher: maybeValidatedParams.data.model_publisher,
-      model_name: maybeValidatedParams.data.model_name,
-    }
-  }
 }
 
 /* ROUTE PARAMETER SCHEMAs */

@@ -1,5 +1,5 @@
 import { chat_conversation_message, type ChatConversationMessageToCreate, type GetChatConversation, type GetChatConversationMessage } from '../../../lib/types/database.tables/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, asc } from 'drizzle-orm';
 // import { ENCRYPTION_SECRET } from "~/server/utils/globals"; // TODO: maybe encrypt chat conversations
 
 export const createChatConversationMessages = async (
@@ -44,7 +44,7 @@ export const readChatConversationMessage = async (
   return chatConversationMessage[0];
 };
 
-export const readChatConversationMessages = async ( // TODO: dynamic filter with query parameters
+export const readChatConversationMessages = async (
   chat_conversation_id: GetChatConversation['id']
 ) => {
   const chatConversationMessages = await db
@@ -53,7 +53,7 @@ export const readChatConversationMessages = async ( // TODO: dynamic filter with
     .where(
       eq(chat_conversation_message.chat_conversation_id, chat_conversation_id)
     )
-    .orderBy(desc(chat_conversation_message.updated_at))
+    .orderBy(asc(chat_conversation_message.updated_at))
     .catch((err) => {
       if (LOG_BACKEND)
         console.error(

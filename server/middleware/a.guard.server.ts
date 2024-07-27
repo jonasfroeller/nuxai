@@ -1,8 +1,18 @@
+import type { H3Event } from 'h3';
+
 const userDataRoute = '^/api/users(/.*)?$';
 const protectedRoutes = [userDataRoute, '^/api/ai(/.*)?$'];
 
+export async function initializeValidatedContext(event: H3Event) {
+  if (!event.context.validated) {
+    event.context.validated = { params: {}, query: {} };
+  }
+}
+
 // EXPOSES event.context.user
 export default defineEventHandler(async (event) => {
+  await initializeValidatedContext(event);
+
   const url = getRequestURL(event);
   const urlPath = url.pathname;
 
