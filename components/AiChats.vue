@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { RefreshCcw, Pen, Trash2, Search, Loader2 } from "lucide-vue-next";
-import type { AllowedAiModels } from "~/lib/types/ai.models";
-import type { MinimalChat, FullyFeaturedChat } from "~/lib/types/chat";
+import { RefreshCcw, Pen, Trash2, Search, Loader2 } from 'lucide-vue-next';
+import type { AllowedAiModels } from '~/lib/types/ai.models';
+import type { MinimalChat, FullyFeaturedChat } from '~/lib/types/chat';
 const { console } = useLogger();
 
 const { persistChatConversationEdit, persistChatConversationDelete } = useAPI();
@@ -10,7 +10,7 @@ const { selectedAiChat, resetSelectedAiChatToDefaults } = useSelectedAiChat();
 const chatToEdit = ref<MinimalChat>({
   id: -1,
   name: `chat-${Date.now()}`,
-  model: "OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5",
+  model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
 });
 
 function setSelectedChat(
@@ -27,7 +27,7 @@ function setSelectedChat(
     selectedAiChat.value.model = model;
   }
 
-  console.info("setSelectedChat", selectedAiChat.value);
+  console.info('setSelectedChat', selectedAiChat.value);
 }
 
 const editChat = (id: number, name: string) => {
@@ -70,7 +70,7 @@ const deleteChat = async (id: number) => {
     setSelectedChat(
       -1,
       `chat-${Date.now()}`,
-      "OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5"
+      'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5'
     );
   }
 
@@ -83,12 +83,12 @@ const {
   error: fetchedChatsError,
   refresh: fetchedChatsRefresh,
 } = await useFetch(`/api/users/${user.value?.id}/chats`, {
-  method: "GET",
+  method: 'GET',
   lazy: true,
-  pick: ["chats"],
+  pick: ['chats'],
 });
 
-const searchQuery = ref("");
+const searchQuery = ref('');
 let filteredChats = computed(() => {
   if (!fetchedChats.value?.chats) return [];
 

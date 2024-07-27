@@ -5,7 +5,10 @@ import {
   experimental_buildLlama2Prompt,
 } from 'ai/prompts';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
-import { validateParamAiModelName, validateQueryChatId } from '~/server/utils/validate';
+import {
+  validateParamAiModelName,
+  validateQueryChatId,
+} from '~/server/utils/validate';
 import type { User } from '#auth-utils';
 import type { H3Event, EventHandlerRequest } from 'h3';
 
@@ -99,10 +102,12 @@ export default defineLazyEventHandler(async () => {
     const model_name = maybeModelName.data?.model_name;
     const model_publisher = maybeModelName.data?.model_publisher;
 
-    if (LOG_BACKEND) console.info(`Fetching model: ${model_publisher}/${model_name}...`);
+    if (LOG_BACKEND)
+      console.info(`Fetching model: ${model_publisher}/${model_name}...`);
 
-    const body = await readValidatedBody(event, (body) => { // complete chat history
-      return ChatConversationMessagesToCreateSchema.safeParse(body)
+    const body = await readValidatedBody(event, (body) => {
+      // complete chat history
+      return ChatConversationMessagesToCreateSchema.safeParse(body);
     });
     if (!body.success || !body.data) {
       return sendError(
@@ -139,7 +144,7 @@ export default defineLazyEventHandler(async () => {
       }
 
       let inputs = String(messages);
-      const minimalMessages = messages as Pick<Message, "content" | "role">[];
+      const minimalMessages = messages as Pick<Message, 'content' | 'role'>[];
       if (model_name === 'oasst-sft-4-pythia-12b-epoch-3.5') {
         inputs = experimental_buildOpenAssistantPrompt(minimalMessages); // basically convertToCoreMessages from 'ai'
         // if (LOG_BACKEND) console.info('using custom prompt builder for OpenAssistant');

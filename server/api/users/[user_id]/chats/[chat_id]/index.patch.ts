@@ -37,12 +37,12 @@ export default defineEventHandler(async (event) => {
 
   /* CREATE NEW CHAT CONVERSATION */
 
-  const updatedChatConversation = await updateChatConversation(
-    chat_id,
-    { name },
-  );
+  const updatedChatConversation = await updateChatConversation(chat_id, {
+    name,
+  });
 
-  if (LOG_BACKEND) console.info('updatedChatConversation:', updatedChatConversation);
+  if (LOG_BACKEND)
+    console.info('updatedChatConversation:', updatedChatConversation);
 
   return {
     chat: updatedChatConversation,

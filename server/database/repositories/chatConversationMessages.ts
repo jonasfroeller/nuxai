@@ -1,4 +1,9 @@
-import { chat_conversation_message, type ChatConversationMessageToCreate, type GetChatConversation, type GetChatConversationMessage } from '../../../lib/types/database.tables/schema';
+import {
+  chat_conversation_message,
+  type ChatConversationMessageToCreate,
+  type GetChatConversation,
+  type GetChatConversationMessage,
+} from '../../../lib/types/database.tables/schema';
 import { eq, asc } from 'drizzle-orm';
 // import { ENCRYPTION_SECRET } from "~/server/utils/globals"; // TODO: maybe encrypt chat conversations
 

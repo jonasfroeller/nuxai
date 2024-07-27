@@ -3,10 +3,7 @@ import { Icon } from '@iconify/vue';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
 
 const { user } = useUserSession();
-const {
-  selectedAiChat,
-  selectedAiChatIsPlayground,
-} = useSelectedAiChat();
+const { selectedAiChat, selectedAiChatIsPlayground } = useSelectedAiChat();
 const { resetAiPlaygroundChat } = useAiChatPlayground();
 const { persistChatConversation } = useAPI();
 

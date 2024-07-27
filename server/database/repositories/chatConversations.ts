@@ -1,4 +1,9 @@
-import { chat_conversation, type GetUser, type ChatConversationToCreate, type GetChatConversation } from '../../../lib/types/database.tables/schema';
+import {
+  chat_conversation,
+  type GetUser,
+  type ChatConversationToCreate,
+  type GetChatConversation,
+} from '../../../lib/types/database.tables/schema';
 import { eq, desc } from 'drizzle-orm';
 
 export async function createChatConversation(
@@ -35,7 +40,8 @@ export async function readChatConversation(id: GetChatConversation['id']) {
   return fetchedChatConversation[0];
 }
 
-export async function readAllChatConversationsOfUser(user_id: GetUser['id']) { // TODO: dynamic filter with query parameters
+export async function readAllChatConversationsOfUser(user_id: GetUser['id']) {
+  // TODO: dynamic filter with query parameters
   const fetchedChatConversations = await db
     .select()
     .from(chat_conversation)

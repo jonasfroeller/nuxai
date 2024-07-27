@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
   /* 1. VALIDATE INPUT */
   const result = await readValidatedBody(event, (body) => {
-    return UserLogInSchema.safeParse(body)
+    return UserLogInSchema.safeParse(body);
   });
 
   if (LOG_BACKEND) console.info('result', JSON.stringify(result));

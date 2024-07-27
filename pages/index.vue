@@ -52,11 +52,15 @@ const headerNavigationHeight = ref(0);
 watch(headerNavigationElement, (newHeaderNavigationElement) => {
   const { height } = useElementSize(newHeaderNavigationElement); // needs access to lifecycle hooks (that is why it is not defined in the store or a composable)
   headerNavigationHeight.value = height.value;
-})
+});
 
-type possibleDashboardTabs = "chat" | "chats";
-const selectedDashboardTab = ref<possibleDashboardTabs>("chat");
-const selectedDashboardTabFromLocalStorage = useLocalStorage<possibleDashboardTabs>(localStorageTopicKey('selected-dashboard-tab'), "chat");
+type possibleDashboardTabs = 'chat' | 'chats';
+const selectedDashboardTab = ref<possibleDashboardTabs>('chat');
+const selectedDashboardTabFromLocalStorage =
+  useLocalStorage<possibleDashboardTabs>(
+    localStorageTopicKey('selected-dashboard-tab'),
+    'chat'
+  );
 
 watch(selectedDashboardTab, () => {
   selectedDashboardTabFromLocalStorage.value = selectedDashboardTab.value;
@@ -233,7 +237,11 @@ onMounted(() => {
       <main
         class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 2xl:grid-cols-[33%,1fr]"
       >
-        <Tabs v-model="selectedDashboardTab" default-value="chat" class="h-screen max-h-[calc(100%-3rem)]">
+        <Tabs
+          v-model="selectedDashboardTab"
+          default-value="chat"
+          class="h-screen max-h-[calc(100%-3rem)]"
+        >
           <TabsList class="flex justify-start w-full bg-muted/50">
             <TabsTrigger value="chats"> All Chats </TabsTrigger>
             <TabsTrigger value="chat"> Active Chat Information </TabsTrigger>
@@ -242,10 +250,12 @@ onMounted(() => {
             <AiChats />
           </TabsContent>
           <TabsContent value="chat" class="h-full">
-            <AiChatInformation /> <!-- FILES OF CHAT -->
+            <AiChatInformation />
+            <!-- FILES OF CHAT -->
           </TabsContent>
         </Tabs>
-        <AiChat :key="selectedAiChatKey" /> <!-- MESSAGES OF CHAT (needs key, to rerender chat, so that useChat gets a new ID, useChat can not be put anywhere als then the setup script, because some functionality depends on that environment) -->
+        <AiChat :key="selectedAiChatKey" />
+        <!-- MESSAGES OF CHAT (needs key, to rerender chat, so that useChat gets a new ID, useChat can not be put anywhere als then the setup script, because some functionality depends on that environment) -->
       </main>
     </div>
   </div>

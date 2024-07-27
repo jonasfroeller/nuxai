@@ -28,7 +28,11 @@ export default defineEventHandler(async (event) => {
 
   if (isProtected) {
     if (LOG_BACKEND) {
-      console.info(`${event.node.req.headers["host"]} | ${event.node.req.headers["user-agent"]} accessing route:`, matchingRoute, urlPath);
+      console.info(
+        `${event.node.req.headers['host']} | ${event.node.req.headers['user-agent']} accessing route:`,
+        matchingRoute,
+        urlPath
+      );
     }
 
     const session = await requireUserSession(event); // should return error if no session

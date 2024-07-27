@@ -1,14 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import type { HTTPMethod } from "nuxt-security";
+import type { HTTPMethod } from 'nuxt-security';
 
 const corsHandler = {
   origin: '*',
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'] as HTTPMethod[],
   preflight: {
-    statusCode: 204
+    statusCode: 204,
   },
-}
+};
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
@@ -27,13 +27,13 @@ export default defineNuxtConfig({
   routeRules: {
     '/api/**': {
       security: {
-        corsHandler
-      }
+        corsHandler,
+      },
     },
     '/auth/**': {
       security: {
-        corsHandler
-      }
+        corsHandler,
+      },
     },
   },
 
@@ -42,7 +42,8 @@ export default defineNuxtConfig({
   // Keep in mind: Although valid from a CSP syntax perspective, allowing 'unsafe-inline' on script-src is unsafe. This setup is not a Script CSP
   security: {
     headers: {
-      crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp', // to allow devtools
+      crossOriginEmbedderPolicy:
+        process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp', // to allow devtools
     },
   },
 
@@ -50,14 +51,16 @@ export default defineNuxtConfig({
     imports: {
       dirs: ['./server/utils'],
     },
-    experimental: { // Scalar support is currently available in nightly channel. (https://nitro.unjs.io/config#experimental, https://nuxt.com/modules/scalar)
-      openAPI: true, /* { // enables /_nitro/scalar and /_nitro/swagger and /_nitro/openapi.json (currently only in dev mode)
+    experimental: {
+      // Scalar support is currently available in nightly channel. (https://nitro.unjs.io/config#experimental, https://nuxt.com/modules/scalar)
+      openAPI:
+        true /* { // enables /_nitro/scalar and /_nitro/swagger and /_nitro/openapi.json (currently only in dev mode)
         meta: {
           title: 'Nuxai API Documentation',
           description: 'Chat with different AI models using this REST-API.',
           version: '0.0.0',
         }
-      }, */
+      }, */,
     },
     /* storage: {
       redis: {
@@ -105,7 +108,7 @@ export default defineNuxtConfig({
       IS_SERVERLESS: process.env.IS_SERVERLESS,
       LOG_SQL_QUERIES: process.env.LOG_SQL_QUERIES,
       LOG_BACKEND: process.env.LOG_BACKEND,
-    }
+    },
   },
 
   app: {
@@ -145,7 +148,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@vueuse/nuxt',
     'nuxt-time',
-    "nuxt-security"
+    'nuxt-security',
   ],
 
   mdc: {

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import type { HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue';
 
 const props = defineProps<{
-  class?: HTMLAttributes['class']
-}>()
+  class?: HTMLAttributes['class'];
+}>();
 
 const { loggedIn, user, clear } = useUserSession();
 const headerNavigationStore = useHeaderNavigationStore();
@@ -12,8 +12,14 @@ const { headerNavigationElement } = storeToRefs(headerNavigationStore); // don't
 </script>
 
 <template>
-  <header ref="headerNavigationElement" class="sticky top-0 left-0 z-40 border-b bg-background">
-    <nav class="flex items-center justify-between gap-2 px-4 py-4" :class="props.class">
+  <header
+    ref="headerNavigationElement"
+    class="sticky top-0 left-0 z-40 border-b bg-background"
+  >
+    <nav
+      class="flex items-center justify-between gap-2 px-4 py-4"
+      :class="props.class"
+    >
       <AppLinks layout="navigation" />
       <div class="flex items-center gap-2">
         <Button
@@ -22,7 +28,10 @@ const { headerNavigationElement } = storeToRefs(headerNavigationStore); // don't
           class="truncate"
           @click="clear().finally(async () => await navigateTo('/home'))"
         >
-          Sign Out {{ user?.primary_email.substring(0, 15) }}{{ user?.primary_email && user?.primary_email.length > 15 ? '...' : '' }}
+          Sign Out {{ user?.primary_email.substring(0, 15)
+          }}{{
+            user?.primary_email && user?.primary_email.length > 15 ? '...' : ''
+          }}
         </Button>
         <ThemeToggle />
       </div>

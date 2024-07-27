@@ -1,4 +1,8 @@
-import { AllowedAiModelNamesEnum, AllowedAiModelPublishersEnum, AllowedAiModelsEnum } from '~/lib/types/ai.models';
+import {
+  AllowedAiModelNamesEnum,
+  AllowedAiModelPublishersEnum,
+  AllowedAiModelsEnum,
+} from '~/lib/types/ai.models';
 import { z, ZodError } from 'zod';
 import type { H3Event, EventHandlerRequest } from 'h3';
 import type { User } from '#auth-utils';
@@ -23,60 +27,85 @@ type ValidationResult<S, E = S> = ValidationSuccess<S> | ValidationError<E>;
 
 async function validateParams<S, E = S>(
   event: H3Event<EventHandlerRequest>,
-  parseFunction: () => Promise<{ success: boolean, data?: S, error?: ZodError<E> }>,
+  parseFunction: () => Promise<{
+    success: boolean;
+    data?: S;
+    error?: ZodError<E>;
+  }>,
   validationSuccessMessage: string,
   validationErrorMessage: string,
   logData?: any,
   unauthorizedCheck?: (user: User, data: S) => boolean,
-  secondValidationStep?: (data: S) => { validationErrorMessage: string, data: S | null, success: boolean }
+  secondValidationStep?: (data: S) => {
+    validationErrorMessage: string;
+    data: S | null;
+    success: boolean;
+  }
 ): Promise<ValidationResult<S, E>> {
   const maybeValidatedParams = await parseFunction();
 
   if (!maybeValidatedParams.success) {
     return {
       statusCode: 400,
-      statusMessage: "Bad Request.",
+      statusMessage: 'Bad Request.',
       message: validationErrorMessage,
       data: maybeValidatedParams.error || null,
     };
   }
 
-  const { validationErrorMessage: secondValidationErrorMessage, data, success } = secondValidationStep ? secondValidationStep(maybeValidatedParams.data!) : { success: true, data: null, validationErrorMessage: '' };
+  const {
+    validationErrorMessage: secondValidationErrorMessage,
+    data,
+    success,
+  } = secondValidationStep
+    ? secondValidationStep(maybeValidatedParams.data!)
+    : { success: true, data: null, validationErrorMessage: '' };
   if (secondValidationStep) {
     if (!success || !data) {
       return {
         statusCode: 400,
-        statusMessage: "Bad Request.",
+        statusMessage: 'Bad Request.',
         message: secondValidationErrorMessage,
         data: null,
-      }
+      };
     }
 
     return {
       statusCode: 200,
-      statusMessage: "Successfully validated.",
+      statusMessage: 'Successfully validated.',
       message: validationSuccessMessage,
       data: data,
     };
   }
 
-  if (LOG_BACKEND) console.info("event.context?.params", event.context?.params);
-  if (LOG_BACKEND) console.info("event.context.validated.params", event.context.validated.params);
-  if (LOG_BACKEND) console.info("event.context.validated.query", event.context.validated.query);
+  if (LOG_BACKEND) console.info('event.context?.params', event.context?.params);
+  if (LOG_BACKEND)
+    console.info(
+      'event.context.validated.params',
+      event.context.validated.params
+    );
+  if (LOG_BACKEND)
+    console.info(
+      'event.context.validated.query',
+      event.context.validated.query
+    );
   if (logData && LOG_BACKEND) console.info(logData, maybeValidatedParams.data);
 
-  if (unauthorizedCheck && unauthorizedCheck(event.context.user, maybeValidatedParams.data!)) {
+  if (
+    unauthorizedCheck &&
+    unauthorizedCheck(event.context.user, maybeValidatedParams.data!)
+  ) {
     return {
       statusCode: 401,
-      statusMessage: "Unauthorized.",
-      message: "You do not have access to view the information.",
+      statusMessage: 'Unauthorized.',
+      message: 'You do not have access to view the information.',
       data: null,
     };
   }
 
   return {
     statusCode: 200,
-    statusMessage: "Successfully validated.",
+    statusMessage: 'Successfully validated.',
     message: validationSuccessMessage,
     data: maybeValidatedParams.data!,
   };
@@ -84,7 +113,9 @@ async function validateParams<S, E = S>(
 
 /* VALIDATE QUERY PARAMS */
 /* VALIDATE QUERY PARAMS(chat_id) */
-export async function validateQueryChatId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatIdQueryType>> {
+export async function validateQueryChatId(
+  event: H3Event<EventHandlerRequest>
+): Promise<ValidationResult<ChatIdQueryType>> {
   return validateParams<ChatIdQueryType, ChatIdQueryType>(
     event,
     async () => {
@@ -103,14 +134,19 @@ export async function validateQueryChatId(event: H3Event<EventHandlerRequest>): 
     },
     'Successfully validated queryParams(chat_id).',
     'Invalid queryParams(chat_id).',
-    "queryParams(chat_id):"
+    'queryParams(chat_id):'
   );
 }
 
 /* VALIDATE ROUTE PARAMS */
 /* VALIDATE ROUTE PARAMS(url) */
-export async function validateParamUrl(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<{ url: URL }, UrlType>> {
-  const maybeValidatedParams = await getValidatedRouterParams(event, UrlSchema.safeParse);
+export async function validateParamUrl(
+  event: H3Event<EventHandlerRequest>
+): Promise<ValidationResult<{ url: URL }, UrlType>> {
+  const maybeValidatedParams = await getValidatedRouterParams(
+    event,
+    UrlSchema.safeParse
+  );
 
   if (!maybeValidatedParams.success) {
     return {
@@ -121,9 +157,9 @@ export async function validateParamUrl(event: H3Event<EventHandlerRequest>): Pro
     };
   }
 
-  if (LOG_BACKEND) console.info("url:", maybeValidatedParams.data.url);
+  if (LOG_BACKEND) console.info('url:', maybeValidatedParams.data.url);
   const decodedUrl = decodeURIComponent(maybeValidatedParams.data.url);
-  if (LOG_BACKEND) console.info("decoded url:", decodedUrl);
+  if (LOG_BACKEND) console.info('decoded url:', decodedUrl);
 
   try {
     const url = new URL(decodedUrl);
@@ -134,13 +170,14 @@ export async function validateParamUrl(event: H3Event<EventHandlerRequest>): Pro
       message: 'Successfully validated routeParams(user_id).',
       data: {
         url: url,
-      }
-    }
+      },
+    };
   } catch {
     return {
       statusCode: 400,
       statusMessage: 'Bad Request.',
-      message: 'Invalid routeParams(url). URL is not conform to official URL format.',
+      message:
+        'Invalid routeParams(url). URL is not conform to official URL format.',
       data: null,
     };
   }
@@ -173,7 +210,9 @@ export async function validateParamUrl(event: H3Event<EventHandlerRequest>): Pro
 }
 
 /* VALIDATE ROUTE PARAMS(user_id) */
-export async function validateParamUserId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<UserIdType>> {
+export async function validateParamUserId(
+  event: H3Event<EventHandlerRequest>
+): Promise<ValidationResult<UserIdType>> {
   return validateParams<UserIdType>(
     event,
     async () => {
@@ -193,13 +232,15 @@ export async function validateParamUserId(event: H3Event<EventHandlerRequest>): 
     },
     'Successfully validated routeParams(user_id).',
     'Invalid routeParams(user_id).',
-    "queryParams(user_id):",
+    'queryParams(user_id):',
     (user, data) => user.id !== data.user_id // check if user has access to user information (TODO: extend in the future, to allow multiple accounts connected to one account)
   );
 }
 
 /* VALIDATE ROUTE PARAMS(user_id, chat_id) */
-export async function validateParamChatId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatIdType>> {
+export async function validateParamChatId(
+  event: H3Event<EventHandlerRequest>
+): Promise<ValidationResult<ChatIdType>> {
   return validateParams<ChatIdType>(
     event,
     async () => {
@@ -214,20 +255,25 @@ export async function validateParamChatId(event: H3Event<EventHandlerRequest>): 
         return ChatIdSchema.safeParse({ user_id, chat_id });
       });
       if (result.success) {
-        return { success: true, data: { user_id: result.data.user_id, chat_id: result.data.chat_id } };
+        return {
+          success: true,
+          data: { user_id: result.data.user_id, chat_id: result.data.chat_id },
+        };
       } else {
         return result;
       }
     },
     'Successfully validated routeParams(user_id, chat_id).',
     `Invalid routeParams(user_id, chat_id). You (user_id=${event.context.validated.params['user_id']}) do not have access to view the user information of routeParams(user_id=${event.context.validated.params['user_id']}, chat_id=${event.context.validated.params['chat_id']}).`,
-    "queryParams(user_id, chat_id):",
+    'queryParams(user_id, chat_id):',
     (user, data) => user.id !== data.user_id // check if user has access to user information (TODO: extend in the future, to allow multiple accounts connected to one account)
   );
 }
 
 /* VALIDATE ROUTE PARAMS(user_id, chat_id, message_id) */
-export async function validateParamMessageId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatMessageIdType>> {
+export async function validateParamMessageId(
+  event: H3Event<EventHandlerRequest>
+): Promise<ValidationResult<ChatMessageIdType>> {
   return validateParams<ChatMessageIdType>(
     event,
     async () => {
@@ -245,14 +291,21 @@ export async function validateParamMessageId(event: H3Event<EventHandlerRequest>
         return ChatMessageIdSchema.safeParse({ user_id, chat_id, message_id });
       });
       if (result.success) {
-        return { success: true, data: { user_id: result.data.user_id, chat_id: result.data.chat_id, message_id: result.data.message_id } };
+        return {
+          success: true,
+          data: {
+            user_id: result.data.user_id,
+            chat_id: result.data.chat_id,
+            message_id: result.data.message_id,
+          },
+        };
       } else {
         return result;
       }
     },
     'Successfully validated routeParams(user_id, chat_id, message_id).',
     `Invalid routeParams(user_id, chat_id, message_id). You (user_id=${event.context.validated.params['user_id']}) do not have access to view the user information of routeParams(user_id=${event.context.validated.params['user_id']}, chat_id=${event.context.validated.params['chat_id']}).`,
-    "queryParams(user_id, chat_id, message_id):",
+    'queryParams(user_id, chat_id, message_id):',
     (user, data) => user.id !== data.user_id // check if user has access to user information (TODO: extend in the future, to allow multiple accounts connected to one account)
   );
 }
@@ -261,7 +314,9 @@ export async function validateParamMessageId(event: H3Event<EventHandlerRequest>
 /**
  * User access validation has to be checked before this!!! (user_id is fetched from query params)
  */
-export async function validateParamAiModelName(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ModelType>> {
+export async function validateParamAiModelName(
+  event: H3Event<EventHandlerRequest>
+): Promise<ValidationResult<ModelType>> {
   return validateParams<ModelType>(
     event,
     async () => {
@@ -276,14 +331,20 @@ export async function validateParamAiModelName(event: H3Event<EventHandlerReques
         return ModelSchema.safeParse({ model_publisher, model_name });
       });
       if (result.success) {
-        return { success: true, data: { model_publisher: result.data.model_publisher, model_name: result.data.model_name } };
+        return {
+          success: true,
+          data: {
+            model_publisher: result.data.model_publisher,
+            model_name: result.data.model_name,
+          },
+        };
       } else {
         return result;
       }
     },
     'Successfully validated routeParams(model_publisher, model_name).',
     `Invalid routeParams(model_publisher, model_name).`,
-    "queryParams(model_publisher, model_name):",
+    'queryParams(model_publisher, model_name):'
   );
 }
 
@@ -316,7 +377,7 @@ type ChatMessageIdType = z.infer<typeof ChatMessageIdSchema>;
  * **INFO**: Doesn't use the z.url() because it doesn't allow URLs in the format of encodeURIComponent
  */
 export const UrlSchema = z.object({
-  url: z.string().trim()
+  url: z.string().trim(),
 });
 
 type UrlType = z.infer<typeof UrlSchema>;
@@ -352,24 +413,29 @@ export const ChatConversationToCreateSchema = z.object({
 
 export const ChatConversationAttributesToUpdateSchema = z.object({
   name: z.string().min(3),
-})
+});
 
 /**
  * role: 'system' | **'user'** | **'assistant'** | 'function' | 'data' | 'tool'
  */
 enum Actor {
-  "user" = "user",
-  "assistant" = "assistant",
+  'user' = 'user',
+  'assistant' = 'assistant',
 }
 
 export const ChatConversationMessagesToCreateSchema = z.object({
-  messages: z.array(z.object({
-    content: z.string().trim().min(1),
-    role: z.nativeEnum(Actor),
-  })),
+  messages: z.array(
+    z.object({
+      content: z.string().trim().min(1),
+      role: z.nativeEnum(Actor),
+    })
+  ),
 });
 
-export const ChatConversationMessagesToCreateUniversalSchema = ChatConversationMessagesToCreateSchema.or(z.object({
-  message: z.string().trim().min(1),
-  actor: z.nativeEnum(Actor),
-}));
+export const ChatConversationMessagesToCreateUniversalSchema =
+  ChatConversationMessagesToCreateSchema.or(
+    z.object({
+      message: z.string().trim().min(1),
+      actor: z.nativeEnum(Actor),
+    })
+  );

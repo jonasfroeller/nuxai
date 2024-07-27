@@ -10,7 +10,7 @@ import {
 export type NewUser = typeof chat_user.$inferInsert;
 export type GetUser = typeof chat_user.$inferSelect;
 
-export type ReadUser = Omit<GetUser, "hashed_password">;
+export type ReadUser = Omit<GetUser, 'hashed_password'>;
 export interface UserToCreate extends Omit<NewUser, 'id' | 'hashed_password'> {
   password: string;
 }
@@ -31,7 +31,10 @@ export const chat_user = pgTable('chat_user', {
 export type NewOauthAccount = typeof chat_user_oauth_account.$inferInsert;
 export type GetOauthAccount = typeof chat_user_oauth_account.$inferSelect;
 
-export type ReadOauthAccount = Omit<GetOauthAccount, /* "id" | "chat_user_id" | */ "provider" | "created_at" | "updated_at">;
+export type ReadOauthAccount = Omit<
+  GetOauthAccount,
+  /* "id" | "chat_user_id" | */ 'provider' | 'created_at' | 'updated_at'
+>;
 export interface OauthAccountToCreate
   extends Omit<
     NewOauthAccount,
@@ -64,7 +67,7 @@ export type GetChatConversation = typeof chat_conversation.$inferSelect;
 
 export type ReadChatConversation = GetChatConversation;
 export interface ChatConversationToCreate
-  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> { }
+  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> {}
 
 export const chat_conversation = pgTable('chat_conversation', {
   id: serial('id').primaryKey(),
@@ -80,15 +83,17 @@ export const chat_conversation = pgTable('chat_conversation', {
     .references(() => chat_user.id, { onDelete: 'cascade' }),
 });
 
-export type NewChatConversationMessage = typeof chat_conversation_message.$inferInsert;
-export type GetChatConversationMessage = typeof chat_conversation_message.$inferSelect;
+export type NewChatConversationMessage =
+  typeof chat_conversation_message.$inferInsert;
+export type GetChatConversationMessage =
+  typeof chat_conversation_message.$inferSelect;
 
 export type ReadChatConversationMessage = GetChatConversationMessage;
 export interface ChatConversationMessageToCreate
   extends Omit<
     NewChatConversationMessage,
     'id' | 'created_at' | 'updated_at'
-  > { }
+  > {}
 
 export const chat_conversation_message = pgTable('chat_conversation_message', {
   id: serial('id').primaryKey(),

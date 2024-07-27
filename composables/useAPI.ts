@@ -96,7 +96,10 @@ export const useAPI = () => {
       toastMessages
     );
 
-    await persistChatConversationMessagesOfPlayground(user_id, response.chat.id);
+    await persistChatConversationMessagesOfPlayground(
+      user_id,
+      response.chat.id
+    );
 
     return response.chat.id;
   };

@@ -1,5 +1,10 @@
 import { generateUUID } from '~/lib/utils';
-import { chat_user, chat_user_oauth_account, type GetUser, type UserToCreate } from '../../../lib/types/database.tables/schema';
+import {
+  chat_user,
+  chat_user_oauth_account,
+  type GetUser,
+  type UserToCreate,
+} from '../../../lib/types/database.tables/schema';
 import { and, eq, like, sql } from 'drizzle-orm';
 
 /* TODO: check if user has access to CRUD operations (make sure everything here is LGTM) */

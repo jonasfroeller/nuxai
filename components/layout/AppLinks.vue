@@ -4,7 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu';
 import { Menu } from 'lucide-vue-next';
 
 defineProps({
@@ -31,28 +31,28 @@ const visibleRoutes = computed(() => {
   }
 });
 
-const { width: windowWidth } = useWindowSize()
+const { width: windowWidth } = useWindowSize();
 </script>
 
 <template>
   <div class="flex justify-center">
-    <div v-if="(windowWidth <= 700) && (layout === 'navigation')">
+    <div v-if="windowWidth <= 700 && layout === 'navigation'">
       <DropdownMenu>
         <DropdownMenuTrigger><Menu /></DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem v-for="route in visibleRoutes" :key="route.path">
-            <NuxtLink
-              :to="route.path"
-              activeClass="underline"
-            >
-            <p :key="route.path">{{ route.name }}</p>
+            <NuxtLink :to="route.path" activeClass="underline">
+              <p :key="route.path">{{ route.name }}</p>
             </NuxtLink>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  
-    <ul v-bind:class="{ navigation: layout === 'navigation' }" v-if="(windowWidth > 700) || (layout !== 'navigation')">
+
+    <ul
+      v-bind:class="{ navigation: layout === 'navigation' }"
+      v-if="windowWidth > 700 || layout !== 'navigation'"
+    >
       <NuxtLink
         v-for="route in visibleRoutes"
         :to="route.path"

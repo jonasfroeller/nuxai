@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Icon } from "@iconify/vue";
-import Separator from "@/components/ui/separator/Separator.vue";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Icon } from '@iconify/vue';
+import Separator from '@/components/ui/separator/Separator.vue';
 import {
   validateEmailInput,
   validatePasswordInput,
-} from "~/lib/types/input.validation";
-import { toast } from "vue-sonner";
+} from '~/lib/types/input.validation';
+import { toast } from 'vue-sonner';
 const { console } = useLogger();
 
 const auth = useAuth();
 const { fetch } = useUserSession();
-const email = ref("");
-const password = ref("");
+const email = ref('');
+const password = ref('');
 const emailErrors = ref([]);
 const passwordErrors = ref([]);
 
@@ -38,14 +38,14 @@ async function signUp() {
 
   if (error) {
     // @ts-ignore
-    console.info("error:", error?.message, error?.data);
+    console.info('error:', error?.message, error?.data);
     // @ts-ignore
     emailErrors.value = error?.data?.data?.issues
-      .filter((issue: any) => issue.path[0] === "email")
+      .filter((issue: any) => issue.path[0] === 'email')
       .map((issue: any) => issue.message);
     // @ts-ignore
     passwordErrors.value = error?.data?.data?.issues
-      .filter((issue: any) => issue.path[0] === "password")
+      .filter((issue: any) => issue.path[0] === 'password')
       .map((issue: any) => issue.message);
 
     // @ts-ignore
@@ -54,7 +54,7 @@ async function signUp() {
   }
 
   await fetch(); // reloadNuxtApp({ ttl: 0, force: true, persistState: false, path: "/dashboard" });
-  navigateTo("/dashboard", {
+  navigateTo('/dashboard', {
     redirectCode: 303,
   });
 }

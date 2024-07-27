@@ -16,9 +16,7 @@ export default defineEventHandler(async (event) => {
   }
   const chat_id = maybeChatId.data?.chat_id;
 
-  const fetchedChatMessages = await readChatConversationMessages(
-    chat_id
-  );
+  const fetchedChatMessages = await readChatConversationMessages(chat_id);
 
   return {
     chatMessages: fetchedChatMessages,

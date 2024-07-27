@@ -8,9 +8,9 @@ import {
   Trash2,
   Delete,
   Loader2,
-} from "lucide-vue-next";
-import { useChat, type Message } from "@ai-sdk/vue"; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
-import { toast } from "vue-sonner";
+} from 'lucide-vue-next';
+import { useChat, type Message } from '@ai-sdk/vue'; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
+import { toast } from 'vue-sonner';
 // import type { Message } from '@ai-sdk/vue';
 const { console } = useLogger();
 
@@ -62,14 +62,14 @@ const waitForAiResponseToComplete = (condition: Ref<boolean | undefined>) => {
         { immediate: true }
       );
     } catch (error) {
-      console.info("Failed to resolve value!");
+      console.info('Failed to resolve value!');
       reject(error);
     }
   });
 
   promise.finally(() => {
     if (unwatch) {
-      console.info("Removing watcher...");
+      console.info('Removing watcher...');
       unwatch();
     }
   });
@@ -86,18 +86,18 @@ watch(
 
     // TODO: only trigger, if message is new and not also if it is received from database
     if (
-      chatMessages.value[chatMessages.value.length - 1]?.role === "assistant"
+      chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant'
     ) {
       toast.promise(aiIsDoneResponding, {
-        loading: "Fetching AI response...",
-        success: (data: any) => "AI response fetched!",
-        error: (data: any) => "Failed to fetch AI response!",
+        loading: 'Fetching AI response...',
+        success: (data: any) => 'AI response fetched!',
+        error: (data: any) => 'Failed to fetch AI response!',
       });
     }
 
     await aiIsDoneResponding;
 
-    console.info("Setting chat history messages backup...");
+    console.info('Setting chat history messages backup...');
     if (selectedAiChatIsPlayground.value && chatMessages.value.length > 0) {
       currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
     }
@@ -132,15 +132,15 @@ const {
   stop: stopSpeechRecognition,
   error: speechRecognitionError,
 } = useSpeechRecognition({
-  lang: "en-US",
+  lang: 'en-US',
   interimResults: true,
   continuous: true,
 });
 
 watch(speechRecognitionError, async () => {
-  if (speechRecognitionError.value?.error === "not-allowed") {
+  if (speechRecognitionError.value?.error === 'not-allowed') {
     toast.error(
-      "Speech recognition was disabled for this page!\nPlease allow it, to use the feature!"
+      'Speech recognition was disabled for this page!\nPlease allow it, to use the feature!'
     );
   } else {
     toast.error(
@@ -156,7 +156,7 @@ if (isSpeechRecognitionSupported.value && IS_CLIENT) {
 }
 
 /* CONVERT HTML TO MARKDOWN */
-let urlToFetchHtmlFrom = ref("");
+let urlToFetchHtmlFrom = ref('');
 
 /* FILE UPLOAD */
 const {
@@ -164,15 +164,15 @@ const {
   reset: resetFile,
   onChange,
 } = useFileDialog({
-  accept: "text/plain",
+  accept: 'text/plain',
   /* directory: true, */ // TODO: allow importing of file structure
 });
 
 onChange(async (uploadedFiles) => {
   if (uploadedFiles) {
     for (const file of uploadedFiles) {
-      if (file.type !== "text/plain") {
-        toast.error("File type not supported!");
+      if (file.type !== 'text/plain') {
+        toast.error('File type not supported!');
         resetFile();
         return;
       }
@@ -184,7 +184,7 @@ onChange(async (uploadedFiles) => {
 });
 
 function appendFileUploadToInput(type: string, name: string, text: string) {
-  console.info("Appending file upload to input...");
+  console.info('Appending file upload to input...');
 
   let prettierFileContent = `\`\`\`${type}:${name}\n${text}\n\`\`\``;
   currentChatMessage.value = prettierFileContent + currentChatMessage.value;
@@ -211,7 +211,7 @@ async function loadChatMessages(user_id: number, chat_id: number) {
             id: `${String(id)}-${String(Date.now())}`,
             content: message,
             role: actor,
-          } as Message)
+          }) as Message
       );
 
       setChatMessages(messages);
@@ -225,8 +225,8 @@ onMounted(async () => {
 
 // Send Message on CTRL + ENTER
 function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
-  if (currentChatMessage.value.trim() === "") return;
-  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+  if (currentChatMessage.value.trim() === '') return;
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
     handleChatMessageSubmit();
   }
 }

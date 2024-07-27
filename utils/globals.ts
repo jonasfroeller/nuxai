@@ -8,6 +8,6 @@ export const IS_SERVER = import.meta.server; // import.meta.nitro
 
 if (IS_DEV) {
   console.log(
-    `IS_DEV: ${IS_DEV} \nLOG_FRONTEND: ${"useLogger()"} \nIS_PRERENDER: ${IS_PRERENDER} \nIS_CLIENT: ${IS_CLIENT} \nIS_SERVER: ${IS_SERVER}`
+    `IS_DEV: ${IS_DEV} \nLOG_FRONTEND: ${'useLogger()'} \nIS_PRERENDER: ${IS_PRERENDER} \nIS_CLIENT: ${IS_CLIENT} \nIS_SERVER: ${IS_SERVER}`
   );
 }

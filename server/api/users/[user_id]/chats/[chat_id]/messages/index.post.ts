@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
   }
   const validatedBody = body.data;
 
-  if (validatedBody && "message" in validatedBody && "actor" in validatedBody) {
+  if (validatedBody && 'message' in validatedBody && 'actor' in validatedBody) {
     const { message, actor } = validatedBody;
 
     const conversationMessageToCreate = {
@@ -50,8 +50,8 @@ export default defineEventHandler(async (event) => {
     return {
       chatMessage: createdMessage,
     };
-  } else if (validatedBody && "messages" in validatedBody) {
-    const messages = (validatedBody.messages).map(({ content, role }) => ({
+  } else if (validatedBody && 'messages' in validatedBody) {
+    const messages = validatedBody.messages.map(({ content, role }) => ({
       message: content,
       actor: role,
       chat_user_id: user_id,

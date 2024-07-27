@@ -3,7 +3,8 @@
 <template>
   <div>
     <DynamicHeader />
-    <main class="overflow-x-hidden border-t"> <!-- INFO: overflow-x-hidden breaks position sticky... -->
+    <main class="overflow-x-hidden border-t">
+      <!-- INFO: overflow-x-hidden breaks position sticky... -->
       <slot />
     </main>
     <DynamicFooter />

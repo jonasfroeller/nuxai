@@ -1,4 +1,8 @@
-import { chat_user, chat_user_oauth_account, type OauthAccountToCreate } from '../../../lib/types/database.tables/schema';
+import {
+  chat_user,
+  chat_user_oauth_account,
+  type OauthAccountToCreate,
+} from '../../../lib/types/database.tables/schema';
 import { and, eq } from 'drizzle-orm';
 import { createEmptyUser } from './users';
 
