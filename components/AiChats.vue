@@ -63,6 +63,7 @@ const saveEdit = async (id: number, previousName: string) => {
   }
 };
 
+const chatsSelectedForDeletion = useChatsSelectedForDeletion();
 const deleteChat = async (id: number) => {
   await persistChatConversationDelete(user?.value?.id ?? -1, id);
 
@@ -75,6 +76,45 @@ const deleteChat = async (id: number) => {
   }
 
   fetchedChatsRefresh();
+};
+
+const batchDeleteSelectorIsActive = ref(false);
+const batchDeleteChats = async () => {
+  await persistChatConversationDelete(
+    user?.value?.id ?? -1,
+    chatsSelectedForDeletion.value
+  );
+
+  batchDeleteSelectorIsActive.value = false;
+  chatsSelectedForDeletion.value = [];
+
+  setSelectedChat(
+    -1,
+    `chat-${Date.now()}`,
+    'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5'
+  );
+
+  fetchedChatsRefresh();
+};
+const isSelectedForBatchDeletion = (id: number) => {
+  return chatsSelectedForDeletion.value.includes(id);
+};
+const toggleSelectedForBatchDeletion = (id: number) => {
+  if (isSelectedForBatchDeletion(id)) {
+    chatsSelectedForDeletion.value = chatsSelectedForDeletion.value.filter(
+      (chatId) => chatId !== id
+    );
+  } else {
+    chatsSelectedForDeletion.value.push(id);
+  }
+};
+const toggleAllForBatchDeletion = () => {
+  chatsSelectedForDeletion.value = filteredChats.value.map(
+    (chat: FullyFeaturedChat) => chat.id
+  );
+};
+const unToggleAllForBatchDeletion = () => {
+  chatsSelectedForDeletion.value = [];
 };
 
 const {
@@ -102,31 +142,109 @@ let filteredChats = computed(() => {
 
 <template>
   <div class="relative h-full p-2 border rounded-md">
-    <div
-      class="sticky top-0 left-0 z-10 flex items-center w-full gap-1 pb-2 bg-background"
-    >
-      <div class="relative w-full">
-        <ShadcnInput
-          v-model="searchQuery"
-          id="search"
-          type="text"
-          placeholder="Search..."
-          class="pl-10"
-        />
-        <span
-          class="absolute inset-y-0 flex items-center justify-center px-2 start-0"
+    <div class="sticky top-0 left-0 z-10 pb-2 bg-background">
+      <div class="flex items-center w-full gap-1">
+        <div class="relative w-full">
+          <ShadcnInput
+            v-model="searchQuery"
+            id="search"
+            type="text"
+            placeholder="Search..."
+            class="pl-10"
+          />
+          <span
+            class="absolute inset-y-0 flex items-center justify-center px-2 start-0"
+          >
+            <Search class="size-6 text-muted-foreground" />
+          </span>
+        </div>
+
+        <template
+          v-if="
+            batchDeleteSelectorIsActive && chatsSelectedForDeletion.length > 0
+          "
         >
-          <Search class="size-6 text-muted-foreground" />
-        </span>
+          <ShadcnAlertDialog>
+            <div class="flex gap-1">
+              <ShadcnAlertDialogTrigger as-child>
+                <ShadcnButton variant="destructive" class="w-full"
+                  >Delete<Trash2 class="w-4 h-4 ml-1"
+                /></ShadcnButton>
+              </ShadcnAlertDialogTrigger>
+            </div>
+            <ShadcnAlertDialogContent>
+              <ShadcnAlertDialogHeader>
+                <ShadcnAlertDialogTitle
+                  >Are you sure, that you want to delete
+                  {{ chatsSelectedForDeletion.length }}
+                  chats?</ShadcnAlertDialogTitle
+                >
+                <ShadcnAlertDialogDescription>
+                  Chats can not be recovered!
+                </ShadcnAlertDialogDescription>
+              </ShadcnAlertDialogHeader>
+              <ShadcnAlertDialogFooter>
+                <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
+                <ShadcnAlertDialogAction as-child>
+                  <ShadcnButton
+                    :disabled="
+                      fetchedChatsStatus === 'pending' ||
+                      filteredChats.length === 0
+                    "
+                    :variant="
+                      batchDeleteSelectorIsActive ? 'destructive' : 'outline'
+                    "
+                    @click="batchDeleteChats"
+                    >Delete<Trash2 class="w-4 h-4 ml-1"
+                  /></ShadcnButton>
+                </ShadcnAlertDialogAction>
+              </ShadcnAlertDialogFooter>
+            </ShadcnAlertDialogContent>
+          </ShadcnAlertDialog>
+        </template>
+        <template v-else>
+          <ShadcnButton
+            :disabled="
+              fetchedChatsStatus === 'pending' || filteredChats.length === 0
+            "
+            :variant="batchDeleteSelectorIsActive ? 'destructive' : 'outline'"
+            @click="
+              () => {
+                batchDeleteSelectorIsActive = !batchDeleteSelectorIsActive;
+              }
+            "
+            >Delete<Trash2 class="w-4 h-4 ml-1"
+          /></ShadcnButton>
+        </template>
+        <ShadcnButton
+          :disabled="fetchedChatsStatus === 'pending'"
+          variant="outline"
+          @click="fetchedChatsRefresh"
+          class="[&>*]:hover:animate-spin"
+        >
+          <RefreshCcw class="w-4 h-4" />
+        </ShadcnButton>
       </div>
-      <ShadcnButton
-        :disabled="fetchedChatsStatus === 'pending'"
-        variant="outline"
-        @click="fetchedChatsRefresh"
-        class="[&>*]:hover:animate-spin"
+
+      <fieldset
+        v-if="batchDeleteSelectorIsActive"
+        class="grid gap-6 p-4 mt-1 border rounded-lg"
       >
-        <RefreshCcw class="w-4 h-4" />
-      </ShadcnButton>
+        <legend class="px-1 -ml-1 text-sm font-medium">
+          Batch Delete Options
+        </legend>
+
+        <template v-if="chatsSelectedForDeletion.length > 0">
+          <ShadcnButton variant="outline" @click="unToggleAllForBatchDeletion">
+            Deselect all
+          </ShadcnButton>
+        </template>
+        <template v-else>
+          <ShadcnButton variant="outline" @click="toggleAllForBatchDeletion">
+            Select all
+          </ShadcnButton>
+        </template>
+      </fieldset>
     </div>
 
     <div class="h-[calc(100%-3rem)]">
@@ -189,11 +307,19 @@ let filteredChats = computed(() => {
                   </template>
                 </div>
                 <ShadcnAlertDialog>
-                  <ShadcnAlertDialogTrigger as-child>
-                    <ShadcnButton variant="destructive"
-                      >delete<Trash2 class="w-4 h-4 ml-1"
-                    /></ShadcnButton>
-                  </ShadcnAlertDialogTrigger>
+                  <div class="flex gap-1">
+                    <ShadcnAlertDialogTrigger as-child>
+                      <ShadcnButton variant="destructive" class="w-full"
+                        >Delete<Trash2 class="w-4 h-4 ml-1"
+                      /></ShadcnButton>
+                    </ShadcnAlertDialogTrigger>
+                    <ShadcnCheckbox
+                      v-if="batchDeleteSelectorIsActive"
+                      class="w-10 h-full"
+                      :checked="chatsSelectedForDeletion.includes(chat.id)"
+                      @click.prevent="toggleSelectedForBatchDeletion(chat.id)"
+                    />
+                  </div>
                   <ShadcnAlertDialogContent>
                     <ShadcnAlertDialogHeader>
                       <ShadcnAlertDialogTitle

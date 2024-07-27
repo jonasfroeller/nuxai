@@ -58,8 +58,8 @@ async function validateParams<S, E = S>(
     data,
     success,
   } = secondValidationStep
-    ? secondValidationStep(maybeValidatedParams.data!)
-    : { success: true, data: null, validationErrorMessage: '' };
+      ? secondValidationStep(maybeValidatedParams.data!)
+      : { success: true, data: null, validationErrorMessage: '' };
   if (secondValidationStep) {
     if (!success || !data) {
       return {
@@ -409,6 +409,10 @@ type ChatIdQueryType = z.infer<typeof ChatIdQuerySchema>;
 export const ChatConversationToCreateSchema = z.object({
   model: z.nativeEnum(AllowedAiModelsEnum),
   name: z.string().min(3),
+});
+
+export const ChatConversationsToDelete = z.object({
+  chat_ids: z.array(primaryIdSchema),
 });
 
 export const ChatConversationAttributesToUpdateSchema = z.object({

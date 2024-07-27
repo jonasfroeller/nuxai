@@ -109,3 +109,11 @@ export const useAiChatPlayground = () => {
     resetAiPlaygroundChat,
   };
 };
+
+export const useChatsSelectedForDeletion = () => {
+  const chatsSelectedForDeletion = useState('chats-selected-for-deletion', () =>
+    ref<number[]>([])
+  );
+
+  return chatsSelectedForDeletion;
+};

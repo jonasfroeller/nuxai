@@ -164,18 +164,36 @@ export const useAPI = () => {
 
   const persistChatConversationDelete = async (
     user_id: number,
-    chat_id: number
+    chat_id: number | number[]
   ): Promise<void> => {
-    const url = `/api/users/${user_id}/chats/${chat_id}`;
+    if (!Array.isArray(chat_id)) {
+      const url = `/api/users/${user_id}/chats/${chat_id}`;
+      const options = {
+        method: 'DELETE',
+        lazy: true,
+      };
+
+      const toastMessages = {
+        loading: 'Deleting chat...',
+        success: (data: any) => 'Chat deleted!',
+        error: (data: any) => 'Failed to delete chat!',
+      };
+
+      await handleFetch<void>(url, options, toastMessages);
+      return;
+    }
+
+    const url = `/api/users/${user_id}/chats`;
     const options = {
       method: 'DELETE',
       lazy: true,
+      body: { chat_ids: chat_id },
     };
 
     const toastMessages = {
-      loading: 'Deleting chat...',
-      success: (data: any) => 'Chat deleted!',
-      error: (data: any) => 'Failed to delete chat!',
+      loading: 'Deleting chats...',
+      success: (data: any) => 'Chats deleted!',
+      error: (data: any) => 'Failed to delete chats!',
     };
 
     await handleFetch<void>(url, options, toastMessages);

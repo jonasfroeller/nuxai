@@ -4,7 +4,7 @@ import {
   type ChatConversationToCreate,
   type GetChatConversation,
 } from '../../../lib/types/database.tables/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, inArray, desc } from 'drizzle-orm';
 
 export async function createChatConversation(
   conversation: ChatConversationToCreate
@@ -97,4 +97,20 @@ export async function deleteChatConversation(id: GetChatConversation['id']) {
   if (!deletedChatConversation) return null;
 
   return deletedChatConversation[0];
+}
+
+export async function deleteChatConversations(ids: GetChatConversation['id'][]) {
+  const deletedChatConversations = await db
+    .delete(chat_conversation)
+    .where(inArray(chat_conversation.id, ids))
+    .returning()
+    .catch((err) => {
+      if (LOG_BACKEND)
+        console.error('Failed to delete chat conversation from database', err);
+      return null;
+    });
+
+  if (!deletedChatConversations) return null;
+
+  return deletedChatConversations;
 }
