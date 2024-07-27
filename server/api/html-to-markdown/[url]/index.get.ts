@@ -7,7 +7,7 @@ import { unified } from 'unified'; // HTML and Markdown Utilities
 
 export default defineCachedEventHandler(async (event) => {
   /* VALIDATE PARAMS */
-  const maybeUrl = await validateUrl(event);
+  const maybeUrl = await validateParamUrl(event);
   if (maybeUrl.statusCode !== 200) {
     return sendError(
       event,

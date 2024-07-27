@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   /* 1. GET METHOD AND QUERY PARAMETERS */
   const method = event.node.req.method;
 
-  const maybeUserId = await validateUserId(event);
+  const maybeUserId = await validateParamUserId(event);
   if (maybeUserId.statusCode !== 200) {
     return sendError(
       event,

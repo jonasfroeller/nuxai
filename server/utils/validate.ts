@@ -5,24 +5,22 @@ import type { User } from '#auth-utils';
 
 /* EVENT HANDLER */
 
-// TODO: reduce redundancy for query param validators
-
-/* VALIDATE QUERY PARAMS(chat_id) */
-interface ChatIdQueryValidationSuccess {
+interface ValidationSuccess<T> {
   statusCode: 200;
   statusMessage: string;
-  data: { chat_id: number };
+  data: T;
 }
 
-interface ChatIdQueryValidationError {
+interface ValidationError<T> {
   statusCode: 400 | 401;
   statusMessage: string;
-  data: ZodError<{ chat_id: number }> | null;
+  data: ZodError<T> | null;
 }
 
-type ChatIdQueryValidationResult = ChatIdQueryValidationSuccess | ChatIdQueryValidationError;
+type ValidationResult<S, E = S> = ValidationSuccess<S> | ValidationError<E>;
 
-export async function validateChatIdQuery(event: H3Event<EventHandlerRequest>): Promise<ChatIdQueryValidationResult> {
+/* VALIDATE QUERY PARAMS(chat_id) */
+export async function validateQueryChatId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatIdQueryType>> {
   const maybeValidatedParams = await getValidatedQuery(
     event,
     (params) => {
@@ -55,21 +53,7 @@ export async function validateChatIdQuery(event: H3Event<EventHandlerRequest>): 
 }
 
 /* VALIDATE ROUTE PARAMS(url) */
-interface UrlValidationSuccess {
-  statusCode: 200;
-  statusMessage: string;
-  data: { url: URL };
-}
-
-interface UrlValidationError {
-  statusCode: 400 | 401;
-  statusMessage: string;
-  data: ZodError<{ url: string }> | null;
-}
-
-type UrlValidationResult = UrlValidationSuccess | UrlValidationError;
-
-export async function validateUrl(event: H3Event<EventHandlerRequest>): Promise<UrlValidationResult> {
+export async function validateParamUrl(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<{ url: URL }, UrlType>> {
   const maybeValidatedParams = await getValidatedRouterParams(event, UrlSchema.safeParse);
 
   if (!maybeValidatedParams.success) {
@@ -103,21 +87,7 @@ export async function validateUrl(event: H3Event<EventHandlerRequest>): Promise<
 }
 
 /* VALIDATE ROUTE PARAMS(user_id) */
-interface UserIdValidationSuccess {
-  statusCode: 200;
-  statusMessage: string;
-  data: { user_id: number };
-}
-
-interface UserIdValidationError {
-  statusCode: 400 | 401;
-  statusMessage: string;
-  data: ZodError<{ user_id: number }> | null;
-}
-
-type UserIdValidationResult = UserIdValidationSuccess | UserIdValidationError;
-
-export async function validateUserId(event: H3Event<EventHandlerRequest>): Promise<UserIdValidationResult> {
+export async function validateParamUserId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<UserIdType>> {
   const user: User = event.context.user;
 
   const maybeValidatedParams = await getValidatedRouterParams(
@@ -161,21 +131,7 @@ export async function validateUserId(event: H3Event<EventHandlerRequest>): Promi
 }
 
 /* VALIDATE ROUTE PARAMS(user_id, chat_id) */
-interface ChatIdValidationSuccess {
-  statusCode: 200;
-  statusMessage: string;
-  data: { user_id: number, chat_id: number };
-}
-
-interface ChatIdValidationError {
-  statusCode: 400 | 401;
-  statusMessage: string;
-  data: ZodError<{ user_id: number, chat_id: number }> | null;
-}
-
-type ChatIdValidationResult = ChatIdValidationSuccess | ChatIdValidationError;
-
-export async function validateChatId(event: H3Event<EventHandlerRequest>): Promise<ChatIdValidationResult> {
+export async function validateParamChatId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatIdType>> {
   const user: User = event.context.user;
 
   const maybeValidatedParams = await getValidatedRouterParams(
@@ -222,21 +178,7 @@ export async function validateChatId(event: H3Event<EventHandlerRequest>): Promi
 }
 
 /* VALIDATE ROUTE PARAMS(user_id, chat_id, message_id) */
-interface MessageIdValidationSuccess {
-  statusCode: 200;
-  statusMessage: string;
-  data: { user_id: number, chat_id: number, message_id: number };
-}
-
-interface MessageIdValidationError {
-  statusCode: 400 | 401;
-  statusMessage: string;
-  data: ZodError<{ user_id: number, chat_id: number, message_id: number }> | null;
-}
-
-type MessageIdValidationResult = MessageIdValidationSuccess | MessageIdValidationError;
-
-export async function validateMessageId(event: H3Event<EventHandlerRequest>): Promise<MessageIdValidationResult> {
+export async function validateParamMessageId(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ChatMessageIdType>> {
   const user: User = event.context.user;
 
   const maybeValidatedParams = await getValidatedRouterParams(
@@ -287,21 +229,7 @@ export async function validateMessageId(event: H3Event<EventHandlerRequest>): Pr
 }
 
 /* VALIDATE ROUTE PARAMS(model_publisher, model_name) */
-interface AiModelNameValidationSuccess {
-  statusCode: 200;
-  statusMessage: string;
-  data: { model_publisher: AllowedAiModelPublishersEnum, model_name: AllowedAiModelNamesEnum };
-}
-
-interface AiModelNameValidationError {
-  statusCode: 400 | 401;
-  statusMessage: string;
-  data: ZodError<{ model_publisher: string, model_name: string }> | null;
-}
-
-type AiModelNameValidationResult = AiModelNameValidationSuccess | AiModelNameValidationError;
-
-export async function validateAiModelName(event: H3Event<EventHandlerRequest>): Promise<AiModelNameValidationResult> {
+export async function validateParamAiModelName(event: H3Event<EventHandlerRequest>): Promise<ValidationResult<ModelType>> {
   const maybeValidatedParams = await getValidatedRouterParams(
     event,
     (params) => {
@@ -342,10 +270,14 @@ export const UserIdSchema = z.object({
   user_id: primaryIdSchema,
 });
 
+type UserIdType = z.infer<typeof UserIdSchema>;
+
 export const ChatIdSchema = z.object({
   user_id: primaryIdSchema,
   chat_id: primaryIdSchema,
 });
+
+type ChatIdType = z.infer<typeof ChatIdSchema>;
 
 export const ChatMessageIdSchema = z.object({
   user_id: primaryIdSchema,
@@ -353,20 +285,34 @@ export const ChatMessageIdSchema = z.object({
   message_id: primaryIdSchema,
 });
 
+type ChatMessageIdType = z.infer<typeof ChatMessageIdSchema>;
+
+/**
+ * **INFO**: Doesn't use the z.url() because it doesn't allow URLs in the format of encodeURIComponent
+ */
 export const UrlSchema = z.object({
-  url: z.string().trim() // .url(), // .url() doesn't allow URLs in format of encodeURIComponent
+  url: z.string().trim()
 });
+
+type UrlType = z.infer<typeof UrlSchema>;
 
 export const ModelSchema = z.object({
   model_publisher: z.nativeEnum(AllowedAiModelPublishersEnum),
   model_name: z.nativeEnum(AllowedAiModelNamesEnum),
 });
 
+type ModelType = z.infer<typeof ModelSchema>;
+
 /* QUERY SCHEMAs */
 
+/**
+ * **NOTE**: can be -1, if none selected
+ */
 export const ChatIdQuerySchema = z.object({
   chat_id: z.number().int(),
 });
+
+type ChatIdQueryType = z.infer<typeof ChatIdQuerySchema>;
 
 /* BODY SCHEMAs */
 
@@ -383,7 +329,9 @@ export const ChatConversationAttributesToUpdateSchema = z.object({
   name: z.string().min(3),
 })
 
-// role: 'system' | 'user' | 'assistant' | 'function' | 'data' | 'tool'
+/**
+ * role: 'system' | **'user'** | **'assistant'** | 'function' | 'data' | 'tool'
+ */
 enum Actor {
   "user" = "user",
   "assistant" = "assistant",

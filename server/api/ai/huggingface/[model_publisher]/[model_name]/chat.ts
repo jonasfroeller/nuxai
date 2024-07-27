@@ -5,7 +5,7 @@ import {
   experimental_buildLlama2Prompt,
 } from 'ai/prompts';
 import { ALLOWED_AI_MODELS, POSSIBLE_AI_MODELS } from '~/lib/types/ai.models';
-import { validateAiModelName, validateChatIdQuery } from '~/server/utils/validate';
+import { validateParamAiModelName, validateQueryChatId } from '~/server/utils/validate';
 import type { User } from '#auth-utils';
 import type { H3Event, EventHandlerRequest } from 'h3';
 
@@ -71,7 +71,7 @@ export default defineLazyEventHandler(async () => {
     const user = event.context.user as User;
 
     /* VALIDATE QUERY */
-    const maybeChatId = await validateChatIdQuery(event);
+    const maybeChatId = await validateQueryChatId(event);
     if (maybeChatId.statusCode !== 200) {
       return sendError(
         event,
@@ -85,7 +85,7 @@ export default defineLazyEventHandler(async () => {
     const chat_id = maybeChatId.data?.chat_id;
 
     /* VALIDATE PARAMS */
-    const maybeModelName = await validateAiModelName(event);
+    const maybeModelName = await validateParamAiModelName(event);
     if (maybeModelName.statusCode !== 200) {
       return sendError(
         event,

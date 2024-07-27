@@ -1,7 +1,7 @@
 // Update chat message of chat conversation (TODO: only allow to edit last message => don't forget to trigger new ai request)
 export default defineEventHandler(async (event) => {
   /* VALIDATE PARAMS */
-  const maybeMessageId = await validateMessageId(event);
+  const maybeMessageId = await validateParamMessageId(event);
   if (maybeMessageId.statusCode !== 200) {
     return sendError(
       event,

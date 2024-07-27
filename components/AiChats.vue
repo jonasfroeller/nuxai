@@ -35,8 +35,9 @@ const editChat = (id: number, name: string) => {
   chatToEdit.value.name = name;
 };
 
-const saveEdit = async (id: number) => {
-  const data = await persistChatConversationEdit(
+const saveEdit = async (id: number, previousName: string) => {
+  if (previousName !== chatToEdit.value.name) {
+    const data = await persistChatConversationEdit(
     user?.value?.id ?? -1,
     id,
     chatToEdit.value?.name
@@ -57,6 +58,9 @@ const saveEdit = async (id: number) => {
   }
 
   fetchedChatsRefresh();
+  } else {
+    chatToEdit.value.id = -1;
+  }
 };
 
 const deleteChat = async (id: number) => {
@@ -154,10 +158,11 @@ let filteredChats = computed(() => {
                 <div class="flex items-center gap-1">
                   <template v-if="chatToEdit.id === chat.id">
                     <ShadcnInput
-                      @keydown.enter="saveEdit(chat.id)"
+                      @keydown.enter="saveEdit(chat.id, chat.name)"
+                      @keydown.escape="chatToEdit.id = -1"
                       v-model="chatToEdit.name"
                     />
-                    <ShadcnButton variant="outline" @click="saveEdit(chat.id)"
+                    <ShadcnButton variant="outline" @click="saveEdit(chat.id, chat.name)"
                       >Save</ShadcnButton
                     >
                   </template>
@@ -176,9 +181,32 @@ let filteredChats = computed(() => {
                     /></ShadcnButton>
                   </template>
                 </div>
-                <ShadcnButton variant="destructive" @click="deleteChat(chat?.id)"
-                  >delete<Trash2 class="w-4 h-4 ml-1"
-                /></ShadcnButton>
+                <ShadcnAlertDialog>
+                  <ShadcnAlertDialogTrigger as-child>
+                      <ShadcnButton variant="destructive"
+                          >delete<Trash2 class="w-4 h-4 ml-1"
+                      /></ShadcnButton>
+                  </ShadcnAlertDialogTrigger>
+                  <ShadcnAlertDialogContent>
+                    <ShadcnAlertDialogHeader>
+                      <ShadcnAlertDialogTitle
+                        >Are you sure, that you want to delete the
+                        chat?</ShadcnAlertDialogTitle
+                      >
+                      <ShadcnAlertDialogDescription>
+                        Chats can not be recovered!
+                      </ShadcnAlertDialogDescription>
+                    </ShadcnAlertDialogHeader>
+                    <ShadcnAlertDialogFooter>
+                      <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
+                      <ShadcnAlertDialogAction as-child>
+                        <ShadcnButton variant="destructive" @click="deleteChat(chat?.id)"
+                          >Delete<Trash2 class="w-4 h-4 ml-1"
+                        /></ShadcnButton>
+                      </ShadcnAlertDialogAction>
+                    </ShadcnAlertDialogFooter>
+                  </ShadcnAlertDialogContent>
+                </ShadcnAlertDialog>
               </div>
               <div class="grid text-right">
                 <span class="truncate text-muted-foreground">{{

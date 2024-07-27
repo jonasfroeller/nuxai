@@ -3,7 +3,7 @@ import { updateChatConversation } from '~/server/database/repositories/chatConve
 // Update chat conversation
 export default defineEventHandler(async (event) => {
   /* VALIDATE PARAMS */
-  const maybeChatId = await validateChatId(event);
+  const maybeChatId = await validateParamChatId(event);
   if (maybeChatId.statusCode !== 200) {
     return sendError(
       event,

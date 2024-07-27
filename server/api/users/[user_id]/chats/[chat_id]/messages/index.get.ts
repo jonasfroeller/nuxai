@@ -3,7 +3,7 @@ import { readChatConversationMessages } from '~/server/database/repositories/cha
 // Read all messages of chat conversation
 export default defineEventHandler(async (event) => {
   /* VALIDATE PARAMS */
-  const maybeChatId = await validateChatId(event);
+  const maybeChatId = await validateParamChatId(event);
   if (maybeChatId.statusCode !== 200) {
     return sendError(
       event,
