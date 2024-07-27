@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { RefreshCcw, Pen, Trash2, Search, Loader2 } from 'lucide-vue-next';
-import type { AllowedAiModels } from '~/lib/types/ai.models';
-import type { MinimalChat, FullyFeaturedChat } from '~/lib/types/chat';
+import { RefreshCcw, Pen, Trash2, Search, Loader2 } from "lucide-vue-next";
+import type { AllowedAiModels } from "~/lib/types/ai.models";
+import type { MinimalChat, FullyFeaturedChat } from "~/lib/types/chat";
 const { console } = useLogger();
 
 const { persistChatConversationEdit, persistChatConversationDelete } = useAPI();
@@ -10,7 +10,7 @@ const { selectedAiChat, resetSelectedAiChatToDefaults } = useSelectedAiChat();
 const chatToEdit = ref<MinimalChat>({
   id: -1,
   name: `chat-${Date.now()}`,
-  model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
+  model: "OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5",
 });
 
 function setSelectedChat(
@@ -27,7 +27,7 @@ function setSelectedChat(
     selectedAiChat.value.model = model;
   }
 
-  console.info('setSelectedChat', selectedAiChat.value);
+  console.info("setSelectedChat", selectedAiChat.value);
 }
 
 const editChat = (id: number, name: string) => {
@@ -38,26 +38,26 @@ const editChat = (id: number, name: string) => {
 const saveEdit = async (id: number, previousName: string) => {
   if (previousName !== chatToEdit.value.name) {
     const data = await persistChatConversationEdit(
-    user?.value?.id ?? -1,
-    id,
-    chatToEdit.value?.name
-  );
-
-  if (data && data.chat?.name) {
-    const { name: chatName } = data.chat;
-
-    setSelectedChat(
-      chatToEdit.value.id,
-      chatName,
-      chatToEdit.value.model,
-      true
+      user?.value?.id ?? -1,
+      id,
+      chatToEdit.value?.name
     );
 
-    chatToEdit.value.id = -1;
-    chatToEdit.value.name = `chat-${Date.now()}`;
-  }
+    if (data && data.chat?.name) {
+      const { name: chatName } = data.chat;
 
-  fetchedChatsRefresh();
+      setSelectedChat(
+        chatToEdit.value.id,
+        chatName,
+        chatToEdit.value.model,
+        true
+      );
+
+      chatToEdit.value.id = -1;
+      chatToEdit.value.name = `chat-${Date.now()}`;
+    }
+
+    fetchedChatsRefresh();
   } else {
     chatToEdit.value.id = -1;
   }
@@ -70,7 +70,7 @@ const deleteChat = async (id: number) => {
     setSelectedChat(
       -1,
       `chat-${Date.now()}`,
-      'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5'
+      "OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5"
     );
   }
 
@@ -83,12 +83,12 @@ const {
   error: fetchedChatsError,
   refresh: fetchedChatsRefresh,
 } = await useFetch(`/api/users/${user.value?.id}/chats`, {
-  method: 'GET',
+  method: "GET",
   lazy: true,
-  pick: ['chats'],
+  pick: ["chats"],
 });
 
-const searchQuery = ref('');
+const searchQuery = ref("");
 let filteredChats = computed(() => {
   if (!fetchedChats.value?.chats) return [];
 
@@ -130,9 +130,12 @@ let filteredChats = computed(() => {
     </div>
 
     <div class="h-[calc(100%-3rem)]">
-      <div v-show="fetchedChatsStatus === 'pending'" class="flex items-center justify-center gap-2 px-4 py-2 mb-2 border border-blue-200 rounded-lg bg-background">
-        <Loader2 class="w-4 h-4 mr-2 text-blue-500 animate-spin" />
-        <p class="flex-grow">Waiting for response...</p>
+      <div
+        v-show="fetchedChatsStatus === 'pending'"
+        class="flex items-center justify-center gap-2 px-3 py-2 mb-2 border border-blue-200 rounded-lg bg-background"
+      >
+        <Loader2 class="w-4 h-4 mr-1 text-blue-500 animate-spin" />
+        <p class="flex-grow">Loading chats<LoadingDots /></p>
       </div>
       <ShadcnScrollArea
         class="h-full"
@@ -153,7 +156,7 @@ let filteredChats = computed(() => {
                 'border border-green-600': selectedAiChat?.id === chat?.id,
               }"
             >
-            <div class="hidden border-green-600"></div>
+              <div class="hidden border-green-600"></div>
               <div class="flex flex-col gap-1">
                 <div class="flex items-center gap-1">
                   <template v-if="chatToEdit.id === chat.id">
@@ -162,14 +165,18 @@ let filteredChats = computed(() => {
                       @keydown.escape="chatToEdit.id = -1"
                       v-model="chatToEdit.name"
                     />
-                    <ShadcnButton variant="outline" @click="saveEdit(chat.id, chat.name)"
+                    <ShadcnButton
+                      variant="outline"
+                      @click="saveEdit(chat.id, chat.name)"
                       >Save</ShadcnButton
                     >
                   </template>
                   <template v-else>
                     <ShadcnButton
                       :variant="
-                        selectedAiChat?.id === chat?.id ? 'secondary' : 'outline'
+                        selectedAiChat?.id === chat?.id
+                          ? 'secondary'
+                          : 'outline'
                       "
                       @click="setSelectedChat(chat.id, chat.name, chat.model)"
                       >{{ chat?.name }}</ShadcnButton
@@ -183,9 +190,9 @@ let filteredChats = computed(() => {
                 </div>
                 <ShadcnAlertDialog>
                   <ShadcnAlertDialogTrigger as-child>
-                      <ShadcnButton variant="destructive"
-                          >delete<Trash2 class="w-4 h-4 ml-1"
-                      /></ShadcnButton>
+                    <ShadcnButton variant="destructive"
+                      >delete<Trash2 class="w-4 h-4 ml-1"
+                    /></ShadcnButton>
                   </ShadcnAlertDialogTrigger>
                   <ShadcnAlertDialogContent>
                     <ShadcnAlertDialogHeader>
@@ -200,7 +207,9 @@ let filteredChats = computed(() => {
                     <ShadcnAlertDialogFooter>
                       <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
                       <ShadcnAlertDialogAction as-child>
-                        <ShadcnButton variant="destructive" @click="deleteChat(chat?.id)"
+                        <ShadcnButton
+                          variant="destructive"
+                          @click="deleteChat(chat?.id)"
                           >Delete<Trash2 class="w-4 h-4 ml-1"
                         /></ShadcnButton>
                       </ShadcnAlertDialogAction>

@@ -8,18 +8,22 @@ import {
   Trash2,
   Delete,
   Loader2,
-} from 'lucide-vue-next';
-import { useChat, type Message } from '@ai-sdk/vue'; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
-import { toast } from 'vue-sonner';
+} from "lucide-vue-next";
+import { useChat, type Message } from "@ai-sdk/vue"; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
+import { toast } from "vue-sonner";
 // import type { Message } from '@ai-sdk/vue';
 const { console } = useLogger();
 
 const { user } = useUserSession();
-const { aiPlaygroundChatMessages: currentAiChatPlaygroundMessagesBackup, resetAiPlaygroundChat } = useAiChatPlayground();
+const {
+  aiPlaygroundChatMessages: currentAiChatPlaygroundMessagesBackup,
+  resetAiPlaygroundChat,
+} = useAiChatPlayground();
 const { generateMarkdownFromUrl } = useAPI();
 
 /* CHAT AI */
-const { selectedAiChat, selectedAiChatIsPlayground, selectedAiChatKey } = useSelectedAiChat();
+const { selectedAiChat, selectedAiChatIsPlayground, selectedAiChatKey } =
+  useSelectedAiChat();
 let {
   messages: chatMessages,
   input: currentChatMessage,
@@ -65,7 +69,7 @@ const waitForAiResponseToComplete = (condition: Ref<boolean | undefined>) => {
 
   promise.finally(() => {
     if (unwatch) {
-      console.info('Removing watcher...');
+      console.info("Removing watcher...");
       unwatch();
     }
   });
@@ -82,18 +86,18 @@ watch(
 
     // TODO: only trigger, if message is new and not also if it is received from database
     if (
-      chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant'
+      chatMessages.value[chatMessages.value.length - 1]?.role === "assistant"
     ) {
       toast.promise(aiIsDoneResponding, {
-        loading: 'Fetching AI response...',
-        success: (data: any) => 'AI response fetched!',
-        error: (data: any) => 'Failed to fetch AI response!',
+        loading: "Fetching AI response...",
+        success: (data: any) => "AI response fetched!",
+        error: (data: any) => "Failed to fetch AI response!",
       });
     }
 
     await aiIsDoneResponding;
 
-    console.info('Setting chat history messages backup...');
+    console.info("Setting chat history messages backup...");
     if (selectedAiChatIsPlayground.value && chatMessages.value.length > 0) {
       currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
     }
@@ -128,15 +132,15 @@ const {
   stop: stopSpeechRecognition,
   error: speechRecognitionError,
 } = useSpeechRecognition({
-  lang: 'en-US',
+  lang: "en-US",
   interimResults: true,
   continuous: true,
 });
 
 watch(speechRecognitionError, async () => {
-  if (speechRecognitionError.value?.error === 'not-allowed') {
+  if (speechRecognitionError.value?.error === "not-allowed") {
     toast.error(
-      'Speech recognition was disabled for this page!\nPlease allow it, to use the feature!'
+      "Speech recognition was disabled for this page!\nPlease allow it, to use the feature!"
     );
   } else {
     toast.error(
@@ -152,32 +156,36 @@ if (isSpeechRecognitionSupported.value && IS_CLIENT) {
 }
 
 /* CONVERT HTML TO MARKDOWN */
-let urlToFetchHtmlFrom = ref('');
+let urlToFetchHtmlFrom = ref("");
 
 /* FILE UPLOAD */
-const { /* files: uploadedFiles,  */open: openFile, reset: resetFile, onChange } = useFileDialog({
-  accept: 'text/plain',
+const {
+  /* files: uploadedFiles,  */ open: openFile,
+  reset: resetFile,
+  onChange,
+} = useFileDialog({
+  accept: "text/plain",
   /* directory: true, */ // TODO: allow importing of file structure
-})
+});
 
 onChange(async (uploadedFiles) => {
   if (uploadedFiles) {
     for (const file of uploadedFiles) {
-      if (file.type !== 'text/plain') {
-        toast.error('File type not supported!');
+      if (file.type !== "text/plain") {
+        toast.error("File type not supported!");
         resetFile();
         return;
-      };
+      }
       appendFileUploadToInput(file.type, file.name, await file.text());
     }
 
     resetFile();
   }
-})
+});
 
 function appendFileUploadToInput(type: string, name: string, text: string) {
-  console.info('Appending file upload to input...');
-  
+  console.info("Appending file upload to input...");
+
   let prettierFileContent = `\`\`\`${type}:${name}\n${text}\n\`\`\``;
   currentChatMessage.value = prettierFileContent + currentChatMessage.value;
 }
@@ -185,24 +193,27 @@ function appendFileUploadToInput(type: string, name: string, text: string) {
 // Load data
 async function loadChatMessages(user_id: number, chat_id: number) {
   if (user_id !== -1) {
-
-    if (chat_id === -1) { // load playground, if no chat is selected
-      chatMessages.value = currentAiChatPlaygroundMessagesBackup.value
+    if (chat_id === -1) {
+      // load playground, if no chat is selected
+      chatMessages.value = currentAiChatPlaygroundMessagesBackup.value;
       return;
     }
 
-    const data = await $fetch(`/api/users/${user_id}/chats/${chat_id}/messages`);
+    const data = await $fetch(
+      `/api/users/${user_id}/chats/${chat_id}/messages`
+    );
 
     if (data?.chatMessages && data.chatMessages.length > 0) {
-      const chatMessages = data.chatMessages; 
-      const messages = chatMessages.map(({ id, message, actor }) => (
-        {
-          id: `${String(id)}-${String(Date.now())}`,
-          content: message,
-          role: actor
-        } as Message)
+      const chatMessages = data.chatMessages;
+      const messages = chatMessages.map(
+        ({ id, message, actor }) =>
+          ({
+            id: `${String(id)}-${String(Date.now())}`,
+            content: message,
+            role: actor,
+          } as Message)
       );
-      
+
       setChatMessages(messages);
     }
   }
@@ -214,8 +225,8 @@ onMounted(async () => {
 
 // Send Message on CTRL + ENTER
 function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
-  if (currentChatMessage.value.trim() === '') return;
-  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+  if (currentChatMessage.value.trim() === "") return;
+  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
     handleChatMessageSubmit();
   }
 }
@@ -234,95 +245,99 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
 
     <div class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
       <ShadcnScrollArea>
-
-      <DevOnly>
-        <ClientOnly>
-          SELECTED: {{ selectedAiChat }} | {{ selectedAiChatKey }}<br />
-          messages: {{ JSON.stringify(chatMessages) }}<br>
-          <hr>
-          PLAYGROUND: {{ selectedAiChatIsPlayground }} | {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}<br>
-        </ClientOnly>
-      </DevOnly>
-
-      <div
-        v-for="m in chatMessages"
-        :key="m.id"
-        class="flex my-2"
-        v-bind:class="{
-          'justify-start': m.role === 'assistant',
-          'justify-end': m.role === 'user',
-        }"
-      >
-        <div
-          v-if="m.role === 'assistant'"
-          class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] relative dark:border-border"
-          :id="`message-${m.id}`"
-          :data-message-created-at="m.createdAt"
-        >
-          <!-- TODO: listen to message -->
-          <!-- <ShadcnButton class="absolute bottom-[-70%] right-[-1rem] px-2 py-1 border rounded-md w-fit bg-background border-slate-200 dark:border-border" variant="ghost" size="icon" @click="respondToMessage(`message-${m.id}`)">respond</ShadcnButton> -->
+        <DevOnly>
           <ClientOnly>
-            <MDC
-              class="overflow-x-auto break-words whitespace-pre-wrap"
-              :value="m.content"
-            />
+            SELECTED: {{ selectedAiChat }} | {{ selectedAiChatKey }}<br />
+            messages: {{ JSON.stringify(chatMessages) }}<br />
+            <hr />
+            PLAYGROUND: {{ selectedAiChatIsPlayground }} |
+            {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}<br />
           </ClientOnly>
-        </div>
+        </DevOnly>
 
         <div
-          v-if="m.role === 'user'"
-          class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] dark:border-border"
-          :id="`message-${m.id}`"
-          :data-message-created-at="m.createdAt"
-        >
-          <ClientOnly>
-            <MDC
-              class="overflow-x-auto break-words whitespace-pre-wrap"
-              :value="m.content"
-            />
-          </ClientOnly>
-        </div>
-      </div>
-
-      <!-- User Input Draft -->
-      <div
-        class="flex justify-end mt-8 overflow-auto"
-        v-if="currentChatMessage.trim() !== ''"
-      >
-        <div
-          class="break-words whitespace-pre-wrap max-w-[80%] border border-orange-300 rounded-lg bg-background px-4 py-2"
-        >
-          {{ currentChatMessage }}
-        </div>
-      </div>
-
-      <!-- NOTE: v-if is server-side and v-show client-side -->
-      <div
-        v-show="chatResponseIsLoading"
-        class="flex flex-wrap items-center gap-2 px-4 py-2 border border-blue-200 rounded-lg bg-background"
-      >
-        <Loader2 class="w-4 h-4 mr-2 text-blue-500 animate-spin" />
-        <p class="flex-grow">Waiting for response...</p>
-      </div>
-
-      <div
-        v-if="chatError"
-        class="flex flex-wrap items-center w-full p-4 mt-8 font-black uppercase border-2 rounded-md text-ellipsis border-destructive"
-      >
-        <p class="flex-grow">Something went wrong!</p>
-        <ShadcnButton
-          variant="outline"
-          @click="async () => {
-            await reloadLastChatMessage().then(() => {
-              toast.success('Chat message reloaded!');
-            }).catch(() => {
-              toast.error('Failed to reload chat message!');
-            })
+          v-for="m in chatMessages"
+          :key="m.id"
+          class="flex my-2"
+          v-bind:class="{
+            'justify-start': m.role === 'assistant',
+            'justify-end': m.role === 'user',
           }"
-          >Try again</ShadcnButton
         >
-      </div>
-    </ShadcnScrollArea>
+          <div
+            v-if="m.role === 'assistant'"
+            class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] relative dark:border-border"
+            :id="`message-${m.id}`"
+            :data-message-created-at="m.createdAt"
+          >
+            <!-- TODO: listen to message -->
+            <!-- <ShadcnButton class="absolute bottom-[-70%] right-[-1rem] px-2 py-1 border rounded-md w-fit bg-background border-slate-200 dark:border-border" variant="ghost" size="icon" @click="respondToMessage(`message-${m.id}`)">respond</ShadcnButton> -->
+            <ClientOnly>
+              <MDC
+                class="overflow-x-auto break-words whitespace-pre-wrap"
+                :value="m.content"
+              />
+            </ClientOnly>
+          </div>
+
+          <div
+            v-if="m.role === 'user'"
+            class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] dark:border-border"
+            :id="`message-${m.id}`"
+            :data-message-created-at="m.createdAt"
+          >
+            <ClientOnly>
+              <MDC
+                class="overflow-x-auto break-words whitespace-pre-wrap"
+                :value="m.content"
+              />
+            </ClientOnly>
+          </div>
+        </div>
+
+        <!-- User Input Draft -->
+        <div
+          class="flex justify-end mt-8 overflow-auto"
+          v-if="currentChatMessage.trim() !== ''"
+        >
+          <div
+            class="break-words whitespace-pre-wrap max-w-[80%] border border-orange-300 rounded-lg bg-background px-4 py-2"
+          >
+            {{ currentChatMessage }}
+          </div>
+        </div>
+
+        <!-- NOTE: v-if is server-side and v-show client-side -->
+        <div
+          v-show="chatResponseIsLoading"
+          class="flex items-center justify-center gap-2 px-3 py-2 mb-2 border border-blue-200 rounded-lg bg-background"
+        >
+          <Loader2 class="w-4 h-4 mr-1 text-blue-500 animate-spin" />
+          <p class="flex-grow">Waiting for response<LoadingDots /></p>
+        </div>
+
+        <div
+          v-if="chatError"
+          class="flex flex-wrap items-center w-full p-4 mt-8 font-black uppercase border-2 rounded-md text-ellipsis border-destructive"
+        >
+          <p class="flex-grow">Something went wrong!</p>
+          <ShadcnButton
+            variant="outline"
+            @click="
+              async () => {
+                await reloadLastChatMessage()
+                  .then(() => {
+                    toast.success('Chat message reloaded!');
+                  })
+                  .catch(() => {
+                    toast.error('Failed to reload chat message!');
+                  });
+              }
+            "
+            >Try again</ShadcnButton
+          >
+        </div>
+      </ShadcnScrollArea>
     </div>
 
     <form
@@ -346,7 +361,12 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
         <ShadcnTooltipProvider>
           <ShadcnTooltip>
             <ShadcnTooltipTrigger as-child>
-              <ShadcnButton @click="openFile" type="button" variant="ghost" size="icon">
+              <ShadcnButton
+                @click="openFile"
+                type="button"
+                variant="ghost"
+                size="icon"
+              >
                 <Paperclip class="size-4" />
                 <span class="sr-only">Attach file</span>
               </ShadcnButton>
@@ -441,7 +461,9 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
                     variant="ghost"
                     size="icon"
                     :disabled="
-                      chatResponseIsLoading || chatMessages.length === 0 || !selectedAiChatIsPlayground
+                      chatResponseIsLoading ||
+                      chatMessages.length === 0 ||
+                      !selectedAiChatIsPlayground
                     "
                   >
                     <Trash2 class="size-4" />
@@ -463,7 +485,11 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
                 <ShadcnAlertDialogFooter>
                   <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
                   <ShadcnAlertDialogAction
-                    @click="resetAiPlaygroundChat('OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5')"
+                    @click="
+                      resetAiPlaygroundChat(
+                        'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5'
+                      )
+                    "
                     >Continue</ShadcnAlertDialogAction
                   >
                 </ShadcnAlertDialogFooter>
