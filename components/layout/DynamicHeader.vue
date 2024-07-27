@@ -7,7 +7,8 @@ const props = defineProps<{
 }>()
 
 const { loggedIn, user, clear } = useUserSession();
-const { headerNavigationElement } = useHeaderNavigation(); // don't bind using :ref (VNodeRef and not Element)
+const headerNavigationStore = useHeaderNavigationStore();
+const { headerNavigationElement } = storeToRefs(headerNavigationStore); // don't bind using :ref (VNodeRef and not Element)!!!
 </script>
 
 <template>

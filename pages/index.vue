@@ -45,7 +45,14 @@ definePageMeta({
 });
 
 const { selectedAiChatKey } = useSelectedAiChat();
-const { headerNavigationSize } = useHeaderNavigation();
+const headerNavigationStore = useHeaderNavigationStore();
+const { headerNavigationElement } = storeToRefs(headerNavigationStore);
+
+const headerNavigationHeight = ref(0);
+watch(headerNavigationElement, (newHeaderNavigationElement) => {
+  const { height } = useElementSize(newHeaderNavigationElement); // needs access to lifecycle hooks (that is why it is not defined in the store or a composable)
+  headerNavigationHeight.value = height.value;
+})
 
 type possibleDashboardTabs = "chat" | "chats";
 const selectedDashboardTab = ref<possibleDashboardTabs>("chat");
@@ -190,7 +197,7 @@ onMounted(() => {
     <div class="flex flex-col">
       <header
         class="sticky left-0 z-20 flex items-center justify-between gap-1 py-2 border-b bg-background"
-        :style="{ top: headerNavigationSize.height + 'px' }"
+        :style="{ top: headerNavigationHeight + 'px' }"
       >
         <div class="flex items-center gap-2">
           <h1 class="text-xl font-semibold">Configuration Generator</h1>
