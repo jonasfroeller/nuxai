@@ -15,6 +15,8 @@ import { toast } from 'vue-sonner';
 // import type { Message } from '@ai-sdk/vue';
 const { console } = useLogger();
 
+// TODO: improve performance
+
 const { user } = useUserSession();
 const {
   aiPlaygroundChatMessages: currentAiChatPlaygroundMessagesBackup,
@@ -214,7 +216,7 @@ async function loadChatMessages(user_id: number, chat_id: number) {
             id: `${String(id)}-${String(Date.now())}`,
             content: message,
             role: actor,
-          } as Message)
+          }) as Message
       );
 
       setChatMessages(messages);
@@ -250,16 +252,20 @@ onMounted(() => {
 
 const scrollToBottom = () => {
   if ($actualScrollArea.value) {
-    $actualScrollArea.value.scrollTo(0, $actualScrollArea.value.scrollHeight);
+    $actualScrollArea.value.scrollTo({
+      top: $actualScrollArea.value.scrollHeight,
+      behavior: 'smooth',
+    });
   }
 };
 
+// TODO: find a actual solution for this
 watchOnce(isLoading, () => {
   setTimeout(() => {
     if ($actualScrollArea.value) {
       scrollToBottom();
     }
-  }, 150);
+  }, 500);
 });
 </script>
 

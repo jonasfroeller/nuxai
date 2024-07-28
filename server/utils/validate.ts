@@ -6,7 +6,12 @@ import {
 import { z, ZodError } from 'zod';
 import type { H3Event, EventHandlerRequest } from 'h3';
 import type { User } from '#auth-utils';
-import { type ChatConversationKeys, type OrderByDirection, possibleOrderByColumns, possibleOrderByDirections } from '~/lib/types/chat';
+import {
+  type ChatConversationKeys,
+  type OrderByDirection,
+  possibleOrderByColumns,
+  possibleOrderByDirections,
+} from '~/lib/types/chat';
 
 /* EVENT HANDLER */
 
@@ -59,8 +64,8 @@ async function validateParams<S, E = S>(
     data,
     success,
   } = secondValidationStep
-      ? secondValidationStep(maybeValidatedParams.data!)
-      : { success: true, data: null, validationErrorMessage: '' };
+    ? secondValidationStep(maybeValidatedParams.data!)
+    : { success: true, data: null, validationErrorMessage: '' };
   if (secondValidationStep) {
     if (!success || !data) {
       return {

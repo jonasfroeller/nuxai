@@ -12,12 +12,13 @@ const props = defineProps<{
 }>();
 
 /* SPEECH SYNTHESIS */
+// TODO: find out, why the speaker sometimes suddenly stops
 const {
   isSupported: isSpeechSynthesisSupported,
   isPlaying: isSpeaking,
   // status: speechSynthesisStatus,
   // utterance: currentUtterance,
-  error: speechSynthesisError,
+  // error: speechSynthesisError,
   stop: stopSpeaking,
   speak: speakText,
 } = useSpeechSynthesis(props.message, {
@@ -25,10 +26,6 @@ const {
   pitch: 1,
   rate: 1,
   volume: 1,
-});
-
-watch(speechSynthesisError, () => {
-  isSpeaking.value = false;
 });
 
 /* COPY TO CLIPBOARD */
