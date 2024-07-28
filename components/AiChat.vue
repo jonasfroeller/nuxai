@@ -315,7 +315,6 @@ watchOnce(isLoading, () => {
             :id="`message-${m.id}`"
             :data-message-created-at="m.createdAt"
           >
-            <!-- TODO: listen to message -->
             <!-- <ShadcnButton class="absolute bottom-[-70%] right-[-1rem] px-2 py-1 border rounded-md w-fit bg-background border-slate-200 dark:border-border" variant="ghost" size="icon" @click="respondToMessage(`message-${m.id}`)">respond</ShadcnButton> -->
             <ClientOnly>
               <MDC
@@ -323,6 +322,8 @@ watchOnce(isLoading, () => {
                 :value="m.content"
               />
             </ClientOnly>
+            <ShadcnSeparator class="my-4" label="Controls" />
+            <MessageControls :message="m.content" />
           </div>
 
           <div

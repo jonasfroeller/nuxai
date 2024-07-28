@@ -243,12 +243,12 @@ let filteredChats = computed(() => {
           variant="outline"
           @click="filterVisible = !filterVisible"
           :disabled="fetchedChatsStatus === 'pending'"
-        >
+          >Filter
           <template v-if="filterVisible">
-            <FilterX class="w-4 h-4" />
+            <FilterX class="w-4 h-4 ml-1" />
           </template>
           <template v-else>
-            <Filter class="w-4 h-4" />
+            <Filter class="w-4 h-4 ml-1" />
           </template>
         </ShadcnButton>
         <ShadcnButton
@@ -257,7 +257,8 @@ let filteredChats = computed(() => {
           @click="async () => await fetchedChatsRefresh()"
           class="[&>*]:hover:animate-spin"
         >
-          <RefreshCcw class="w-4 h-4" />
+          Reload
+          <RefreshCcw class="w-4 h-4 ml-1" />
         </ShadcnButton>
       </div>
 
