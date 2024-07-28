@@ -1,17 +1,26 @@
-<script setup>
-import { possibleOrderByColumns } from '~/server/utils/validate';
+<script lang="ts" setup>
+/// <reference path="../lib/types/vue-dndrop.d.ts" />
+
+import { possibleOrderByColumns } from '~/lib/types/chat';
+// @ts-ignore (somehow still not recognized...)
+import { Container, Draggable, type DropResult } from 'vue-dndrop'; // https://amendx.github.io/vue-dndrop/guide/installation.html
+import { GripVertical } from 'lucide-vue-next';
+
+interface Filter {
+  column: string;
+  direction: 'asc' | 'desc';
+}
 
 const chatsFilters = useChatsFilter();
-
-const columns = possibleOrderByColumns;
-const filters = ref([{ column: 'updated_at', direction: 'asc' }]);
+const columns: string[] = possibleOrderByColumns;
+const filters = ref<Filter[]>([{ column: 'updated_at', direction: 'asc' }]);
 
 const addFilter = () => {
   const column = availableColumns()[0];
   filters.value.push({ column, direction: 'desc' });
 };
 
-const removeFilter = (index) => {
+const removeFilter = (index: number) => {
   filters.value.splice(index, 1);
 };
 
@@ -19,7 +28,7 @@ const removeAllFilters = () => {
   filters.value = [];
 };
 
-const availableColumns = (currentIndex) => {
+const availableColumns = (currentIndex?: number): string[] => {
   const selectedColumns = filters.value
     .map((filter) => filter.column)
     .filter((_, index) => index !== currentIndex);
@@ -36,6 +45,28 @@ const queryString = computed(() => {
   chatsFilters.value = orderByFilter;
   return orderByFilter;
 });
+
+const onDrop = (dropResult: DropResult) => {
+  filters.value = applyDrag(filters.value, dropResult);
+};
+
+const applyDrag = (filters: Filter[], dropResult: DropResult): Filter[] => {
+  const { removedIndex, addedIndex, payload } = dropResult;
+  if (removedIndex === null && addedIndex === null) return filters;
+
+  const result = [...filters];
+  let itemToAdd = payload;
+
+  if (removedIndex !== null) {
+    itemToAdd = result.splice(removedIndex, 1)[0];
+  }
+
+  if (addedIndex !== null) {
+    result.splice(addedIndex, 0, itemToAdd);
+  }
+
+  return result;
+};
 </script>
 
 <template>
@@ -43,45 +74,48 @@ const queryString = computed(() => {
     <legend class="px-1 -ml-1 text-sm font-medium">Order By Filter</legend>
 
     <ShadcnScrollArea class="max-h-32">
-      <div class="flex flex-col gap-1">
-        <div v-for="(filter, index) in filters" :key="index" class="flex gap-1">
-          <ShadcnSelect v-model="filter.column">
-            <ShadcnSelectTrigger>
-              <ShadcnSelectValue placeholder="Select column" />
-            </ShadcnSelectTrigger>
-            <ShadcnSelectContent>
-              <ShadcnSelectGroup>
-                <ShadcnSelectLabel>Column</ShadcnSelectLabel>
-                <ShadcnSelectItem
-                  v-for="column in availableColumns(index)"
-                  :key="column"
-                  :value="column"
-                >
-                  {{ column }}
-                </ShadcnSelectItem>
-              </ShadcnSelectGroup>
-            </ShadcnSelectContent>
-          </ShadcnSelect>
-          <ShadcnSelect v-model="filter.direction">
-            <ShadcnSelectTrigger>
-              <ShadcnSelectValue placeholder="Select direction" />
-            </ShadcnSelectTrigger>
-            <ShadcnSelectContent>
-              <ShadcnSelectGroup>
-                <ShadcnSelectLabel>Direction</ShadcnSelectLabel>
-                <ShadcnSelectItem value="asc"> Ascending </ShadcnSelectItem>
-                <ShadcnSelectItem value="desc"> Descending </ShadcnSelectItem>
-              </ShadcnSelectGroup>
-            </ShadcnSelectContent>
-          </ShadcnSelect>
-          <ShadcnButton variant="destructive" @click="removeFilter(index)"
-            >Remove</ShadcnButton
-          >
-        </div>
+      <Container @drop="onDrop" class="flex flex-col gap-1">
+        <Draggable v-for="(filter, index) in filters" :key="index">
+          <div class="flex items-center gap-1 draggable-item">
+            <GripVertical class="w-8 h-8 cursor-grabbing" />
+            <ShadcnSelect v-model="filter.column">
+              <ShadcnSelectTrigger>
+                <ShadcnSelectValue placeholder="Select column" />
+              </ShadcnSelectTrigger>
+              <ShadcnSelectContent>
+                <ShadcnSelectGroup>
+                  <ShadcnSelectLabel>Column</ShadcnSelectLabel>
+                  <ShadcnSelectItem
+                    v-for="column in availableColumns(index)"
+                    :key="column"
+                    :value="column"
+                  >
+                    {{ column }}
+                  </ShadcnSelectItem>
+                </ShadcnSelectGroup>
+              </ShadcnSelectContent>
+            </ShadcnSelect>
+            <ShadcnSelect v-model="filter.direction">
+              <ShadcnSelectTrigger>
+                <ShadcnSelectValue placeholder="Select direction" />
+              </ShadcnSelectTrigger>
+              <ShadcnSelectContent>
+                <ShadcnSelectGroup>
+                  <ShadcnSelectLabel>Direction</ShadcnSelectLabel>
+                  <ShadcnSelectItem value="asc"> Ascending </ShadcnSelectItem>
+                  <ShadcnSelectItem value="desc"> Descending </ShadcnSelectItem>
+                </ShadcnSelectGroup>
+              </ShadcnSelectContent>
+            </ShadcnSelect>
+            <ShadcnButton variant="destructive" @click="removeFilter(index)"
+              >Remove</ShadcnButton
+            >
+          </div>
+        </Draggable>
         <!-- <div v-if="filters.length === 0">
         <p class="text-center"><em>No filters</em></p>
         </div> -->
-      </div>
+      </Container>
     </ShadcnScrollArea>
     <div class="flex gap-1">
       <ShadcnButton

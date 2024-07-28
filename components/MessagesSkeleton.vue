@@ -1,6 +1,8 @@
-<script setup>
+<script lang="ts" setup>
 const isLoading = ref(false);
-const messages = ref([]);
+const messages = ref<
+  { heightClass: string; width: number; justifyClass: string }[]
+>([]);
 const heights = [
   'h-10',
   'h-11',
@@ -35,7 +37,7 @@ const generateMessages = () => {
   }
 };
 
-const getRandomInt = (min, max) => {
+const getRandomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 

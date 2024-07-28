@@ -12,3 +12,14 @@ export interface FullyFeaturedChat extends MinimalChat {
   updated_at: GetChatConversation['updated_at'];
   chat_user_id: GetChatConversation['chat_user_id'];
 }
+
+export type ChatConversationKeys = keyof GetChatConversation;
+export type OrderByDirection = (typeof possibleOrderByDirections)[number];
+export const possibleOrderByColumns: ChatConversationKeys[] = [
+  'id',
+  'created_at',
+  'updated_at',
+  'name',
+  'model',
+] as const;
+export const possibleOrderByDirections = ['asc', 'desc'] as const;
