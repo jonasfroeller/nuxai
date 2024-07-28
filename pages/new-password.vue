@@ -1,12 +1,15 @@
 <script setup lang="ts">
 definePageMeta({
   name: 'New Password',
-  alias: ['/forgot-password'],
+  alias: ['/forgot-password', '/reset-password'],
 });
+
+defineOgImageComponent('NuxtSeo');
 </script>
 
 <template>
-  <div>New Password</div>
+  <!-- TODO: needs email verification -->
+  <div>Reset Password</div>
 </template>
 
 <style scoped></style>
