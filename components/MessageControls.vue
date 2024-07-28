@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Volume2, CirclePause } from 'lucide-vue-next';
+import { Volume2, CirclePause, Copy, CopyCheck } from 'lucide-vue-next';
 import {
   Tooltip,
   TooltipContent,
@@ -30,15 +30,31 @@ const {
 watch(speechSynthesisError, () => {
   isSpeaking.value = false;
 });
+
+/* COPY TO CLIPBOARD */
+// const mime = 'text/markdown'; // Unknown error (NotAllowedError: Failed to execute 'write' on 'Clipboard': Type text/markdown not supported on write.)
+const mime = 'text/plain';
+const source = ref([
+  new ClipboardItem({
+    [mime]: new Blob([props.message], { type: mime }),
+  }),
+]);
+
+const {
+  // content: copiedText,
+  copy: copyToClipboard,
+  copied: isCopied,
+  isSupported: isClipboardSupported,
+} = useClipboardItems({ source });
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-1 mb-1">
+  <div class="flex flex-wrap items-center gap-1 mb-1">
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger as-child>
           <ShadcnButton
-            variant="outline"
+            variant="ghost"
             size="icon"
             :disabled="!isSpeechSynthesisSupported"
             @click="
@@ -49,14 +65,32 @@ watch(speechSynthesisError, () => {
             "
           >
             <template v-if="isSpeaking">
-              <CirclePause />
+              <CirclePause class="w-6 h-6" />
             </template>
             <template v-else>
-              <Volume2 />
+              <Volume2 class="w-6 h-6" />
             </template>
           </ShadcnButton>
         </TooltipTrigger>
         <TooltipContent side="top"> Read Message </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <ShadcnButton
+            variant="ghost"
+            size="icon"
+            :disabled="!isClipboardSupported"
+            @click="copyToClipboard(source)"
+          >
+            <template v-if="isCopied">
+              <CopyCheck class="w-5 h-5" />
+            </template>
+            <template v-else>
+              <Copy class="w-5 h-5" />
+            </template>
+          </ShadcnButton>
+        </TooltipTrigger>
+        <TooltipContent side="top"> Copy to Clipboard </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   </div>
