@@ -22,7 +22,7 @@
     "@ai-sdk/vue": "^0.0.24",
     "@huggingface/inference": "^2.7.0",
     "@neondatabase/serverless": "^0.9.4",
-    "@nuxt/eslint": "^0.3.13",
+    "@nuxt/eslint": "^0.4.0",
     "@nuxt/image": "^1.7.0",
     "@nuxtjs/mdc": "^0.8.3",
     "@pinia/nuxt": "^0.5.1",
