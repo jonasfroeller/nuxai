@@ -8,6 +8,7 @@ import {
   Trash2,
   Delete,
   Loader2,
+  Mouse,
 } from 'lucide-vue-next';
 import { useChat, type Message } from '@ai-sdk/vue'; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
 import { toast } from 'vue-sonner';
@@ -101,6 +102,8 @@ watch(
     if (selectedAiChatIsPlayground.value && chatMessages.value.length > 0) {
       currentAiChatPlaygroundMessagesBackup.value = chatMessages.value;
     }
+
+    scrollToBottom();
   }
 );
 
@@ -235,12 +238,47 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
     handleChatMessageSubmit();
   }
 }
+
+// scroll to bottom
+const $scrollArea = ref();
+const $actualScrollArea = ref<HTMLElement | null>(null);
+onMounted(() => {
+  $actualScrollArea.value = $scrollArea.value.$el.querySelector(
+    '[data-radix-scroll-area-viewport]'
+  ) as HTMLElement;
+});
+
+const scrollToBottom = () => {
+  if ($actualScrollArea.value) {
+    $actualScrollArea.value.scrollTo(0, $actualScrollArea.value.scrollHeight);
+  }
+};
+
+watchOnce(isLoading, () => {
+  setTimeout(() => {
+    if ($actualScrollArea.value) {
+      scrollToBottom();
+    }
+  }, 150);
+});
 </script>
 
 <template>
   <div
     class="relative flex flex-col h-full min-h-[60vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 w-[calc(100%-2rem)] order-1 2xl:order-2"
   >
+    <div class="absolute z-10 left-3 top-3">
+      <ShadcnButton
+        type="button"
+        size="icon"
+        variant="ghost"
+        :disabled="chatResponseIsLoading"
+        @click="scrollToBottom"
+      >
+        <Mouse class="size-6" />
+      </ShadcnButton>
+    </div>
+
     <ShadcnBadge
       variant="outline"
       class="absolute z-10 right-3 top-3 bg-background"
@@ -248,8 +286,8 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
       {{ selectedAiChat.name }}
     </ShadcnBadge>
 
-    <div class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
-      <ShadcnScrollArea>
+    <div class="flex flex-col flex-grow max-w-full min-h-0 pt-10 pb-6">
+      <ShadcnScrollArea ref="$scrollArea">
         <!--
         <DevOnly>
           <ClientOnly>
