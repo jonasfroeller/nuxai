@@ -213,10 +213,22 @@ export const useAPI = () => {
 
 // Pilot Composable for extended opportunities
 export function useFetchChats(user_id: number) {
-  const fetchedChats = useState<{ chats: FullyFeaturedChat[] } | null>('fetched-chats', () => null);
-  const fetchedChatsStatus = useState<AsyncDataRequestStatus>('fetched-chats-status', () => 'pending');
-  const fetchedChatsError = useState<FetchError | null>('fetched-chats-error', () => null);
-  const fetchedChatsRefresh = useState<(opts?: any) => Promise<void>>('fetched-chats-refresh', () => () => Promise.resolve()); // any should be AsyncDataExecuteOptions, but I can not find the type
+  const fetchedChats = useState<{ chats: FullyFeaturedChat[] } | null>(
+    'fetched-chats',
+    () => null
+  );
+  const fetchedChatsStatus = useState<AsyncDataRequestStatus>(
+    'fetched-chats-status',
+    () => 'pending'
+  );
+  const fetchedChatsError = useState<FetchError | null>(
+    'fetched-chats-error',
+    () => null
+  );
+  const fetchedChatsRefresh = useState<(opts?: any) => Promise<void>>(
+    'fetched-chats-refresh',
+    () => () => Promise.resolve()
+  ); // any should be AsyncDataExecuteOptions, but I can not find the type
 
   const chatsFilters = useChatsFilter();
   const fetchChatsUrl = computed(() => {
@@ -224,16 +236,11 @@ export function useFetchChats(user_id: number) {
   });
 
   const fetchChats = async (url: string) => {
-    const {
-      data,
-      status,
-      error,
-      refresh,
-    } = await useFetch(url, {
+    const { data, status, error, refresh } = await useFetch(url, {
       method: 'GET' as HTTPMethod,
       lazy: true,
       pick: ['chats'] as any,
-    })
+    });
 
     watch(status, () => {
       fetchedChats.value = data.value as { chats: FullyFeaturedChat[] } | null;
@@ -243,5 +250,12 @@ export function useFetchChats(user_id: number) {
     });
   };
 
-  return { fetchChatsUrl, fetchedChats, fetchedChatsStatus, fetchedChatsError, fetchedChatsRefresh, fetchChats };
+  return {
+    fetchChatsUrl,
+    fetchedChats,
+    fetchedChatsStatus,
+    fetchedChatsError,
+    fetchedChatsRefresh,
+    fetchChats,
+  };
 }

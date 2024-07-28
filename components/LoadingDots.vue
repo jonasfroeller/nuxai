@@ -15,7 +15,7 @@ const updateDots = () => {
 };
 
 onMounted(() => {
-  interval = setInterval(updateDots, 500); // Adjust the interval as needed
+  interval = setInterval(updateDots, 300);
 });
 
 onUnmounted(() => {
