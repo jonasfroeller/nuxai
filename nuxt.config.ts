@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 import type { HTTPMethod } from 'nuxt-security';
+import { protectedRoutes } from './utils/pages';
 
 const corsHandler = {
   origin: '*',
@@ -14,10 +15,13 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: {
     enabled: true,
-
     timeline: {
       enabled: true,
     },
+  },
+
+  robots: {
+    disallow: protectedRoutes,
   },
 
   vite: {
@@ -149,6 +153,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-time',
     'nuxt-security',
+    "@nuxtjs/robots"
   ],
 
   mdc: {

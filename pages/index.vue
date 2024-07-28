@@ -41,7 +41,7 @@ definePageMeta({
   name: 'Dashboard',
   middleware: ['protected'],
   layout: 'dashboard',
-  alias: ['/dashboard', '/chat'],
+  alias: dashboardAliases,
 });
 
 const { selectedAiChatKey } = useSelectedAiChat();
