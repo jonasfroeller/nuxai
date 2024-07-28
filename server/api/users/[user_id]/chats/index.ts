@@ -77,6 +77,7 @@ export default defineEventHandler(async (event) => {
     const { chat_ids } = validatedBody;
 
     await deleteChatConversations(chat_ids);
+    return null; // => No Content
   } else {
     /* 3.3 READ ALL CHATS */
     const maybeOrderBy = await validateQueryOrderBy(event);
@@ -107,7 +108,3 @@ export default defineEventHandler(async (event) => {
     };
   }
 });
-
-/* $fetch("/api/users/:user_id/chats/:chat_id") => DOESN'T EVEN MAKE A REQUEST, IF USED ON THE SERVER, IT JUST EXECUTES THE FUNCTION. Nuxt is so sick */
-/* defineCachedEventHandler serves the old response and the evaluates the new one */
-/* null as response => No Content. BRILLIANT! */

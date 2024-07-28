@@ -1,7 +1,3 @@
-import type {
-  ChatConversationKeys,
-  OrderByDirection,
-} from '~/server/utils/validate';
 import {
   chat_conversation,
   type GetUser,
@@ -42,17 +38,6 @@ export async function readChatConversation(id: GetChatConversation['id']) {
   if (!fetchedChatConversation) return null;
 
   return fetchedChatConversation[0];
-}
-
-function parseOrderByString(order_by: string) {
-  const orders = order_by.split(',').map((order) => {
-    const [column, direction] = order.split(':') as [
-      ChatConversationKeys,
-      OrderByDirection,
-    ];
-    return { column, direction };
-  });
-  return orders;
 }
 
 // Options for dynamic query building:
@@ -121,35 +106,31 @@ export async function updateChatConversation(
 }
 
 export async function deleteChatConversation(id: GetChatConversation['id']) {
-  const deletedChatConversation = await db
+  const successfullyDeleted = await db
     .delete(chat_conversation)
     .where(eq(chat_conversation.id, id))
-    .returning()
+    .then(() => true)
     .catch((err) => {
       if (LOG_BACKEND)
         console.error('Failed to delete chat conversation from database', err);
-      return null;
+      return false;
     });
 
-  if (!deletedChatConversation) return null;
-
-  return deletedChatConversation[0];
+  return successfullyDeleted;
 }
 
 export async function deleteChatConversations(
   ids: GetChatConversation['id'][]
 ) {
-  const deletedChatConversations = await db
+  const successfullyDeleted = await db
     .delete(chat_conversation)
     .where(inArray(chat_conversation.id, ids))
-    .returning()
+    .then(() => true)
     .catch((err) => {
       if (LOG_BACKEND)
         console.error('Failed to delete chat conversation from database', err);
-      return null;
+      return false;
     });
 
-  if (!deletedChatConversations) return null;
-
-  return deletedChatConversations;
+  return successfullyDeleted;
 }

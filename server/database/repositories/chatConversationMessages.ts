@@ -111,20 +111,18 @@ export const updateChatConversationMessage = async (
 export const deleteChatConversationMessage = async (
   id: GetChatConversationMessage['id']
 ) => {
-  const deletedChatConversationMessage = await db
+  const successfullyDeleted = await db
     .delete(chat_conversation_message)
     .where(eq(chat_conversation_message.id, id))
-    .returning()
+    .then(() => true)
     .catch((err) => {
       if (LOG_BACKEND)
         console.error(
           'Failed to delete chat conversation message from database',
           err
         );
-      return null;
+      return false;
     });
 
-  if (!deletedChatConversationMessage) return null;
-
-  return deletedChatConversationMessage[0];
+  return successfullyDeleted;
 };

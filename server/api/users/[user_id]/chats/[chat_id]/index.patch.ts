@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
 
   if (LOG_BACKEND) console.info('Renaming chat to', validatedBody.name);
 
-  /* CREATE NEW CHAT CONVERSATION */
+  /* UPDATE CHAT CONVERSATION */
 
   const updatedChatConversation = await updateChatConversation(chat_id, {
     name,

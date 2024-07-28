@@ -121,24 +121,34 @@ export const updateUser = async (
     ...updated_password(),
   };
 
-  return await db
+  const updatedUser = await db
     .update(chat_user)
     .set(updatedUserInformation)
     .where(eq(chat_user.id, id))
+    // @ts-ignore (is allowed, just not properly typed)
+    .returning({
+      id: chat_user.id,
+      primary_email: decryptColumn(chat_user.primary_email),
+    })
     .catch((err) => {
       if (LOG_BACKEND) console.error('Failed to update user in database', err);
       return null;
     });
+
+  if (!updatedUser) return null;
+
+  return updatedUser[0];
 };
 
 export const deleteUser = async (id: GetUser['id']) => {
   return await db
     .delete(chat_user)
     .where(eq(chat_user.id, id))
+    .then(() => true)
     .catch((err) => {
       if (LOG_BACKEND)
         console.error('Failed to delete user from database', err);
-      return null;
+      return false;
     });
 };
 
