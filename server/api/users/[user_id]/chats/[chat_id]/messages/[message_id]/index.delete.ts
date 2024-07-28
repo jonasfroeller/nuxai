@@ -1,4 +1,4 @@
-// Update chat message of chat conversation (TODO: only allow to edit last message, don't forget to delete AI response too => don't forget to trigger new ai request)
+// Delete chat message of chat conversation (TODO: only allow to delete last message, don't forget to delete AI response too)
 export default defineEventHandler(async (event) => {
   /* VALIDATE PARAMS */
   const maybeMessageId = await validateParamMessageId(event);
