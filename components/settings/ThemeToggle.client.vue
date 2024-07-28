@@ -27,14 +27,31 @@ const colorMode = useColorMode();
           <span class="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem @click="colorMode.preference = 'light'">
+      <DropdownMenuContent align="end" class="flex flex-col gap-1">
+        <DropdownMenuItem
+          class="cursor-pointer"
+          @click="colorMode.preference = 'light'"
+          v-bind:class="{
+            'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground':
+              colorMode.value === 'light',
+          }"
+        >
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem @click="colorMode.preference = 'dark'">
+        <DropdownMenuItem
+          class="cursor-pointer"
+          @click="colorMode.preference = 'dark'"
+          v-bind:class="{
+            'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground':
+              colorMode.value === 'dark',
+          }"
+        >
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem @click="colorMode.preference = 'system'">
+        <DropdownMenuItem
+          class="cursor-pointer"
+          @click="colorMode.preference = 'system'"
+        >
           System
         </DropdownMenuItem>
       </DropdownMenuContent>
