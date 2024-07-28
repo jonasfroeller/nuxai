@@ -4,7 +4,7 @@ definePageMeta({
   alias: ['/forgot-password', '/reset-password'],
 });
 
-defineOgImageComponent('NuxtSeo');
+/* defineOgImageComponent('NuxtSeo'); */
 </script>
 
 <template>

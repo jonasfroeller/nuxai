@@ -20,9 +20,9 @@ export default defineNuxtConfig({
     },
   },
 
-  site: {
+  /* site: {
     url: 'https://nuxai-chat.vercel.app', // OG customization: https://nuxtseo.com/og-image/getting-started/getting-familar-with-nuxt-og-image
-  },
+  }, */
 
   /* robots: {
     disallow: protectedRoutes, // replace with https://nuxtseo.com/robots/guides/route-rules#inline-route-rules in the future
@@ -158,7 +158,7 @@ export default defineNuxtConfig({
     'nuxt-time',
     'nuxt-security',
     // "@nuxtjs/robots",
-    "nuxt-og-image"
+    // "nuxt-og-image"
   ],
 
   mdc: {

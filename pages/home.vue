@@ -6,7 +6,7 @@ definePageMeta({
   alias: ['/root'],
 });
 
-defineOgImageComponent('NuxtSeo');
+/* defineOgImageComponent('NuxtSeo'); */
 </script>
 
 <template>
