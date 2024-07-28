@@ -143,9 +143,13 @@ const {
   await fetchChats(fetchChatsUrl.value);
 })();
 
-watch(fetchChatsUrl, async () => {
-  await fetchChats(fetchChatsUrl.value);
-});
+watchDebounced(
+  fetchChatsUrl,
+  async () => {
+    await fetchChats(fetchChatsUrl.value);
+  },
+  { debounce: 300, maxWait: 500 }
+);
 
 const searchQuery = ref('');
 let filteredChats = computed(() => {

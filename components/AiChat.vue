@@ -211,7 +211,7 @@ async function loadChatMessages(user_id: number, chat_id: number) {
             id: `${String(id)}-${String(Date.now())}`,
             content: message,
             role: actor,
-          }) as Message
+          } as Message)
       );
 
       setChatMessages(messages);
@@ -219,8 +219,13 @@ async function loadChatMessages(user_id: number, chat_id: number) {
   }
 }
 
+const isLoading = ref(true);
 onMounted(async () => {
-  await loadChatMessages(user.value?.id ?? -1, selectedAiChat.value.id);
+  await loadChatMessages(user.value?.id ?? -1, selectedAiChat.value.id).then(
+    () => {
+      isLoading.value = false;
+    }
+  );
 });
 
 // Send Message on CTRL + ENTER
@@ -245,6 +250,7 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
 
     <div class="flex flex-col flex-grow max-w-full min-h-0 pt-8 pb-6">
       <ShadcnScrollArea>
+        <!--
         <DevOnly>
           <ClientOnly>
             SELECTED: {{ selectedAiChat }} | {{ selectedAiChatKey }}<br />
@@ -254,6 +260,7 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
             {{ JSON.stringify(currentAiChatPlaygroundMessagesBackup) }}<br />
           </ClientOnly>
         </DevOnly>
+        -->
 
         <div
           v-for="m in chatMessages"
@@ -294,6 +301,10 @@ function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
             </ClientOnly>
           </div>
         </div>
+
+        <template v-if="isLoading">
+          <MessagesSkeleton />
+        </template>
 
         <!-- User Input Draft -->
         <div
