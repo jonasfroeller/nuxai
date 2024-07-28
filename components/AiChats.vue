@@ -165,7 +165,7 @@ let filteredChats = computed(() => {
 
 <template>
   <div class="relative h-full p-2 border rounded-md">
-    <div class="sticky top-0 left-0 z-10 pb-2 bg-background">
+    <div class="pb-2 bg-background">
       <div class="flex items-center w-full gap-1">
         <div class="relative w-full">
           <ShadcnInput
