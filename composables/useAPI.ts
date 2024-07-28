@@ -1,3 +1,7 @@
+import type { AsyncDataRequestStatus } from '#app';
+import type { HTTPMethod } from 'h3';
+import type { UseFetchOptions } from 'nuxt/app';
+import type { FetchError } from 'ofetch';
 import { toast } from 'vue-sonner';
 import type { FullyFeaturedChat /* , MinimalChat */ } from '~/lib/types/chat';
 const { console } = useLogger();
@@ -9,7 +13,7 @@ const { console } = useLogger();
 export const useAPI = () => {
   const handleFetch = async <T>(
     url: string,
-    options: any /* UseFetchOptions<unknown> */ = {},
+    options: UseFetchOptions<T> = {},
     toastMessages: {
       loading: string;
       success: (data: any) => string;
@@ -78,10 +82,10 @@ export const useAPI = () => {
   ) => {
     const url = `/api/users/${user_id}/chats`;
     const options = {
-      method: 'POST',
+      method: 'POST' as HTTPMethod,
       body: { model, name },
       lazy: true,
-      pick: ['chat'],
+      pick: ['chat'] as any,
     };
 
     const toastMessages = {
@@ -119,7 +123,7 @@ export const useAPI = () => {
     if (messages.length > 0) {
       const url = `/api/users/${user_id}/chats/${chat_id}/messages`;
       const options = {
-        method: 'POST',
+        method: 'POST' as HTTPMethod,
         body: { messages },
         lazy: true,
       };
@@ -144,7 +148,7 @@ export const useAPI = () => {
   ) => {
     const url = `/api/users/${user_id}/chats/${chat_id}`;
     const options = {
-      method: 'PATCH',
+      method: 'PATCH' as HTTPMethod,
       body: { name: chat_name },
       lazy: true,
     };
@@ -169,7 +173,7 @@ export const useAPI = () => {
     if (!Array.isArray(chat_id)) {
       const url = `/api/users/${user_id}/chats/${chat_id}`;
       const options = {
-        method: 'DELETE',
+        method: 'DELETE' as HTTPMethod,
         lazy: true,
       };
 
@@ -185,7 +189,7 @@ export const useAPI = () => {
 
     const url = `/api/users/${user_id}/chats`;
     const options = {
-      method: 'DELETE',
+      method: 'DELETE' as HTTPMethod,
       lazy: true,
       body: { chat_ids: chat_id },
     };
@@ -206,3 +210,38 @@ export const useAPI = () => {
     persistChatConversationDelete,
   };
 };
+
+// Pilot Composable for extended opportunities
+export function useFetchChats(user_id: number) {
+  const fetchedChats = useState<{ chats: FullyFeaturedChat[] } | null>('fetched-chats', () => null);
+  const fetchedChatsStatus = useState<AsyncDataRequestStatus>('fetched-chats-status', () => 'pending');
+  const fetchedChatsError = useState<FetchError | null>('fetched-chats-error', () => null);
+  const fetchedChatsRefresh = useState<(opts?: any) => Promise<void>>('fetched-chats-refresh', () => () => Promise.resolve()); // any should be AsyncDataExecuteOptions, but I can not find the type
+
+  const chatsFilters = useChatsFilter();
+  const fetchChatsUrl = computed(() => {
+    return `/api/users/${user_id}/chats?${chatsFilters.value}`;
+  });
+
+  const fetchChats = async (url: string) => {
+    const {
+      data,
+      status,
+      error,
+      refresh,
+    } = await useFetch(url, {
+      method: 'GET' as HTTPMethod,
+      lazy: true,
+      pick: ['chats'] as any,
+    })
+
+    watch(status, () => {
+      fetchedChats.value = data.value as { chats: FullyFeaturedChat[] } | null;
+      fetchedChatsStatus.value = status.value;
+      fetchedChatsError.value = error.value;
+      fetchedChatsRefresh.value = refresh;
+    });
+  };
+
+  return { fetchChatsUrl, fetchedChats, fetchedChatsStatus, fetchedChatsError, fetchedChatsRefresh, fetchChats };
+}

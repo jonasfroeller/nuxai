@@ -79,10 +79,23 @@ export default defineEventHandler(async (event) => {
     await deleteChatConversations(chat_ids);
   } else {
     /* 3.3 READ ALL CHATS */
-    if (LOG_BACKEND) console.info(`fetching all chats of user ${user_id}...`);
+    const maybeOrderBy = await validateQueryOrderBy(event);
+    if (maybeOrderBy.statusCode !== 200) {
+      return sendError(
+        event,
+        createError({
+          statusCode: maybeOrderBy.statusCode,
+          statusMessage: maybeOrderBy.statusMessage,
+          data: maybeOrderBy.data,
+        })
+      );
+    }
+    const order_by = maybeOrderBy.data?.order_by;
+
+    if (LOG_BACKEND) console.info(`fetching all chats of user ${user_id} with order_by(${order_by})...`,);
 
     const fetchedChatConversations =
-      await readAllChatConversationsOfUser(user_id);
+      await readAllChatConversationsOfUser(user_id, order_by);
 
     return {
       chats: fetchedChatConversations,

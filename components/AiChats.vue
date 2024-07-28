@@ -1,5 +1,13 @@
 <script lang="ts" setup>
-import { RefreshCcw, Pen, Trash2, Search, Loader2 } from 'lucide-vue-next';
+import {
+  RefreshCcw,
+  Pen,
+  Trash2,
+  Search,
+  Loader2,
+  Filter,
+  FilterX,
+} from 'lucide-vue-next';
 import type { AllowedAiModels } from '~/lib/types/ai.models';
 import type { MinimalChat, FullyFeaturedChat } from '~/lib/types/chat';
 const { console } = useLogger();
@@ -57,7 +65,7 @@ const saveEdit = async (id: number, previousName: string) => {
       chatToEdit.value.name = `chat-${Date.now()}`;
     }
 
-    fetchedChatsRefresh();
+    await fetchedChatsRefresh.value();
   } else {
     chatToEdit.value.id = -1;
   }
@@ -75,7 +83,7 @@ const deleteChat = async (id: number) => {
     );
   }
 
-  fetchedChatsRefresh();
+  await fetchedChatsRefresh.value();
 };
 
 const batchDeleteSelectorIsActive = ref(false);
@@ -94,7 +102,7 @@ const batchDeleteChats = async () => {
     'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5'
   );
 
-  fetchedChatsRefresh();
+  await fetchedChatsRefresh.value();
 };
 const isSelectedForBatchDeletion = (id: number) => {
   return chatsSelectedForDeletion.value.includes(id);
@@ -117,15 +125,26 @@ const unToggleAllForBatchDeletion = () => {
   chatsSelectedForDeletion.value = [];
 };
 
+const filterVisible = ref(false);
 const {
-  data: fetchedChats,
-  status: fetchedChatsStatus,
-  error: fetchedChatsError,
-  refresh: fetchedChatsRefresh,
-} = await useFetch(`/api/users/${user.value?.id}/chats`, {
-  method: 'GET',
-  lazy: true,
-  pick: ['chats'],
+  fetchedChats,
+  fetchedChatsStatus,
+  fetchedChatsError,
+  fetchedChatsRefresh,
+  fetchChats,
+  fetchChatsUrl,
+} = useFetchChats(user.value?.id ?? -1);
+
+/* onMounted(async () => {
+  await fetchChats(fetchChatsUrl.value);
+}); */
+
+(async () => {
+  await fetchChats(fetchChatsUrl.value);
+})();
+
+watch(fetchChatsUrl, async () => {
+  await fetchChats(fetchChatsUrl.value);
 });
 
 const searchQuery = ref('');
@@ -151,6 +170,7 @@ let filteredChats = computed(() => {
             type="text"
             placeholder="Search..."
             class="pl-10"
+            :disabled="fetchedChatsStatus === 'pending'"
           />
           <span
             class="absolute inset-y-0 flex items-center justify-center px-2 start-0"
@@ -158,7 +178,6 @@ let filteredChats = computed(() => {
             <Search class="size-6 text-muted-foreground" />
           </span>
         </div>
-
         <template
           v-if="
             batchDeleteSelectorIsActive && chatsSelectedForDeletion.length > 0
@@ -217,14 +236,30 @@ let filteredChats = computed(() => {
           /></ShadcnButton>
         </template>
         <ShadcnButton
+          variant="outline"
+          @click="filterVisible = !filterVisible"
+          :disabled="fetchedChatsStatus === 'pending'"
+        >
+          <template v-if="filterVisible">
+            <FilterX class="w-4 h-4" />
+          </template>
+          <template v-else>
+            <Filter class="w-4 h-4" />
+          </template>
+        </ShadcnButton>
+        <ShadcnButton
           :disabled="fetchedChatsStatus === 'pending'"
           variant="outline"
-          @click="fetchedChatsRefresh"
+          @click="async () => await fetchedChatsRefresh()"
           class="[&>*]:hover:animate-spin"
         >
           <RefreshCcw class="w-4 h-4" />
         </ShadcnButton>
       </div>
+
+      <template v-if="filterVisible">
+        <OrderByFilter />
+      </template>
 
       <fieldset
         v-if="batchDeleteSelectorIsActive"

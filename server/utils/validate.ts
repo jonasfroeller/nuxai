@@ -6,6 +6,7 @@ import {
 import { z, ZodError } from 'zod';
 import type { H3Event, EventHandlerRequest } from 'h3';
 import type { User } from '#auth-utils';
+import type { GetChatConversation } from '~/lib/types/database.tables/schema';
 
 /* EVENT HANDLER */
 
@@ -135,6 +136,31 @@ export async function validateQueryChatId(
     'Successfully validated queryParams(chat_id).',
     'Invalid queryParams(chat_id).',
     'queryParams(chat_id):'
+  );
+}
+
+export async function validateQueryOrderBy(
+  event: H3Event<EventHandlerRequest>
+): Promise<ValidationResult<OrderByQueryType>> {
+  return validateParams<OrderByQueryType>(
+    event,
+    async () => {
+      const result = await getValidatedQuery(event, (params) => {
+        // @ts-ignore
+        const order_by = params?.order_by;
+        event.context.validated.query['order_by'] = order_by;
+
+        return OrderByQuerySchema.safeParse({ order_by });
+      });
+      if (result.success) {
+        return { success: true, data: { order_by: result.data.order_by } };
+      } else {
+        return result;
+      }
+    },
+    `Successfully validated queryParams(order_by=<column(${possibleOrderByColumns}):direction(${possibleOrderByDirections})>).`,
+    `Invalid queryParams(order_by=<column(${possibleOrderByColumns}):direction(${possibleOrderByDirections})>).`,
+    'queryParams(order_by):'
   );
 }
 
@@ -399,6 +425,35 @@ export const ChatIdQuerySchema = z.object({
 });
 
 type ChatIdQueryType = z.infer<typeof ChatIdQuerySchema>;
+
+export type ChatConversationKeys = keyof GetChatConversation;
+export type OrderByDirection = typeof possibleOrderByDirections[number]
+export const possibleOrderByColumns: ChatConversationKeys[] = [
+  "id",
+  "chat_user_id",
+  "created_at",
+  "updated_at",
+  "name",
+  "model",
+] as const;
+const possibleOrderByDirections = ["asc", "desc"] as const;
+
+const OrderByQuerySchema = z.object({
+  order_by: z.string().refine(
+    (value) => {
+      const parts = value.split(','); // allows multiple order_by values
+      return parts.every((part) => { // allows "column:direction" syntax
+        const [column, direction] = part.split(':');
+        return possibleOrderByColumns.includes(column as ChatConversationKeys) && possibleOrderByDirections.includes(direction as OrderByDirection);
+      });
+    },
+    {
+      message: "order_by must be a comma-separated list of 'column:direction' pairs, e.g. 'updated_at:desc,created_at:asc'"
+    }
+  ).optional(),
+});
+
+type OrderByQueryType = z.infer<typeof OrderByQuerySchema>;
 
 /* BODY SCHEMAs */
 
