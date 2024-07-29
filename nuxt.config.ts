@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 import type { HTTPMethod } from 'nuxt-security';
-// import { protectedRoutes } from './utils/pages';
+import { protectedRoutes } from './utils/pages';
 
 const corsHandler = {
   origin: '*',
@@ -28,9 +28,9 @@ export default defineNuxtConfig({
     url: 'https://nuxai-chat.vercel.app', // OG customization: https://nuxtseo.com/og-image/getting-started/getting-familar-with-nuxt-og-image
   }, */
 
-  /* robots: {
+  robots: {
     disallow: protectedRoutes, // replace with https://nuxtseo.com/robots/guides/route-rules#inline-route-rules in the future
-  }, */
+  },
 
   vite: {
     logLevel: 'warn', // 'info' | 'warn' | 'error' | 'silent'
@@ -161,7 +161,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-time',
     'nuxt-security',
-    // "@nuxtjs/robots",
+    "@nuxtjs/robots",
     // "nuxt-og-image"
   ],
 
