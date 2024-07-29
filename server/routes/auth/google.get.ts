@@ -1,6 +1,6 @@
 import { createOauthAccount } from '~/server/database/repositories/oauthAccounts';
 
-export default oauth.googleEventHandler({
+export default oauthGoogleEventHandler({
   config: {
     scope: ['email'],
   },

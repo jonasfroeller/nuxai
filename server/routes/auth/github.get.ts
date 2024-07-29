@@ -1,6 +1,6 @@
 import { createOauthAccount } from '~/server/database/repositories/oauthAccounts';
 
-export default oauth.githubEventHandler({
+export default oauthGitHubEventHandler({
   config: {
     emailRequired: true,
   },
