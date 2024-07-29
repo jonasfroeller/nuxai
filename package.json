@@ -34,7 +34,7 @@
     "drizzle-orm": "^0.32.0",
     "lucide-vue-next": "^0.417.0",
     "nuxt": "^3.12.3",
-    "nuxt-auth-utils": "^0.2.0",
+    "nuxt-auth-utils": "^0.3.0",
     "nuxt-og-image": "3.0.0-rc.64",
     "nuxt-posthog": "^1.5.0",
     "nuxt-security": "2.0.0-rc.9",

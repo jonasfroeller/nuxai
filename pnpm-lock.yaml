@@ -54,8 +54,8 @@ importers:
         specifier: ^3.12.3
         version: 3.12.4(@parcel/watcher@2.4.1)(@types/node@22.0.0)(drizzle-orm@0.32.1(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.19.1)(terser@5.31.3)(typescript@5.5.4)(vite@5.3.5(@types/node@22.0.0)(terser@5.31.3))(vue-tsc@2.0.29(typescript@5.5.4))
       nuxt-auth-utils:
-        specifier: ^0.2.0
-        version: 0.2.1(magicast@0.3.4)(rollup@4.19.1)
+        specifier: ^0.3.0
+        version: 0.3.0(magicast@0.3.4)(rollup@4.19.1)
       nuxt-og-image:
         specifier: 3.0.0-rc.64
         version: 3.0.0-rc.64(magicast@0.3.4)(rollup@4.19.1)(vite@5.3.5(@types/node@22.0.0)(terser@5.31.3))(vue@3.4.34(typescript@5.5.4))
@@ -193,15 +193,6 @@ packages:
       svelte:
         optional: true
 
-  '@ai-sdk/ui-utils@0.0.20':
-    resolution: {integrity: sha512-6MRWigzXfuxUcAYEFMLP6cLbALJkg12Iz1Sl+wuPMpB6aw7di2ePiTuNakFUYjgP7TNsW4UxzpypBqqJ1KNB0A==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.0.0
-    peerDependenciesMeta:
-      zod:
-        optional: true
-
   '@ai-sdk/ui-utils@0.0.21':
     resolution: {integrity: sha512-qZ4ScEhNVpVqfg/2KcKYKKQcUpmfVyMD3P06OVDqXpzMaWvw95lUSYkJO/TDI49MhyVyK4eAI35pRU5B7bhrTQ==}
     engines: {node: '>=18'}
@@ -209,15 +200,6 @@ packages:
       zod: ^3.0.0
     peerDependenciesMeta:
       zod:
-        optional: true
-
-  '@ai-sdk/vue@0.0.24':
-    resolution: {integrity: sha512-0S+2dVSui6LFgaWoFx+3h5R7GIP9MxdJo63tFuLvgyKr2jmpo5S5kGcWl95vNdzKDqaesAXfOnky+tn5A2d49A==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      vue: ^3.3.4
-    peerDependenciesMeta:
-      vue:
         optional: true
 
   '@ai-sdk/vue@0.0.25':
@@ -4282,8 +4264,8 @@ packages:
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
 
-  nuxt-auth-utils@0.2.1:
-    resolution: {integrity: sha512-iorn9Eq4QM4ftE+1JL1QTAjDWFh2KWmTpgTHwoaQrMbTQKeEZoR1tftaLrDQbFZMwWVlEi65LwMj5xPDlJsUzw==}
+  nuxt-auth-utils@0.3.0:
+    resolution: {integrity: sha512-iuQFyQRQ3rPGfEttKBO1t6oEjvSawF8q/aJrWdb6EShvg0CTiMmWtRkbBsJNJTg5Y6uYOFX651UTE9WC+EWrZg==}
 
   nuxt-csurf@1.6.1:
     resolution: {integrity: sha512-my7jXM4bzIoDQMaJD0a4ZT6bRISrTotxv0W+W+2Omn1CywQX2ikGeOnwnoBdit61Lr2bKIDPUdAjLHlXSZtCRg==}
@@ -6019,13 +6001,6 @@ snapshots:
     transitivePeerDependencies:
       - zod
 
-  '@ai-sdk/ui-utils@0.0.20(zod@3.23.8)':
-    dependencies:
-      '@ai-sdk/provider-utils': 1.0.5(zod@3.23.8)
-      secure-json-parse: 2.7.0
-    optionalDependencies:
-      zod: 3.23.8
-
   '@ai-sdk/ui-utils@0.0.21(zod@3.23.8)':
     dependencies:
       '@ai-sdk/provider': 0.0.14
@@ -6033,16 +6008,6 @@ snapshots:
       secure-json-parse: 2.7.0
     optionalDependencies:
       zod: 3.23.8
-
-  '@ai-sdk/vue@0.0.24(vue@3.4.34(typescript@5.5.4))(zod@3.23.8)':
-    dependencies:
-      '@ai-sdk/provider-utils': 1.0.5(zod@3.23.8)
-      '@ai-sdk/ui-utils': 0.0.20(zod@3.23.8)
-      swrv: 1.0.4(vue@3.4.34(typescript@5.5.4))
-    optionalDependencies:
-      vue: 3.4.34(typescript@5.5.4)
-    transitivePeerDependencies:
-      - zod
 
   '@ai-sdk/vue@0.0.25(vue@3.4.34(typescript@5.5.4))(zod@3.23.8)':
     dependencies:
@@ -10672,7 +10637,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  nuxt-auth-utils@0.2.1(magicast@0.3.4)(rollup@4.19.1):
+  nuxt-auth-utils@0.3.0(magicast@0.3.4)(rollup@4.19.1):
     dependencies:
       '@nuxt/kit': 3.12.4(magicast@0.3.4)(rollup@4.19.1)
       defu: 6.1.4
