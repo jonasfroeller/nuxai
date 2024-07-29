@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 import type { HTTPMethod } from 'nuxt-security';
-import { protectedRoutes } from './utils/pages';
+// import { protectedRoutes } from './utils/pages';
 
 const corsHandler = {
   origin: '*',
@@ -18,6 +18,10 @@ export default defineNuxtConfig({
     timeline: {
       enabled: true,
     },
+  },
+
+  devServer: {
+    port: 42124,
   },
 
   /* site: {
