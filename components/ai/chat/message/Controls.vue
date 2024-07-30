@@ -3,7 +3,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
 import strip from 'strip-markdown';
-import { Volume2, CirclePause, Copy, CopyCheck } from 'lucide-vue-next';
+import { Volume2, CirclePause } from 'lucide-vue-next';
 import {
   Tooltip,
   TooltipContent,
@@ -46,22 +46,6 @@ const {
   rate: 1,
   volume: 1,
 });
-
-/* COPY TO CLIPBOARD */
-// const mime = 'text/markdown'; // Unknown error (NotAllowedError: Failed to execute 'write' on 'Clipboard': Type text/markdown not supported on write.)
-const mime = 'text/plain';
-const source = computed(() => [
-  new ClipboardItem({
-    [mime]: new Blob([messageAsPlainText.value], { type: mime }),
-  }),
-]);
-
-const {
-  // content: copiedText,
-  copy: copyToClipboard,
-  copied: isCopied,
-  isSupported: isClipboardSupported,
-} = useClipboardItems({ source });
 </script>
 
 <template>
@@ -92,19 +76,7 @@ const {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger as-child>
-          <ShadcnButton
-            variant="ghost"
-            size="icon"
-            :disabled="!isClipboardSupported"
-            @click="copyToClipboard(source)"
-          >
-            <template v-if="isCopied">
-              <CopyCheck class="w-5 h-5" />
-            </template>
-            <template v-else>
-              <Copy class="w-5 h-5" />
-            </template>
-          </ShadcnButton>
+          <CopyToClipboard :text="messageAsPlainText" />
         </TooltipTrigger>
         <TooltipContent side="top"> Copy to Clipboard </TooltipContent>
       </Tooltip>
