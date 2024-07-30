@@ -224,11 +224,21 @@ onMounted(() => {
           </Drawer>
         </div>
         <div class="flex gap-2 pr-5">
-          <Button variant="outline" size="sm" class="ml-auto gap-1.5 text-sm">
+          <Button
+            variant="outline"
+            size="sm"
+            class="ml-auto gap-1.5 text-sm"
+            disabled
+          >
             <Import class="size-3.5" />
             Import Code Repository To Analyze
           </Button>
-          <Button variant="outline" size="sm" class="ml-auto gap-1.5 text-sm">
+          <Button
+            variant="outline"
+            size="sm"
+            class="ml-auto gap-1.5 text-sm"
+            disabled
+          >
             <Share class="size-3.5" />
             Share
           </Button>
