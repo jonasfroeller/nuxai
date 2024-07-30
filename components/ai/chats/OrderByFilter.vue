@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-/// <reference path="../lib/types/vue-dndrop.d.ts" />
+/// <reference path="../../../lib/types/vue-dndrop.d.ts" />
 
 import { possibleOrderByColumns } from '~/lib/types/chat';
 // @ts-ignore (somehow still not recognized...)

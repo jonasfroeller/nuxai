@@ -263,7 +263,7 @@ let filteredChats = computed(() => {
       </div>
 
       <template v-if="filterVisible">
-        <OrderByFilter />
+        <AiChatsOrderByFilter />
       </template>
 
       <fieldset

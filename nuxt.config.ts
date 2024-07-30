@@ -88,6 +88,15 @@ export default defineNuxtConfig({
       path: '~/components',
       pathPrefix: false, // disables components/base/Button.vue => <BaseButton /> for auto imports
     },
+    // prefix needed, because pathPrefix: true doesn't work, when files are called `Index.vue` (the keyword index is thrown away completely, also for the component name)
+    {
+      path: '~/components/ai/chat',
+      prefix: 'AiChat',
+    },
+    {
+      path: '~/components/ai/chats',
+      prefix: 'AiChats',
+    },
   ],
 
   runtimeConfig: {

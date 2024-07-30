@@ -15,7 +15,7 @@ const filetypeSearchSelectableValues = ref([
     class="relative flex flex-col items-start order-2 h-full gap-8 2xl:order-1"
   >
     <!-- hidden md:flex -->
-    <AiModelConfiguration />
+    <AiChatModelConfiguration />
     <fieldset class="flex flex-col w-full h-full gap-6 p-4 border rounded-lg">
       <legend class="px-1 -ml-1 text-sm font-medium">
         Generated Configuration File

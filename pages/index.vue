@@ -219,7 +219,7 @@ onMounted(() => {
                   Configure the settings for the model
                 </DrawerDescription>
               </DrawerHeader>
-              <AiModelConfiguration />
+              <AiChatModelConfiguration />
             </DrawerContent>
           </Drawer>
         </div>
