@@ -32,17 +32,18 @@ const visibleRoutes = computed(() => {
 });
 
 const { width: windowWidth } = useWindowSize();
+const useSsrSaveId = () => useId();
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div nuxt-client class="flex justify-center">
     <div v-if="windowWidth <= 700 && layout === 'navigation'">
       <DropdownMenu>
         <DropdownMenuTrigger><Menu /></DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem v-for="route in visibleRoutes" :key="route.path">
+          <DropdownMenuItem v-for="route in visibleRoutes">
             <NuxtLink :to="route.path" activeClass="underline">
-              <p :key="route.path">{{ route.name }}</p>
+              <p :key="useSsrSaveId">{{ route.name }}</p>
             </NuxtLink>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -56,10 +57,9 @@ const { width: windowWidth } = useWindowSize();
       <NuxtLink
         v-for="route in visibleRoutes"
         :to="route.path"
-        :key="route.path"
         activeClass="active-link"
       >
-        <li :key="route.path">{{ route.name }}</li>
+        <li :key="useSsrSaveId">{{ route.name }}</li>
       </NuxtLink>
     </ul>
   </div>

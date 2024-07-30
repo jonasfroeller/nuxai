@@ -4,6 +4,7 @@ import type {
   AllowedAiModels,
 } from '~/lib/types/ai.models';
 import { generateUUID } from '~/lib/utils';
+const { console } = useLogger();
 
 function createChatName(time: Date) {
   return `chat-${time.valueOf()}`;
@@ -34,7 +35,7 @@ export const useSelectedAiChat = () => {
       IS_CLIENT &&
       localStorageSelectedChatId.value !== selectedAiChat.value.id
     ) {
-      console.log(
+      console.info(
         'localStorageSelectedChatId.value',
         localStorageSelectedChatId.value
       );

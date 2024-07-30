@@ -11,7 +11,6 @@ watch(
   () => selectedAiChat.value.model,
   (newModel) => {
     if (newModel) {
-      console.log('Model changed:', newModel);
       resetAiPlaygroundChat(newModel);
     }
   }

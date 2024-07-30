@@ -303,112 +303,109 @@ let filteredChats = computed(() => {
           filteredChats?.length !== 0
         "
       >
-        <ClientOnly>
-          <div class="flex flex-col h-full gap-1">
-            <div
-              class="flex justify-between flex-grow w-full gap-8 p-4 border rounded-sm border-border bg-background"
-              :id="String(chat?.id)"
-              v-for="chat in filteredChats"
-              :key="chat?.id"
-              v-bind:class="{
-                'border border-green-600': selectedAiChat?.id === chat?.id,
-              }"
-            >
-              <div class="hidden border-green-600"></div>
-              <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-1">
-                  <template v-if="chatToEdit.id === chat.id">
-                    <ShadcnInput
-                      @keydown.enter="saveEdit(chat.id, chat.name)"
-                      @keydown.escape="chatToEdit.id = -1"
-                      v-model="chatToEdit.name"
-                    />
-                    <ShadcnButton
-                      variant="outline"
-                      @click="saveEdit(chat.id, chat.name)"
-                      >Save</ShadcnButton
-                    >
-                  </template>
-                  <template v-else>
-                    <ShadcnButton
-                      :variant="
-                        selectedAiChat?.id === chat?.id
-                          ? 'secondary'
-                          : 'outline'
-                      "
-                      @click="setSelectedChat(chat.id, chat.name, chat.model)"
-                      >{{ chat?.name }}</ShadcnButton
-                    >
-                    <ShadcnButton
-                      variant="outline"
-                      @click="editChat(chat.id, chat.name)"
-                      ><Pen class="w-4 h-4"
+        <div class="flex flex-col h-full gap-1">
+          <div
+            nuxt-client
+            class="flex justify-between flex-grow w-full gap-8 p-4 border rounded-sm border-border bg-background"
+            :id="String(chat?.id)"
+            v-for="chat in filteredChats"
+            :key="chat?.id"
+            v-bind:class="{
+              'border border-green-600': selectedAiChat?.id === chat?.id,
+            }"
+          >
+            <div class="hidden border-green-600"></div>
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-1">
+                <template v-if="chatToEdit.id === chat.id">
+                  <ShadcnInput
+                    @keydown.enter="saveEdit(chat.id, chat.name)"
+                    @keydown.escape="chatToEdit.id = -1"
+                    v-model="chatToEdit.name"
+                  />
+                  <ShadcnButton
+                    variant="outline"
+                    @click="saveEdit(chat.id, chat.name)"
+                    >Save</ShadcnButton
+                  >
+                </template>
+                <template v-else>
+                  <ShadcnButton
+                    :variant="
+                      selectedAiChat?.id === chat?.id ? 'secondary' : 'outline'
+                    "
+                    @click="setSelectedChat(chat.id, chat.name, chat.model)"
+                    >{{ chat?.name }}</ShadcnButton
+                  >
+                  <ShadcnButton
+                    variant="outline"
+                    @click="editChat(chat.id, chat.name)"
+                    ><Pen class="w-4 h-4"
+                  /></ShadcnButton>
+                </template>
+              </div>
+              <ShadcnAlertDialog>
+                <div class="flex gap-1">
+                  <ShadcnAlertDialogTrigger as-child>
+                    <ShadcnButton variant="destructive" class="w-full"
+                      >Delete<Trash2 class="w-4 h-4 ml-1"
                     /></ShadcnButton>
-                  </template>
+                  </ShadcnAlertDialogTrigger>
+                  <ShadcnCheckbox
+                    v-if="batchDeleteSelectorIsActive"
+                    class="w-10 h-full"
+                    :checked="chatsSelectedForDeletion.includes(chat.id)"
+                    @click.prevent="toggleSelectedForBatchDeletion(chat.id)"
+                  />
                 </div>
-                <ShadcnAlertDialog>
-                  <div class="flex gap-1">
-                    <ShadcnAlertDialogTrigger as-child>
-                      <ShadcnButton variant="destructive" class="w-full"
+                <ShadcnAlertDialogContent>
+                  <ShadcnAlertDialogHeader>
+                    <ShadcnAlertDialogTitle
+                      >Are you sure, that you want to delete the
+                      chat?</ShadcnAlertDialogTitle
+                    >
+                    <ShadcnAlertDialogDescription>
+                      Chats can not be recovered!
+                    </ShadcnAlertDialogDescription>
+                  </ShadcnAlertDialogHeader>
+                  <ShadcnAlertDialogFooter>
+                    <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
+                    <ShadcnAlertDialogAction as-child>
+                      <ShadcnButton
+                        variant="destructive"
+                        @click="deleteChat(chat?.id)"
                         >Delete<Trash2 class="w-4 h-4 ml-1"
                       /></ShadcnButton>
-                    </ShadcnAlertDialogTrigger>
-                    <ShadcnCheckbox
-                      v-if="batchDeleteSelectorIsActive"
-                      class="w-10 h-full"
-                      :checked="chatsSelectedForDeletion.includes(chat.id)"
-                      @click.prevent="toggleSelectedForBatchDeletion(chat.id)"
-                    />
-                  </div>
-                  <ShadcnAlertDialogContent>
-                    <ShadcnAlertDialogHeader>
-                      <ShadcnAlertDialogTitle
-                        >Are you sure, that you want to delete the
-                        chat?</ShadcnAlertDialogTitle
-                      >
-                      <ShadcnAlertDialogDescription>
-                        Chats can not be recovered!
-                      </ShadcnAlertDialogDescription>
-                    </ShadcnAlertDialogHeader>
-                    <ShadcnAlertDialogFooter>
-                      <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
-                      <ShadcnAlertDialogAction as-child>
-                        <ShadcnButton
-                          variant="destructive"
-                          @click="deleteChat(chat?.id)"
-                          >Delete<Trash2 class="w-4 h-4 ml-1"
-                        /></ShadcnButton>
-                      </ShadcnAlertDialogAction>
-                    </ShadcnAlertDialogFooter>
-                  </ShadcnAlertDialogContent>
-                </ShadcnAlertDialog>
-              </div>
-              <div class="grid text-right">
-                <span class="truncate text-muted-foreground">{{
-                  chat?.model
-                }}</span>
-                <NuxtTime
-                  class="text-muted-foreground"
-                  :datetime="chat?.created_at ?? new Date()"
-                  day="numeric"
-                  month="numeric"
-                  year="numeric"
-                  hour="numeric"
-                  minute="numeric"
-                />
-                <NuxtTime
-                  class="text-muted-foreground"
-                  :datetime="chat?.updated_at ?? new Date()"
-                  day="numeric"
-                  month="numeric"
-                  year="numeric"
-                  hour="numeric"
-                  minute="numeric"
-                />
-              </div>
+                    </ShadcnAlertDialogAction>
+                  </ShadcnAlertDialogFooter>
+                </ShadcnAlertDialogContent>
+              </ShadcnAlertDialog>
+            </div>
+            <div class="grid text-right">
+              <span class="truncate text-muted-foreground">{{
+                chat?.model
+              }}</span>
+              <NuxtTime
+                class="text-muted-foreground"
+                :datetime="chat?.created_at ?? new Date()"
+                day="numeric"
+                month="numeric"
+                year="numeric"
+                hour="numeric"
+                minute="numeric"
+              />
+              <NuxtTime
+                class="text-muted-foreground"
+                :datetime="chat?.updated_at ?? new Date()"
+                day="numeric"
+                month="numeric"
+                year="numeric"
+                hour="numeric"
+                minute="numeric"
+              />
             </div>
           </div>
-        </ClientOnly>
+        </div>
       </ShadcnScrollArea>
       <div class="h-full pt-2 text-center" v-else>
         <p
@@ -421,7 +418,7 @@ let filteredChats = computed(() => {
         </p>
         <p v-else>No search results... ({{ fetchedChatsStatus }})</p>
         <p v-if="fetchedChatsError">
-          {{ fetchedChatsError.message }} ({{ fetchedChatsError.data.data }})
+          {{ fetchedChatsError.message }} ({{ fetchedChatsError.data?.data }})
         </p>
       </div>
     </div>

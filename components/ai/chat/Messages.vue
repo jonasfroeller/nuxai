@@ -9,7 +9,6 @@ const props = defineProps<{
 <template>
   <div
     v-for="m in messages"
-    :key="m.id"
     class="flex my-2"
     v-bind:class="{
       'justify-start': m.role === 'assistant',

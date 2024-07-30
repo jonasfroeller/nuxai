@@ -25,15 +25,16 @@ const useSsrSaveId = () => useId();
         :throttle="200"
       />
       <!-- when it shows: https://github.com/nuxt/nuxt/issues/18630, https://nuxt.com/docs/api/composables/use-loading-indicator -->
-      <DynamicMeta :key="$route.path" />
+      <DynamicMeta :key="$route.name" />
       <!-- key is needed, so that the component is rerendered without a prop change -->
       <div>
         <!-- needed for transitions to work properly -->
         <NuxtRouteAnnouncer />
+        <!-- :name="main_layout" -->
         <NuxtLayout>
-          <!-- :name="main_layout" -->
           <NuxtPage />
         </NuxtLayout>
+        <!-- <NuxtPage /> -->
       </div>
     </ConfigProvider>
   </div>
