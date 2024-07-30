@@ -2,7 +2,7 @@
 import type { NuxtError } from '#app';
 import Button from './components/ui/button/Button.vue';
 
-const props = defineProps({
+defineProps({
   error: Object as () => NuxtError,
 });
 

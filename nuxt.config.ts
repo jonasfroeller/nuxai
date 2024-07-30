@@ -171,7 +171,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-time',
     'nuxt-security',
-    "@nuxtjs/robots",
+    '@nuxtjs/robots',
     // "nuxt-og-image"
   ],
 
