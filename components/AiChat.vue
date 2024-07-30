@@ -216,7 +216,7 @@ async function loadChatMessages(user_id: number, chat_id: number) {
             id: `${String(id)}-${String(Date.now())}`,
             content: message,
             role: actor,
-          }) as Message
+          } as Message)
       );
 
       setChatMessages(messages);
@@ -329,7 +329,7 @@ watchOnce(isLoading, () => {
               />
             </ClientOnly>
             <ShadcnSeparator class="my-4" label="Controls" />
-            <MessageControls :message="m.content" />
+            <MessageControls :message="m.content" :key="m.content" />
           </div>
 
           <div

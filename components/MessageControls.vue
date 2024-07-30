@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkStringify from 'remark-stringify';
+import strip from 'strip-markdown';
 import { Volume2, CirclePause, Copy, CopyCheck } from 'lucide-vue-next';
 import {
   Tooltip,
@@ -11,6 +15,21 @@ const props = defineProps<{
   message: string;
 }>();
 
+const messageAsPlainText = ref(props.message);
+const processMarkdown = async (markdown: string) => {
+  const file = await unified()
+    .use(remarkParse)
+    .use(strip)
+    .use(remarkStringify)
+    .process(markdown);
+
+  messageAsPlainText.value = String(file);
+};
+
+onMounted(async () => {
+  await processMarkdown(props.message);
+});
+
 /* SPEECH SYNTHESIS */
 // TODO: find out, why the speaker sometimes suddenly stops
 const {
@@ -21,7 +40,7 @@ const {
   // error: speechSynthesisError,
   stop: stopSpeaking,
   speak: speakText,
-} = useSpeechSynthesis(props.message, {
+} = useSpeechSynthesis(messageAsPlainText, {
   lang: 'en-US',
   pitch: 1,
   rate: 1,
@@ -31,9 +50,9 @@ const {
 /* COPY TO CLIPBOARD */
 // const mime = 'text/markdown'; // Unknown error (NotAllowedError: Failed to execute 'write' on 'Clipboard': Type text/markdown not supported on write.)
 const mime = 'text/plain';
-const source = ref([
+const source = computed(() => [
   new ClipboardItem({
-    [mime]: new Blob([props.message], { type: mime }),
+    [mime]: new Blob([messageAsPlainText.value], { type: mime }),
   }),
 ]);
 
