@@ -16,6 +16,6 @@ export default defineEventHandler(async (event) => {
   }
   const chat_id = maybeChatId.data?.chat_id;
 
-  await deleteChatConversation(chat_id);
-  return null; // => No Content
+  return await deleteChatConversation(chat_id);
+  // return null; // => No Content
 });

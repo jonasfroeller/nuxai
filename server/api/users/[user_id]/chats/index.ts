@@ -76,8 +76,8 @@ export default defineEventHandler(async (event) => {
     const validatedBody = body.data;
     const { chat_ids } = validatedBody;
 
-    await deleteChatConversations(chat_ids);
-    return null; // => No Content
+    return await deleteChatConversations(chat_ids);
+    // return null; // => No Content
   } else {
     /* 3.3 READ ALL CHATS */
     const maybeOrderBy = await validateQueryOrderBy(event);
