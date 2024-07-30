@@ -83,6 +83,9 @@ importers:
       rehype-remark:
         specifier: ^10.0.0
         version: 10.0.0
+      remark-flexible-code-titles:
+        specifier: ^1.2.0
+        version: 1.2.0
       remark-gfm:
         specifier: ^4.0.0
         version: 4.0.0
@@ -4954,6 +4957,9 @@ packages:
   remark-emoji@5.0.1:
     resolution: {integrity: sha512-QCqTSvcZ65Ym+P+VyBKd4JfJfh7icMl7cIOGVmPMzWkDtdD8pQ0nQG7yxGolVIiMzSx90EZ7SwNiVpYpfTxn7w==}
     engines: {node: '>=18'}
+
+  remark-flexible-code-titles@1.2.0:
+    resolution: {integrity: sha512-/inw9BoXvBOTBmsg/brTRsQaGRU1QCH6v7TYcat4ZG54k0aKn4Ov8JMCmbcZ1fJds8NjK3iICmNsp9w12uRntA==}
 
   remark-gfm@4.0.0:
     resolution: {integrity: sha512-U92vJgBPkbw4Zfu/IiW2oTZLSL3Zpv+uI7My2eq8JxKgqraFdU8YUGicEJCEgSbeaG+QDFqIcwwfMTOEelPxuA==}
@@ -11579,6 +11585,11 @@ snapshots:
       mdast-util-find-and-replace: 3.0.1
       node-emoji: 2.1.3
       unified: 11.0.5
+
+  remark-flexible-code-titles@1.2.0:
+    dependencies:
+      '@types/mdast': 4.0.4
+      unist-util-visit: 5.0.0
 
   remark-gfm@4.0.0:
     dependencies:

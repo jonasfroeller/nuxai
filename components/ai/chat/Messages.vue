@@ -23,7 +23,10 @@ onMounted(() => {
           // pre tag with class="language-<some-language> shiki"
           for (const codeBlock of shikiElement) {
             if (!codeBlock.classList.contains('relative')) {
-              codeBlock.classList.add('relative');
+              codeBlock.classList.add(
+                'relative',
+                'min-h-[calc(1.25rem+1rem+(2*0.5rem))]'
+              );
 
               // creates a Vue component instance
               const copyComponent = h(CopyToClipboard, {

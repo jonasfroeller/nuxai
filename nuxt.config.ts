@@ -176,14 +176,11 @@ export default defineNuxtConfig({
   ],
 
   mdc: {
-    /* remarkPlugins: {
-      plugins: {
-        // Register/Configure remark plugin to extend the parser
-      }
-    },*/
+    remarkPlugins: {
+      'remark-flexible-code-titles': {}
+    },
     /* rehypePlugins: {
-      // "rehype-remark": {} // TODO: find out how to register a plugin here
-       options: {
+      options: {
         // Configure rehype options to extend the parser
       },
       plugins: {
@@ -192,7 +189,10 @@ export default defineNuxtConfig({
     }, */
     highlight: {
       highlighter: 'shiki',
-      theme: 'github-dark',
+      theme: {
+        dark: 'github-dark',
+        default: 'github-light',
+      },
       langs: [
         'js',
         'jsx',
