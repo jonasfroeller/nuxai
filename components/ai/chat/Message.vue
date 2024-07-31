@@ -49,8 +49,9 @@ defineProps<{
   </div>
 </template>
 
-<style scoped>
-pre.shiki {
+<style lang="postcss" scoped>
+:deep(pre.shiki) {
+  @apply bg-primary/10;
   margin: 0.25rem 0;
 }
 </style>

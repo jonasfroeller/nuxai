@@ -29,6 +29,7 @@
     "pgcrypto",
     "pinia",
     "plsql",
+    "postcss",
     "POSTHOG",
     "rehype",
     "shadcn",

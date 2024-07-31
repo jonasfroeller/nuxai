@@ -204,7 +204,9 @@ onMounted(async () => {
           <template v-else> ({{ selectedFileVersion?.id }}) </template>
           :</ShadcnLabel
         >
-        <ShadcnScrollArea class="h-[14.45rem] flex-grow border rounded-sm">
+        <ShadcnScrollArea
+          class="h-[14.45rem] flex-grow border rounded-sm bg-primary/10"
+        >
           <template v-if="isLoading">
             <p class="px-4 py-2">loading...</p>
           </template>

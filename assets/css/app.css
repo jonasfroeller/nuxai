@@ -85,7 +85,6 @@
 }
 
 pre.shiki {
-  @apply bg-primary/10;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   overflow-x: auto;
