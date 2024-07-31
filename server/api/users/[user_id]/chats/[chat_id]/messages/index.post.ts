@@ -1,6 +1,6 @@
 import { createChatConversationMessages } from '~/server/database/repositories/chatConversationMessages';
 
-// Read all messages of chat conversation
+// Create messages for chat conversation
 export default defineEventHandler(async (event) => {
   /* VALIDATE PARAMS */
   const maybeChatId = await validateParamChatId(event);

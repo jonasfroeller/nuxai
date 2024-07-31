@@ -83,6 +83,15 @@ watch(
             type="text"
             v-model="selectedAiChat.name"
             placeholder="Name of the chat... (optional)"
+            @keydown.enter.prevent="
+              async () => {
+                selectedAiChat.id = await persistChatConversation(
+                  user?.id ?? -1,
+                  selectedAiChat.name,
+                  selectedAiChat.model
+                );
+              }
+            "
           />
           <ShadcnButton
             :disabled="!selectedAiChatIsPlayground"

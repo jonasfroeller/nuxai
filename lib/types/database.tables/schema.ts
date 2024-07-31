@@ -1,3 +1,5 @@
+import { z } from 'zod';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import {
   integer,
   pgEnum,
@@ -10,10 +12,10 @@ import {
 export type NewUser = typeof chat_user.$inferInsert;
 export type GetUser = typeof chat_user.$inferSelect;
 
-export type ReadUser = Omit<GetUser, 'hashed_password'>;
 export interface UserToCreate extends Omit<NewUser, 'id' | 'hashed_password'> {
   password: string;
 }
+export type ReadUser = Omit<GetUser, 'hashed_password'>;
 
 export const chat_user = pgTable('chat_user', {
   id: serial('id').primaryKey(),
@@ -31,10 +33,6 @@ export const chat_user = pgTable('chat_user', {
 export type NewOauthAccount = typeof chat_user_oauth_account.$inferInsert;
 export type GetOauthAccount = typeof chat_user_oauth_account.$inferSelect;
 
-export type ReadOauthAccount = Omit<
-  GetOauthAccount,
-  /* "id" | "chat_user_id" | */ 'provider' | 'created_at' | 'updated_at'
->;
 export interface OauthAccountToCreate
   extends Omit<
     NewOauthAccount,
@@ -42,6 +40,10 @@ export interface OauthAccountToCreate
   > {
   chat_user_id?: number /* so that a oauth account can be linked to an existing user */;
 }
+export type ReadOauthAccount = Omit<
+  GetOauthAccount,
+  /* "id" | "chat_user_id" | */ 'provider' | 'created_at' | 'updated_at'
+>;
 
 export const POSSIBLE_OAUTH_PROVIDERS = pgEnum('oauth_provider_enum', [
   'github',
@@ -65,9 +67,9 @@ export const chat_user_oauth_account = pgTable('chat_user_oauth_account', {
 export type NewChatConversation = typeof chat_conversation.$inferInsert;
 export type GetChatConversation = typeof chat_conversation.$inferSelect;
 
-export type ReadChatConversation = GetChatConversation;
 export interface ChatConversationToCreate
-  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> {}
+  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> { }
+export type ReadChatConversation = GetChatConversation;
 
 export const chat_conversation = pgTable('chat_conversation', {
   id: serial('id').primaryKey(),
@@ -88,12 +90,12 @@ export type NewChatConversationMessage =
 export type GetChatConversationMessage =
   typeof chat_conversation_message.$inferSelect;
 
-export type ReadChatConversationMessage = GetChatConversationMessage;
 export interface ChatConversationMessageToCreate
   extends Omit<
     NewChatConversationMessage,
     'id' | 'created_at' | 'updated_at'
-  > {}
+  > { }
+export type ReadChatConversationMessage = GetChatConversationMessage;
 
 export const chat_conversation_message = pgTable('chat_conversation_message', {
   id: serial('id').primaryKey(),
@@ -111,3 +113,41 @@ export const chat_conversation_message = pgTable('chat_conversation_message', {
     .notNull()
     .references(() => chat_conversation.id, { onDelete: 'cascade' }),
 });
+
+export const chat_conversation_file = pgTable('chat_conversation_file', {
+  id: serial('id').primaryKey(),
+  title: text('title'),
+  language: text('language').default('text').notNull(),
+  text: text('text').notNull(),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+
+  chat_user_id: integer('chat_user_id')
+    .notNull()
+    .references(() => chat_user.id, { onDelete: 'cascade' }),
+  chat_conversation_id: integer('chat_conversation_id')
+    .notNull()
+    .references(() => chat_conversation.id, { onDelete: 'cascade' }),
+  chat_conversation_message_id: integer('chat_conversation_message_id')
+    .notNull()
+    .references(() => chat_conversation_message.id, { onDelete: 'cascade' }),
+});
+
+export type NewChatConversationFile =
+  typeof chat_conversation_file.$inferInsert;
+export type GetChatConversationFile =
+  typeof chat_conversation_file.$inferSelect;
+
+export interface ChatConversationFileToCreate
+  extends Omit<
+    NewChatConversationFile,
+    'id' | 'created_at' | 'updated_at'
+  > { }
+export type ReadChatConversationFile = GetChatConversationFile;
+
+const InsertFileSchemaBase = createInsertSchema(chat_conversation_file);
+export const InsertFileSchema = InsertFileSchemaBase.pick({ title: true, language: true, text: true }); // chat_user_id: true, chat_conversation_id: true, chat_conversation_message_id: true
+export const InsertFileUniversalSchema = z.object({ files: z.array(InsertFileSchema) }).or(InsertFileSchema); // files: [] could be shortened to []
+export const SelectFileSchema = createSelectSchema(chat_conversation_file);

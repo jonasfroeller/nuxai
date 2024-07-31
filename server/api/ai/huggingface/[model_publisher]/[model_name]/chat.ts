@@ -12,6 +12,39 @@ import {
 import type { User } from '#auth-utils';
 import type { H3Event, EventHandlerRequest } from 'h3';
 
+async function persistCodeBlocks(user_id: number, chat_id: number, message_id: number, markdown: string, event: H3Event<EventHandlerRequest>) {
+  const codeBlocks = await getCodeBlocksFromMarkdown(markdown);
+
+  if (LOG_BACKEND) console.log('codeBlocks', codeBlocks);
+  if (codeBlocks.length > 0) {
+    if (LOG_BACKEND) console.log(`persisting ${codeBlocks.length} code block(s)...`);
+
+    const persistedCodeBlocks = await event.$fetch(
+      `/api/users/${user_id}/chats/${chat_id}/files/${message_id}`,
+      {
+        // .event.$fetch used because it contains the current session
+        method: 'POST',
+        body: {
+          files: codeBlocks,
+        },
+      }
+    );
+
+    if (LOG_BACKEND)
+      console.info(
+        'persistCodeBlocks:',
+        persistedCodeBlocks,
+        user_id,
+        chat_id,
+        message_id
+      );
+
+    return persistedCodeBlocks;
+  }
+
+  return null;
+}
+
 async function persistChatMessage(
   user_id: number,
   chat_id: number,
@@ -20,7 +53,7 @@ async function persistChatMessage(
   event: H3Event<EventHandlerRequest>
 ) {
   if (chat_id >= 1) {
-    const persistChatMessage = await event.$fetch(
+    const persistedChatMessage = await event.$fetch(
       `/api/users/${user_id}/chats/${chat_id}/messages`,
       {
         // .event.$fetch used because it contains the current session
@@ -35,15 +68,15 @@ async function persistChatMessage(
     if (LOG_BACKEND)
       console.info(
         'persistChatMessage:',
-        persistChatMessage,
+        persistedChatMessage,
         user_id,
         chat_id,
         messageText
       );
-    return;
+    return persistedChatMessage;
   }
 
-  return;
+  return null;
 }
 
 async function persistAiChatMessage(
@@ -52,7 +85,20 @@ async function persistAiChatMessage(
   messageText: string,
   event: H3Event<EventHandlerRequest>
 ) {
-  await persistChatMessage(user_id, chat_id, messageText, 'assistant', event);
+  const persistedChatMessage = await persistChatMessage(user_id, chat_id, messageText, 'assistant', event);
+
+  if (!persistedChatMessage) return persistedChatMessage;
+  if ('chatMessage' in persistedChatMessage && persistedChatMessage.chatMessage) {
+    const { chat_user_id, chat_conversation_id, id: message_id, message } = persistedChatMessage.chatMessage;
+    const persistedCodeBlocks = await persistCodeBlocks(chat_user_id, chat_conversation_id, message_id, message, event);
+
+    if (persistedCodeBlocks && 'chatFiles' in persistedCodeBlocks && persistedCodeBlocks.chatFiles) {
+      return {
+        chat_message: persistedChatMessage.chatMessage,
+        code_blocks: persistedCodeBlocks.chatFiles, // TODO: find out how to get type, if not clear, what route it is (made it [message_id]/[file_id] instead of /[message_id] and /[file_id] for now)
+      }
+    }
+  }
 }
 
 async function persistUserChatMessage(

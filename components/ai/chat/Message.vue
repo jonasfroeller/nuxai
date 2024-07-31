@@ -22,7 +22,6 @@ defineProps<{
     >
       <ClientOnly>
         <MDC
-          ref="mdc"
           class="overflow-x-auto break-words whitespace-pre-wrap"
           :value="message.content"
         />

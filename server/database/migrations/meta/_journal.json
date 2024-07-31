@@ -15,6 +15,20 @@
       "when": 1721260432892,
       "tag": "0001_burly_nightmare",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1722423865536,
+      "tag": "0002_nasty_whistler",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1722424453681,
+      "tag": "0003_grey_jamie_braddock",
+      "breakpoints": true
     }
   ]
 }
