@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@ai-sdk/vue':
-        specifier: ^0.0.25
-        version: 0.0.25(vue@3.4.35(typescript@5.5.4))(zod@3.23.8)
+        specifier: ^0.0.27
+        version: 0.0.27(vue@3.4.35(typescript@5.5.4))(zod@3.23.8)
       '@huggingface/inference':
         specifier: ^2.7.0
         version: 2.8.0
@@ -205,15 +205,6 @@ packages:
       svelte:
         optional: true
 
-  '@ai-sdk/ui-utils@0.0.21':
-    resolution: {integrity: sha512-qZ4ScEhNVpVqfg/2KcKYKKQcUpmfVyMD3P06OVDqXpzMaWvw95lUSYkJO/TDI49MhyVyK4eAI35pRU5B7bhrTQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.0.0
-    peerDependenciesMeta:
-      zod:
-        optional: true
-
   '@ai-sdk/ui-utils@0.0.22':
     resolution: {integrity: sha512-iBjuCxBf7N7ZaU9dlvMSU+AdasmcmzhJUBfOAXuR+5jyRTD6ukP46Kdz+6GaUBU7PCgNLldDlyggx4MV3NeLZw==}
     engines: {node: '>=18'}
@@ -223,8 +214,17 @@ packages:
       zod:
         optional: true
 
-  '@ai-sdk/vue@0.0.25':
-    resolution: {integrity: sha512-qdlcWH4mrTq93V3b6c/5GwECLBBSUMV4m1F4SYUV5q+YfZjc8NiNcTYGes4pQoSRJBsDvB1Ch0fTam0hM3Gr7w==}
+  '@ai-sdk/ui-utils@0.0.23':
+    resolution: {integrity: sha512-9KONrxwnoV9VyW9I3m9+cEi5IANvADeLuCe+oB3JzOobNKASwYwcQZ4X7no28DckfiJUmHk4gmPnsC3yfRoU5Q==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
+    peerDependenciesMeta:
+      zod:
+        optional: true
+
+  '@ai-sdk/vue@0.0.26':
+    resolution: {integrity: sha512-AfLHU96mnrAi8AzXgTS9U+J5lzeXopuZ6lJGMOyZ6qhC5TIIAHCdPfvxr0m1KG2/OhiPcWa3+IITpcT3egnTYw==}
     engines: {node: '>=18'}
     peerDependencies:
       vue: ^3.3.4
@@ -232,8 +232,8 @@ packages:
       vue:
         optional: true
 
-  '@ai-sdk/vue@0.0.26':
-    resolution: {integrity: sha512-AfLHU96mnrAi8AzXgTS9U+J5lzeXopuZ6lJGMOyZ6qhC5TIIAHCdPfvxr0m1KG2/OhiPcWa3+IITpcT3egnTYw==}
+  '@ai-sdk/vue@0.0.27':
+    resolution: {integrity: sha512-pYksYRUtMdAceZRKg9M6Rh1M4uSKJpa+cm0CC3Q2CMufE9Tgs3eEMB5ZqdSlP00uOifL3h36O14Y9vQwW4x7uw==}
     engines: {node: '>=18'}
     peerDependencies:
       vue: ^3.3.4
@@ -6058,14 +6058,6 @@ snapshots:
     transitivePeerDependencies:
       - zod
 
-  '@ai-sdk/ui-utils@0.0.21(zod@3.23.8)':
-    dependencies:
-      '@ai-sdk/provider': 0.0.14
-      '@ai-sdk/provider-utils': 1.0.5(zod@3.23.8)
-      secure-json-parse: 2.7.0
-    optionalDependencies:
-      zod: 3.23.8
-
   '@ai-sdk/ui-utils@0.0.22(zod@3.23.8)':
     dependencies:
       '@ai-sdk/provider': 0.0.14
@@ -6074,20 +6066,28 @@ snapshots:
     optionalDependencies:
       zod: 3.23.8
 
-  '@ai-sdk/vue@0.0.25(vue@3.4.35(typescript@5.5.4))(zod@3.23.8)':
+  '@ai-sdk/ui-utils@0.0.23(zod@3.23.8)':
+    dependencies:
+      '@ai-sdk/provider': 0.0.14
+      '@ai-sdk/provider-utils': 1.0.5(zod@3.23.8)
+      secure-json-parse: 2.7.0
+    optionalDependencies:
+      zod: 3.23.8
+
+  '@ai-sdk/vue@0.0.26(vue@3.4.35(typescript@5.5.4))(zod@3.23.8)':
     dependencies:
       '@ai-sdk/provider-utils': 1.0.5(zod@3.23.8)
-      '@ai-sdk/ui-utils': 0.0.21(zod@3.23.8)
+      '@ai-sdk/ui-utils': 0.0.22(zod@3.23.8)
       swrv: 1.0.4(vue@3.4.35(typescript@5.5.4))
     optionalDependencies:
       vue: 3.4.35(typescript@5.5.4)
     transitivePeerDependencies:
       - zod
 
-  '@ai-sdk/vue@0.0.26(vue@3.4.35(typescript@5.5.4))(zod@3.23.8)':
+  '@ai-sdk/vue@0.0.27(vue@3.4.35(typescript@5.5.4))(zod@3.23.8)':
     dependencies:
       '@ai-sdk/provider-utils': 1.0.5(zod@3.23.8)
-      '@ai-sdk/ui-utils': 0.0.22(zod@3.23.8)
+      '@ai-sdk/ui-utils': 0.0.23(zod@3.23.8)
       swrv: 1.0.4(vue@3.4.35(typescript@5.5.4))
     optionalDependencies:
       vue: 3.4.35(typescript@5.5.4)
