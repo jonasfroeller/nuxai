@@ -244,4 +244,8 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+:deep(.remark-code-title) {
+  display: none;
+}
+</style>
