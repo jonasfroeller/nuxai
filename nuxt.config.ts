@@ -3,6 +3,8 @@
 import type { HTTPMethod } from 'nuxt-security';
 import { protectedRoutes } from './utils/pages';
 import { supportedShikiLanguages } from './utils/formatters';
+// @ts-ignore
+import removeConsole from "vite-plugin-remove-console";
 
 const corsHandler = {
   origin: '*',
@@ -35,6 +37,7 @@ export default defineNuxtConfig({
 
   vite: {
     logLevel: 'warn', // 'info' | 'warn' | 'error' | 'silent'
+    plugins: [removeConsole()],
   },
 
   routeRules: {
