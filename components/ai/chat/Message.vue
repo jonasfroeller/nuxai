@@ -49,4 +49,8 @@ defineProps<{
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+pre.shiki {
+  margin: 0.25rem 0;
+}
+</style>

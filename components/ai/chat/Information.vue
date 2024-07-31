@@ -5,7 +5,6 @@ import type { ReadChatConversationFile } from '~/lib/types/database.tables/schem
 import { uniqWith } from 'es-toolkit';
 
 // TODO: disable version select, if no filetype is selected
-// TODO: fix code syntax highlighting
 
 const { user } = useUserSession();
 const { selectedAiChat, selectedAiChatIsPlayground } = useSelectedAiChat();
@@ -20,6 +19,15 @@ const selectedFileVersion = computed(() => {
 });
 const selectedFileVersionDate = computed(() => {
   return new Date(selectedFileVersion.value?.updated_at ?? new Date());
+});
+const selectedFileVersionMarkdown = computed(() => {
+  return `\`\`\`${selectedFileVersion.value?.language}${
+    selectedFileVersion.value?.title
+      ? `:${selectedFileVersion.value?.title}`
+      : ''
+  }
+  ${selectedFileVersion.value?.text}
+  \`\`\``;
 });
 const filetypeSearchIsOpen = ref(false);
 const filetypeSearchSelectedValue = ref<string>(''); // BundledLanguage
@@ -211,8 +219,8 @@ onMounted(async () => {
             <template v-else>
               <ClientOnly>
                 <MDC
-                  class="h-full px-4 py-2 overflow-x-auto break-words whitespace-pre-wrap"
-                  :value="selectedFileVersion?.text"
+                  class="overflow-x-auto break-words whitespace-pre-wrap"
+                  :value="selectedFileVersionMarkdown"
                 />
               </ClientOnly>
 
