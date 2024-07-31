@@ -100,11 +100,12 @@ export const updateUser = async (
   password: GetUser['hashed_password'] | undefined
 ) => {
   /* TODO: check for old password, before allowing update, only allow email, if verified via email code */
+
   const updated_primary_email = () => {
     if (!primary_email) return null;
 
     return {
-      primary_email: decryptColumn(chat_user.primary_email),
+      primary_email: encryptColumn(primary_email),
     };
   };
 
@@ -112,7 +113,7 @@ export const updateUser = async (
     if (!password) return null;
 
     return {
-      updated_password: true,
+      hashed_password: encryptSecret(password),
     };
   };
 

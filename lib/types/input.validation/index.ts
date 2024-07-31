@@ -13,6 +13,11 @@ export const UserLogInSchema = z.object({
   password: passwordSchema,
 });
 
+export const UserUpdateSchema = z.object({
+  email: emailSchema.optional(),
+  password: passwordSchema.optional(),
+});
+
 export const UserSignUpSchema = z
   .object({
     email: emailSchema,

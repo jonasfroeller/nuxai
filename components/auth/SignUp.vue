@@ -86,7 +86,7 @@ async function signUp() {
                 />
               </div>
 
-              <ul v-if="emailErrors.length > 0" class="pl-5 list-disc">
+              <ul v-if="emailErrors?.length > 0" class="pl-5 list-disc">
                 <li
                   v-for="error in emailErrors"
                   class="text-sm font-bold text-destructive"
@@ -108,7 +108,7 @@ async function signUp() {
                 <Label for="password">Password</Label>
               </div>
 
-              <ul v-if="passwordErrors.length > 0" class="pl-5 list-disc">
+              <ul v-if="passwordErrors?.length > 0" class="pl-5 list-disc">
                 <li
                   v-for="error in passwordErrors"
                   class="text-sm font-bold text-destructive"
