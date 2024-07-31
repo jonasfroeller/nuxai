@@ -109,8 +109,15 @@ onMounted(() => {
                 size="icon"
                 class="rounded-lg"
                 aria-label="Documentation"
+                type="button"
               >
-                <Book class="size-5" />
+                <NuxtLink
+                  download="openapi.json"
+                  to="/docs/openapi.json"
+                  external
+                >
+                  <Book class="size-5" />
+                </NuxtLink>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" :side-offset="5">
