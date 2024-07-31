@@ -88,5 +88,5 @@ pre.shiki {
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   overflow-x: auto;
-  max-width: min(48rem, 100%);
+  max-width: min(56rem, 100%);
 }

@@ -72,7 +72,6 @@ onMounted(async () => {
         class="grid grid-cols-2 gap-3"
         v-if="!selectedAiChatIsPlayground && fetchedFiles.length > 0"
       >
-        <!-- flex flex-col gap-2 -->
         <div>
           <ShadcnLabel>Filetype</ShadcnLabel>
           <ShadcnPopover v-model:open="filetypeSearchIsOpen">
@@ -188,7 +187,7 @@ onMounted(async () => {
           </template></ShadcnLabel
         >
         <ShadcnScrollArea
-          class="h-[14.45rem] flex-grow border rounded-sm bg-primary/10"
+          class="h-[14.45rem] flex-grow border rounded-sm bg-primary/10 max-w-[35rem]"
         >
           <template v-if="isLoading">
             <p class="px-4 py-4">
@@ -223,6 +222,8 @@ onMounted(async () => {
               Select a file above, to view it's content.
             </p>
           </template>
+          <ShadcnScrollBar class="bg-primary" orientation="horizontal" />
+          <ShadcnScrollBar class="bg-primary" orientation="vertical" />
         </ShadcnScrollArea>
       </div>
       <div v-else>
