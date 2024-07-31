@@ -2,6 +2,8 @@
 import { ConfigProvider } from 'radix-vue';
 import { Toaster } from '@/components/ui/sonner';
 
+const router = useRouter();
+const currentRouteName = computed(() => router.currentRoute.value.name);
 // const main_layout = 'main';
 
 /* useHead({
@@ -25,7 +27,7 @@ const useSsrSaveId = () => useId();
         :throttle="200"
       />
       <!-- when it shows: https://github.com/nuxt/nuxt/issues/18630, https://nuxt.com/docs/api/composables/use-loading-indicator -->
-      <DynamicMeta :key="$route.name" />
+      <DynamicMeta :key="currentRouteName" />
       <!-- key is needed, so that the component is rerendered without a prop change -->
       <div>
         <!-- needed for transitions to work properly -->
