@@ -135,10 +135,6 @@ const {
   fetchChatsUrl,
 } = useFetchChats(user.value?.id ?? -1);
 
-/* onMounted(async () => {
-  await fetchChats(fetchChatsUrl.value);
-}); */
-
 (async () => {
   await fetchChats(fetchChatsUrl.value);
 })();

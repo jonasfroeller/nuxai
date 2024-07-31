@@ -4,6 +4,7 @@ import type { UseFetchOptions } from 'nuxt/app';
 import type { FetchError } from 'ofetch';
 import { toast } from 'vue-sonner';
 import type { FullyFeaturedChat /* , MinimalChat */ } from '~/lib/types/chat';
+import type { ReadChatConversationFile } from '~/lib/types/database.tables/schema';
 const { console } = useLogger();
 
 /* import type { UseFetchOptions } from '#app'; */
@@ -257,5 +258,31 @@ export function useFetchChats(user_id: number) {
     fetchedChatsError,
     fetchedChatsRefresh,
     fetchChats,
+  };
+}
+
+export function useFetchFiles() {
+  const fetchedFiles = useState<ReadChatConversationFile[]>(
+    'fetched-files',
+    () => []
+  );
+
+  async function loadFiles(user_id: number, chat_id: number) {
+    if (user_id !== -1) {
+      if (chat_id === -1) {
+        return;
+      }
+
+      const data = await $fetch(`/api/users/${user_id}/chats/${chat_id}/files`);
+      if (data.chatFiles && data.chatFiles.length > 0) {
+        const chatFiles = data.chatFiles;
+        fetchedFiles.value = (chatFiles as ReadChatConversationFile[]) ?? [];
+      }
+    }
+  }
+
+  return {
+    fetchedFiles,
+    loadFiles,
   };
 }

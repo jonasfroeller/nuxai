@@ -27,7 +27,7 @@ const {
 <template>
   <div :class="props.class">
     <ShadcnButton
-      variant="ghost"
+      variant="link"
       size="icon"
       :disabled="!isClipboardSupported"
       @click="copyToClipboard(source)"

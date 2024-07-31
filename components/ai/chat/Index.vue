@@ -12,11 +12,9 @@ import {
 } from 'lucide-vue-next';
 import { useChat, type Message } from '@ai-sdk/vue'; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
 import { toast } from 'vue-sonner';
-// import type { Message } from '@ai-sdk/vue';
 const { console } = useLogger();
 
-// TODO: improve performance
-
+const { loadFiles } = useFetchFiles();
 const { user } = useUserSession();
 const {
   aiPlaygroundChatMessages: currentAiChatPlaygroundMessagesBackup,
@@ -49,7 +47,7 @@ watch(chatError, () => {
 });
 
 // INFO: Listening to chatMessages would be way more inefficient, since that would cause the callback function to be called on every token, the AI answers.
-const waitForAiResponseToComplete = (condition: Ref<boolean | undefined>) => {
+const waitForValidRef = (condition: Ref<boolean | undefined>) => {
   let unwatch: (() => void) | null = null;
 
   const promise = new Promise<void>((resolve, reject) => {
@@ -83,13 +81,11 @@ const waitForAiResponseToComplete = (condition: Ref<boolean | undefined>) => {
 watch(
   () => chatMessages.value.length,
   async (newLength, oldLength) => {
-    const aiIsDoneResponding = waitForAiResponseToComplete(
-      chatResponseIsLoading
-    );
+    const aiIsDoneResponding = waitForValidRef(chatResponseIsLoading);
 
-    // TODO: only trigger, if message is new and not also if it is received from database
     if (
-      chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant'
+      chatMessages.value[chatMessages.value.length - 1]?.role === 'assistant' &&
+      !isLoading.value // !isLoading.value needed, so that it only shows the toast, if the messages are actually new, and not onMounted (onLoaded)
     ) {
       toast.promise(aiIsDoneResponding, {
         loading: 'Fetching AI response...',
@@ -99,6 +95,9 @@ watch(
     }
 
     await aiIsDoneResponding;
+    if (selectedAiChat.value.id !== -1) {
+      await loadFiles(user.value?.id ?? -1, selectedAiChat.value.id);
+    }
 
     console.info('Setting chat history messages backup...');
     if (selectedAiChatIsPlayground.value && chatMessages.value.length > 0) {
@@ -216,7 +215,7 @@ async function loadChatMessages(user_id: number, chat_id: number) {
             id: `${String(id)}-${String(Date.now())}`,
             content: message,
             role: actor,
-          }) as Message
+          } as Message)
       );
 
       setChatMessages(messages);

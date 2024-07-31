@@ -30,7 +30,8 @@ onMounted(() => {
 
               // creates a Vue component instance
               const copyComponent = h(CopyToClipboard, {
-                class: 'absolute top-2 right-2',
+                class:
+                  'absolute top-2 right-2 transition opacity-20 hover:opacity-100',
                 text: codeBlock.textContent ?? 'NO CODE', // TODO: parse mime type out of className language-<some-language> and validate it => else text
               });
 

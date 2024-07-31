@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { cn } from '~/lib/utils';
-import { Check, ChevronsUpDown } from 'lucide-vue-next';
-import type { ReadChatConversationFile } from '~/lib/types/database.tables/schema';
+import { Check, ChevronsUpDown, Loader2 } from 'lucide-vue-next';
 import { uniqWith } from 'es-toolkit';
 
-// TODO: disable version select, if no filetype is selected
-
+const { fetchedFiles, loadFiles } = useFetchFiles();
 const { user } = useUserSession();
 const { selectedAiChat, selectedAiChatIsPlayground } = useSelectedAiChat();
 
@@ -18,7 +16,9 @@ const selectedFileVersion = computed(() => {
   );
 });
 const selectedFileVersionDate = computed(() => {
-  return new Date(selectedFileVersion.value?.updated_at ?? new Date());
+  return selectedFileVersion.value?.updated_at
+    ? new Date(selectedFileVersion.value?.updated_at)
+    : null;
 });
 const selectedFileVersionMarkdown = computed(() => {
   return `\`\`\`${selectedFileVersion.value?.language}${
@@ -31,7 +31,7 @@ const filetypeSearchIsOpen = ref(false);
 const filetypeSearchSelectedValue = ref<string>(''); // BundledLanguage
 const filetypeSearchSelectableValues = computed(() => {
   return uniqWith(
-    files.value.map((file) => {
+    fetchedFiles.value.map((file) => {
       return {
         value: file.language,
         label:
@@ -45,29 +45,12 @@ const filetypeSearchSelectableValues = computed(() => {
 });
 
 const versionsForSelectedFileType = computed(() => {
-  return files.value.filter(
+  return fetchedFiles.value.filter(
     (file) => file.language === filetypeSearchSelectedValue.value
   );
 });
 
 const isLoading = ref(true);
-const files = ref<ReadChatConversationFile[]>([]);
-async function loadFiles(user_id: number, chat_id: number) {
-  // TODO: update, when new message is there and code is persisted
-  if (user_id !== -1) {
-    if (chat_id === -1) {
-      return;
-    }
-
-    const data = await $fetch(`/api/users/${user_id}/chats/${chat_id}/files`);
-
-    if (data.chatFiles && data.chatFiles.length > 0) {
-      const chatMessages = data.chatFiles;
-      files.value = (chatMessages as ReadChatConversationFile[]) ?? []; // TODO: fix typing
-    }
-  }
-}
-
 onMounted(async () => {
   await loadFiles(user.value?.id ?? -1, selectedAiChat.value.id).then(() => {
     isLoading.value = false;
@@ -87,7 +70,7 @@ onMounted(async () => {
       </legend>
       <div
         class="grid grid-cols-2 gap-3"
-        v-if="!selectedAiChatIsPlayground && files.length > 0"
+        v-if="!selectedAiChatIsPlayground && fetchedFiles.length > 0"
       >
         <!-- flex flex-col gap-2 -->
         <div>
@@ -152,19 +135,24 @@ onMounted(async () => {
         </div>
         <div>
           <ShadcnLabel
-            >Message/Version (<NuxtTime
-              class="text-muted-foreground"
-              :datetime="selectedFileVersionDate"
-              day="numeric"
-              month="numeric"
-              year="numeric"
-              hour="numeric"
-              minute="numeric"
-            />)</ShadcnLabel
+            >Message/Version<template v-if="selectedFileVersionDate">
+              (<NuxtTime
+                class="text-muted-foreground"
+                :datetime="selectedFileVersionDate"
+                day="numeric"
+                month="numeric"
+                year="numeric"
+                hour="numeric"
+                minute="numeric"
+              />)
+            </template>
+          </ShadcnLabel>
+          <ShadcnSelect
+            :disabled="filetypeSearchSelectedValue === ''"
+            v-model="selectedFileVersionId"
           >
-          <ShadcnSelect v-model="selectedFileVersionId">
             <ShadcnSelectTrigger>
-              <ShadcnSelectValue placeholder="Select a version" />
+              <ShadcnSelectValue placeholder="Select a version..." />
             </ShadcnSelectTrigger>
             <ShadcnSelectContent>
               <ShadcnSelectItem
@@ -184,7 +172,6 @@ onMounted(async () => {
                   minute="numeric"
                   second="numeric"
                 />)
-                <!-- TODO: (+200, -322) -->
               </ShadcnSelectItem>
             </ShadcnSelectContent>
           </ShadcnSelect>
@@ -192,21 +179,21 @@ onMounted(async () => {
       </div>
       <div
         class="flex flex-col h-full gap-2"
-        v-if="!selectedAiChatIsPlayground && files.length > 0"
+        v-if="!selectedAiChatIsPlayground && fetchedFiles.length > 0"
       >
         <ShadcnLabel for="content"
-          >Content of the selected version
+          >Content of the selected version:
           <template v-if="selectedFileVersion?.title">
-            ({{ selectedFileVersion?.title }})
-          </template>
-          <template v-else> ({{ selectedFileVersion?.id }}) </template>
-          :</ShadcnLabel
+            &nbsp;({{ selectedFileVersion?.title }})
+          </template></ShadcnLabel
         >
         <ShadcnScrollArea
           class="h-[14.45rem] flex-grow border rounded-sm bg-primary/10"
         >
           <template v-if="isLoading">
-            <p class="px-4 py-2">loading...</p>
+            <p class="px-4 py-4">
+              <Loader2 class="w-4 h-4 animate-spin" />
+            </p>
           </template>
           <template v-if="selectedFileVersion">
             <template v-if="!selectedFileVersion?.text">
@@ -238,18 +225,19 @@ onMounted(async () => {
           </template>
         </ShadcnScrollArea>
       </div>
-      <div v-else class="prose">
-        <!-- TODO: add tailwind prose -->
+      <div v-else>
         <template v-if="selectedAiChatIsPlayground">
           <h4 class="font-bold">Files are only stored for persisted chats.</h4>
           <p>
             Click on "Persist Chat History", to generated and view persisted
-            files.
+            fetchedFiles.
           </p>
         </template>
         <template v-else>
-          <h4 class="font-bold">No files available for selected chat.</h4>
-          <p>Chat with the AI, to generate and view files.</p>
+          <h4 class="font-bold">
+            No fetchedFiles available for selected chat.
+          </h4>
+          <p>Chat with the AI, to generate and view fetchedFiles.</p>
         </template>
       </div>
     </fieldset>

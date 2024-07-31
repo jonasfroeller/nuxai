@@ -5,7 +5,6 @@ import {
   type GetChatConversationMessage,
 } from '../../../lib/types/database.tables/schema';
 import { eq, asc } from 'drizzle-orm';
-// import { ENCRYPTION_SECRET } from "~/server/utils/globals"; // TODO: maybe encrypt chat conversations
 
 export const createChatConversationMessages = async (
   messages: ChatConversationMessageToCreate[]
