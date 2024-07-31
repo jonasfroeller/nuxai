@@ -25,9 +25,7 @@ const selectedFileVersionMarkdown = computed(() => {
     selectedFileVersion.value?.title
       ? `:${selectedFileVersion.value?.title}`
       : ''
-  }
-  ${selectedFileVersion.value?.text}
-  \`\`\``;
+  }\n${selectedFileVersion.value?.text}\n\`\`\``;
 });
 const filetypeSearchIsOpen = ref(false);
 const filetypeSearchSelectedValue = ref<string>(''); // BundledLanguage
