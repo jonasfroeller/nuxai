@@ -35,15 +35,12 @@ defineProps<{
 
     <div
       v-if="message.role === 'user'"
-      class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] dark:border-border"
+      class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] dark:border-border prose"
       :id="`message-${message.id}`"
       :data-message-created-at="message.createdAt"
     >
       <ClientOnly>
-        <MDC
-          class="overflow-x-auto break-words whitespace-pre-wrap"
-          :value="message.content"
-        />
+        <MDC :value="message.content" />
       </ClientOnly>
     </div>
   </div>
