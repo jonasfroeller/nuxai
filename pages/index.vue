@@ -43,7 +43,6 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
   headerNavigationHeight.value = height.value;
 });
 
-const { selectedAiChatKey } = useSelectedAiChat();
 // TODO: fix `[Vue warn]: Hydration node mismatch` on some Tooltip
 </script>
 
@@ -208,7 +207,7 @@ const { selectedAiChatKey } = useSelectedAiChat();
           </Button>
         </div>
       </header>
-      <Dashboard :key="selectedAiChatKey" />
+      <Dashboard />
     </div>
   </div>
 </template>

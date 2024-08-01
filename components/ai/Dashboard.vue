@@ -6,6 +6,7 @@ import {
 } from '@/components/ui/resizable';
 
 // TODO: fix resizable only working if page is completely rerendered
+const { selectedAiChatKey } = useSelectedAiChat();
 const { width } = useWindowSize();
 </script>
 
@@ -27,12 +28,12 @@ const { width } = useWindowSize();
         :default-size="75"
         class="px-2"
       >
-        <AiChat />
+        <AiChat :key="selectedAiChatKey" />
         <!-- MESSAGES OF CHAT (needs key, to rerender chat, so that useChat gets a new ID, useChat can not be put anywhere als then the setup script, because some functionality depends on that environment) -->
       </ResizablePanel>
     </ResizablePanelGroup>
     <div v-else class="pt-2 pr-2">
-      <AiChat />
+      <AiChat :key="selectedAiChatKey" />
     </div>
   </div>
 </template>
