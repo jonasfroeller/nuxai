@@ -226,14 +226,14 @@ onMounted(async () => {
           <h4 class="font-bold">Files are only stored for persisted chats.</h4>
           <p>
             Click on "Persist Chat History", to generated and view persisted
-            fetchedFiles.
+            fetched files.
           </p>
         </template>
         <template v-else>
           <h4 class="font-bold">
-            No fetchedFiles available for selected chat.
+            No fetched files available for selected chat.
           </h4>
-          <p>Chat with the AI, to generate and view fetchedFiles.</p>
+          <p>Chat with the AI, to generate and view fetched files.</p>
         </template>
       </div>
     </fieldset>
