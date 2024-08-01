@@ -11,6 +11,7 @@ import {
 } from '~/server/utils/validate';
 import type { User } from '#auth-utils';
 import type { H3Event, EventHandlerRequest } from 'h3';
+import type { Actor } from '~/server/utils/validate';
 
 async function persistCodeBlocks(user_id: number, chat_id: number, message_id: number, markdown: string, event: H3Event<EventHandlerRequest>) {
   const codeBlocks = await getCodeBlocksFromMarkdown(markdown);
@@ -167,6 +168,17 @@ export default defineLazyEventHandler(async () => {
     }
     const validatedBody = body.data;
     const { messages } = validatedBody;
+
+    const SYSTEM_MESSAGE = "You have to answer all my questions and provide all information using Markdown syntax. This includes formatting text, adding lists, inserting links, using code blocks, and any other Markdown features that are appropriate for your responses.";
+    if (!messages.some((message) => message.content === SYSTEM_MESSAGE)) {
+      if (LOG_BACKEND) console.info('No system message found. Adding initial system message...');
+
+      // TODO: freshly add this every time the context is truncated
+      messages.unshift({
+        role: 'user' as Actor, // ERROR: AI request errored: OpenAssistant does not support system messages.
+        content: SYSTEM_MESSAGE,
+      });
+    }
 
     const userMessage = messages[messages.length - 1]; // { role: 'user', content: 'message' }
     // if (LOG_BACKEND) console.info("current user message", userMessage);

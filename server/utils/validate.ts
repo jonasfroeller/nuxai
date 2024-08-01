@@ -478,9 +478,10 @@ export const ChatConversationAttributesToUpdateSchema = z.object({
 /**
  * role: 'system' | **'user'** | **'assistant'** | 'function' | 'data' | 'tool'
  */
-enum Actor {
+export enum Actor {
   'user' = 'user',
   'assistant' = 'assistant',
+  'system' = 'system',
 }
 
 export const ChatConversationMessagesToCreateSchema = z.object({
