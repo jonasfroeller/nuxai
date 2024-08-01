@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <div
-    class="flex my-2"
+    class="flex max-w-full my-2 prose"
     v-bind:class="{
       'justify-start': message.role === 'assistant',
       'justify-end': message.role === 'user',
@@ -35,7 +35,7 @@ defineProps<{
 
     <div
       v-if="message.role === 'user'"
-      class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] dark:border-border prose"
+      class="px-4 py-2 border rounded-lg bg-background border-slate-200 max-w-[80%] dark:border-border"
       :id="`message-${message.id}`"
       :data-message-created-at="message.createdAt"
     >
@@ -50,5 +50,15 @@ defineProps<{
 :deep(pre.shiki) {
   @apply bg-primary/10;
   margin: 0.25rem 0;
+}
+
+:deep(div :is(*:last-child)) {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+:deep(div :is(*:first-child)) {
+  margin-top: 0;
+  padding-top: 0;
 }
 </style>

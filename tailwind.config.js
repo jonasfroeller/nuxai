@@ -1,6 +1,17 @@
 import animate from 'tailwindcss-animate';
 import typography from '@tailwindcss/typography';
 
+const typographyShared = {
+  css: {
+    // codeblocks are handled by mdc
+    pre: false,
+    code: false,
+    'pre code': false,
+    'code::before': false,
+    'code::after': false,
+  },
+};
+
 /** @type {import('tailwindcss').Config} */
 export const content = [
   './components/**/*.{js,vue,ts}',
@@ -22,6 +33,14 @@ export const theme = {
     },
   },
   extend: {
+    typography: {
+      DEFAULT: typographyShared,
+      sm: typographyShared,
+      md: typographyShared,
+      lg: typographyShared,
+      xl: typographyShared,
+      '2xl': typographyShared,
+    },
     colors: {
       border: 'hsl(var(--border))',
       input: 'hsl(var(--input))',
