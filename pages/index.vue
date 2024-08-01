@@ -26,11 +26,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable';
 
 definePageMeta({
   name: 'Dashboard',
@@ -39,7 +34,6 @@ definePageMeta({
   alias: dashboardAliases,
 });
 
-const { selectedAiChatKey } = useSelectedAiChat();
 const headerNavigationStore = useHeaderNavigationStore();
 const { headerNavigationElement } = storeToRefs(headerNavigationStore);
 
@@ -49,7 +43,7 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
   headerNavigationHeight.value = height.value;
 });
 
-const { width } = useWindowSize();
+const { selectedAiChatKey } = useSelectedAiChat();
 // TODO: fix `[Vue warn]: Hydration node mismatch` on some Tooltip
 </script>
 
@@ -214,38 +208,7 @@ const { width } = useWindowSize();
           </Button>
         </div>
       </header>
-      <template v-if="width >= 1024">
-        <ResizablePanelGroup
-          id="handle-group-1"
-          direction="horizontal"
-          class="max-w-full mt-2"
-        >
-          <ResizablePanel
-            id="handle-panel-1"
-            :default-size="30"
-            :min-size="25"
-            :max-size="40"
-          >
-            <AiChatTabs />
-          </ResizablePanel>
-          <ResizableHandle id="handle-handle-1" with-handle />
-          <ResizablePanel
-            id="handle-panel-2"
-            :default-size="70"
-            :min-size="60"
-            :max-size="75"
-            class="px-2"
-          >
-            <AiChat :key="selectedAiChatKey" />
-            <!-- MESSAGES OF CHAT (needs key, to rerender chat, so that useChat gets a new ID, useChat can not be put anywhere als then the setup script, because some functionality depends on that environment) -->
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </template>
-      <template v-else>
-        <div class="pt-2 pr-2">
-          <AiChat :key="selectedAiChatKey" />
-        </div>
-      </template>
+      <Dashboard :key="selectedAiChatKey" />
     </div>
   </div>
 </template>

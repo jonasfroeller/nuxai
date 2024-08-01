@@ -244,11 +244,4 @@ onMounted(async () => {
 :deep(.remark-code-title) {
   display: none;
 }
-
-/* prevents overflowing while allowing a fluid layout */
-:deep(pre) {
-  overflow-wrap: break-word !important;
-  word-wrap: break-word !important;
-  white-space: pre-wrap !important;
-}
 </style>

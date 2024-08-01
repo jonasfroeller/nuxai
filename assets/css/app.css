@@ -84,9 +84,15 @@
   border-radius: 0.25rem;
 }
 
+/* prevents overflowing while allowing a fluid layout */
+pre {
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  white-space: pre-wrap !important;
+}
+
 pre.shiki {
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
-  overflow-x: auto;
-  max-width: min(56rem, 100%);
+  /* overflow-x: auto; */
 }
