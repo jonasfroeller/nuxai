@@ -37,7 +37,7 @@ importers:
         version: 1.0.0(vue@3.4.35(typescript@5.5.4))
       ai:
         specifier: ^3.2.22
-        version: 3.2.43(react@18.3.1)(sswr@2.1.0(svelte@4.2.18))(svelte@4.2.18)(vue@3.4.35(typescript@5.5.4))(zod@3.23.8)
+        version: 3.2.44(react@18.3.1)(sswr@2.1.0(svelte@4.2.18))(svelte@4.2.18)(vue@3.4.35(typescript@5.5.4))(zod@3.23.8)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -178,8 +178,8 @@ packages:
     resolution: {integrity: sha512-gaQ5Y033nro9iX1YUjEDFDRhmMcEiCk56LJdIUbX5ozEiCNCfpiBpEqrjSp/Gp5RzBS2W0BVxfG7UGW6Ezcrzg==}
     engines: {node: '>=18'}
 
-  '@ai-sdk/react@0.0.34':
-    resolution: {integrity: sha512-GBLci7/xA1e7tZI+01IwUWvEugwjPGg1dQZ/3OdHFWhhgTARJogABhUi9EOznCPrkx9Ek8h2Zpm/G10jbZvK0Q==}
+  '@ai-sdk/react@0.0.35':
+    resolution: {integrity: sha512-tw/JNuzrDx4RQk/V/pYREwTiQkr+3i0MwROB8NAHlM70dyiKc/97vskQmIwBCuVGfXoEchzUtlF4LeYx085qmw==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^18 || ^19
@@ -2077,8 +2077,8 @@ packages:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
 
-  ai@3.2.43:
-    resolution: {integrity: sha512-+LUTI4cwQKUHxRJ4J1HAWWfCtFnCAbDh+BFE9AtJGpq3oniC/inNcLksuTU1N5YkK1pDc/rllyiNzE2UtadndA==}
+  ai@3.2.44:
+    resolution: {integrity: sha512-3QYkFFxMWzkVXaezxW1NL/AsdBio0YCtqxzGA5u6dumRSAfX2ZAd7OFeZTrCj7b2ubTmHn+l0cLotTSlQH8UQg==}
     engines: {node: '>=18'}
     peerDependencies:
       openai: ^4.42.0
@@ -6008,7 +6008,7 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@0.0.34(react@18.3.1)(zod@3.23.8)':
+  '@ai-sdk/react@0.0.35(react@18.3.1)(zod@3.23.8)':
     dependencies:
       '@ai-sdk/provider-utils': 1.0.5(zod@3.23.8)
       '@ai-sdk/ui-utils': 0.0.23(zod@3.23.8)
@@ -8042,11 +8042,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ai@3.2.43(react@18.3.1)(sswr@2.1.0(svelte@4.2.18))(svelte@4.2.18)(vue@3.4.35(typescript@5.5.4))(zod@3.23.8):
+  ai@3.2.44(react@18.3.1)(sswr@2.1.0(svelte@4.2.18))(svelte@4.2.18)(vue@3.4.35(typescript@5.5.4))(zod@3.23.8):
     dependencies:
       '@ai-sdk/provider': 0.0.14
       '@ai-sdk/provider-utils': 1.0.5(zod@3.23.8)
-      '@ai-sdk/react': 0.0.34(react@18.3.1)(zod@3.23.8)
+      '@ai-sdk/react': 0.0.35(react@18.3.1)(zod@3.23.8)
       '@ai-sdk/solid': 0.0.26(zod@3.23.8)
       '@ai-sdk/svelte': 0.0.28(svelte@4.2.18)(zod@3.23.8)
       '@ai-sdk/ui-utils': 0.0.23(zod@3.23.8)
