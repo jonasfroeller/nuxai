@@ -59,9 +59,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div
-    class="relative flex flex-col items-start order-2 h-full gap-8 2xl:order-1"
-  >
+  <div class="relative flex flex-col items-start order-2 gap-8 2xl:order-1">
     <!-- hidden md:flex -->
     <AiChatModelConfiguration />
     <fieldset class="flex flex-col w-full h-full gap-6 p-4 border rounded-lg">
@@ -69,10 +67,10 @@ onMounted(async () => {
         Generated Configuration File
       </legend>
       <div
-        class="grid grid-cols-1 gap-3 xl:grid-cols-2"
+        class="flex flex-wrap gap-3"
         v-if="!selectedAiChatIsPlayground && fetchedFiles.length > 0"
       >
-        <div>
+        <div class="flex-grow">
           <ShadcnLabel>Filetype</ShadcnLabel>
           <ShadcnPopover v-model:open="filetypeSearchIsOpen">
             <ShadcnPopoverTrigger as-child>
@@ -132,7 +130,7 @@ onMounted(async () => {
             </ShadcnPopoverContent>
           </ShadcnPopover>
         </div>
-        <div>
+        <div class="flex-grow">
           <ShadcnLabel
             >Message/Version<template v-if="selectedFileVersionDate">
               (<NuxtTime
@@ -187,7 +185,7 @@ onMounted(async () => {
           </template></ShadcnLabel
         >
         <ShadcnScrollArea
-          class="h-[14.45rem] flex-grow border rounded-sm bg-primary/10 max-w-full"
+          class="flex-grow max-w-full border rounded-sm h-60 bg-primary/10"
         >
           <template v-if="isLoading">
             <p class="px-4 py-4">
@@ -204,10 +202,7 @@ onMounted(async () => {
             </template>
             <template v-else>
               <ClientOnly>
-                <MDC
-                  class="overflow-x-auto break-words whitespace-pre-wrap"
-                  :value="selectedFileVersionMarkdown"
-                />
+                <MDC :value="selectedFileVersionMarkdown" />
               </ClientOnly>
 
               <span class="absolute top-2 right-2">
@@ -248,5 +243,12 @@ onMounted(async () => {
 <style scoped>
 :deep(.remark-code-title) {
   display: none;
+}
+
+/* prevents overflowing while allowing a fluid layout */
+:deep(pre) {
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  white-space: pre-wrap !important;
 }
 </style>

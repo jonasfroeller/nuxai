@@ -307,7 +307,7 @@ let filteredChats = computed(() => {
         <div class="flex flex-col h-full gap-1">
           <div
             nuxt-client
-            class="flex flex-wrap justify-between flex-grow w-full gap-3 p-4 border rounded-sm lg:gap-8 border-border bg-background"
+            class="flex flex-wrap justify-between flex-grow w-full gap-3 p-4 border rounded-sm border-border bg-background"
             :id="String(chat?.id)"
             v-for="chat in filteredChats"
             :key="chat?.id"
@@ -384,7 +384,8 @@ let filteredChats = computed(() => {
                 </ShadcnAlertDialogContent>
               </ShadcnAlertDialog>
             </div>
-            <div class="text-left sm:text-right">
+
+            <div>
               <span class="truncate text-muted-foreground">{{
                 chat?.model
               }}</span
