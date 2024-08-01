@@ -48,7 +48,7 @@ watch(
                   height="20"
                 />
                 <div class="grid gap-0.5">
-                  <p>
+                  <p class="truncate">
                     {{
                       POSSIBLE_AI_MODELS[model.split('/')[0]][
                         model.split('/')[1]

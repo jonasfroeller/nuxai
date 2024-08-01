@@ -72,42 +72,50 @@ const applyDrag = (filters: Filter[], dropResult: DropResult): Filter[] => {
 <template>
   <fieldset class="grid gap-2 p-4 mt-1 border rounded-lg">
     <legend class="px-1 -ml-1 text-sm font-medium">Order By Filter</legend>
-
-    <ShadcnScrollArea class="max-h-32">
+    <ShadcnScrollArea class="max-h-32" v-if="filters.length > 0">
       <Container @drop="onDrop" class="flex flex-col gap-1">
         <Draggable v-for="(filter, index) in filters" :key="index">
-          <div class="flex items-center gap-1 draggable-item">
-            <GripVertical class="w-8 h-8 cursor-grabbing" />
-            <ShadcnSelect v-model="filter.column">
-              <ShadcnSelectTrigger>
-                <ShadcnSelectValue placeholder="Select column" />
-              </ShadcnSelectTrigger>
-              <ShadcnSelectContent>
-                <ShadcnSelectGroup>
-                  <ShadcnSelectLabel>Column</ShadcnSelectLabel>
-                  <ShadcnSelectItem
-                    v-for="column in availableColumns(index)"
-                    :key="column"
-                    :value="column"
-                  >
-                    {{ column }}
-                  </ShadcnSelectItem>
-                </ShadcnSelectGroup>
-              </ShadcnSelectContent>
-            </ShadcnSelect>
-            <ShadcnSelect v-model="filter.direction">
-              <ShadcnSelectTrigger>
-                <ShadcnSelectValue placeholder="Select direction" />
-              </ShadcnSelectTrigger>
-              <ShadcnSelectContent>
-                <ShadcnSelectGroup>
-                  <ShadcnSelectLabel>Direction</ShadcnSelectLabel>
-                  <ShadcnSelectItem value="asc"> Ascending </ShadcnSelectItem>
-                  <ShadcnSelectItem value="desc"> Descending </ShadcnSelectItem>
-                </ShadcnSelectGroup>
-              </ShadcnSelectContent>
-            </ShadcnSelect>
-            <ShadcnButton variant="destructive" @click="removeFilter(index)"
+          <div
+            class="flex flex-wrap items-center gap-2 p-1 border rounded-md draggable-item"
+          >
+            <div class="flex w-full max-w-full gap-1 xl:w-fit">
+              <GripVertical class="w-8 h-8 cursor-grabbing" />
+              <ShadcnSelect v-model="filter.column">
+                <ShadcnSelectTrigger>
+                  <ShadcnSelectValue placeholder="Select column" />
+                </ShadcnSelectTrigger>
+                <ShadcnSelectContent>
+                  <ShadcnSelectGroup>
+                    <ShadcnSelectLabel>Column</ShadcnSelectLabel>
+                    <ShadcnSelectItem
+                      v-for="column in availableColumns(index)"
+                      :key="column"
+                      :value="column"
+                    >
+                      {{ column }}
+                    </ShadcnSelectItem>
+                  </ShadcnSelectGroup>
+                </ShadcnSelectContent>
+              </ShadcnSelect>
+              <ShadcnSelect v-model="filter.direction">
+                <ShadcnSelectTrigger>
+                  <ShadcnSelectValue placeholder="Select direction" />
+                </ShadcnSelectTrigger>
+                <ShadcnSelectContent>
+                  <ShadcnSelectGroup>
+                    <ShadcnSelectLabel>Direction</ShadcnSelectLabel>
+                    <ShadcnSelectItem value="asc"> Ascending </ShadcnSelectItem>
+                    <ShadcnSelectItem value="desc">
+                      Descending
+                    </ShadcnSelectItem>
+                  </ShadcnSelectGroup>
+                </ShadcnSelectContent>
+              </ShadcnSelect>
+            </div>
+            <ShadcnButton
+              class="flex-grow w-full xl:w-fit"
+              variant="destructive"
+              @click="removeFilter(index)"
               >Remove</ShadcnButton
             >
           </div>

@@ -28,10 +28,15 @@ const { headerNavigationElement } = storeToRefs(headerNavigationStore); // don't
           class="truncate"
           @click="clear().finally(async () => await navigateTo('/home'))"
         >
-          Sign Out {{ user?.primary_email.substring(0, 15)
-          }}{{
-            user?.primary_email && user?.primary_email.length > 15 ? '...' : ''
-          }}
+          Sign Out
+          <template class="hidden lg:block"
+            >{{ user?.primary_email.substring(0, 15)
+            }}{{
+              user?.primary_email && user?.primary_email.length > 15
+                ? '...'
+                : ''
+            }}</template
+          >
         </Button>
         <ThemeToggle />
       </div>

@@ -9,6 +9,7 @@ import {
   Delete,
   Loader2,
   Mouse,
+  Settings2,
 } from 'lucide-vue-next';
 import { useChat, type Message } from '@ai-sdk/vue'; // NOTE: can only be called in setup scripts ("Could not get current instance, check to make sure that `useSwrv` is declared in the top level of the setup function.")
 import { toast } from 'vue-sonner';
@@ -228,17 +229,10 @@ onMounted(async () => {
   await loadChatMessages(user.value?.id ?? -1, selectedAiChat.value.id).then(
     () => {
       isLoading.value = false;
+      currentChatMessageHistoryClear();
     }
   );
 });
-
-// Send Message on CTRL + ENTER
-function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
-  if (currentChatMessage.value.trim() === '') return;
-  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-    handleChatMessageSubmit();
-  }
-}
 
 // scroll to bottom
 const $scrollArea = ref();
@@ -266,13 +260,76 @@ watchOnce(isLoading, () => {
     }
   }, 500);
 });
+
+async function generateMarkdown() {
+  const updatedCurrentChatMessage = await generateMarkdownFromUrl(
+    urlToFetchHtmlFrom.value,
+    currentChatMessage.value
+  );
+
+  if (updatedCurrentChatMessage) {
+    currentChatMessage.value = updatedCurrentChatMessage;
+  }
+}
+
+// Send Message on CTRL + ENTER && allow message history
+function handleInputFieldKeyboardEvents(event: KeyboardEvent) {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+    submitMessage();
+  }
+
+  if ((event.ctrlKey || event.metaKey) && event.key === 'ArrowUp') {
+    currentChatMessageRedo();
+  }
+
+  if ((event.ctrlKey || event.metaKey) && event.key === 'ArrowDown') {
+    currentChatMessageUndo();
+  }
+}
+
+function submitMessage() {
+  if (currentChatMessage.value.trim() === '') return;
+  currentChatMessageCommit();
+  handleChatMessageSubmit();
+}
+
+const {
+  // history: currentChatMessageHistory,
+  commit: currentChatMessageCommit,
+  undo: currentChatMessageUndo,
+  redo: currentChatMessageRedo,
+  clear: currentChatMessageHistoryClear,
+} = useManualRefHistory(currentChatMessage, {
+  capacity: 3,
+});
+
+// const isDesktop = useMediaQuery('(min-width: 768px)');
 </script>
 
 <template>
   <div
-    class="relative flex flex-col h-full min-h-[60vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 w-[calc(100%-2rem)] order-1 2xl:order-2"
+    class="relative flex flex-col h-full min-h-[60vh] max-h-[75vh] rounded-xl bg-muted/50 p-4 order-1 2xl:order-2"
   >
     <div class="absolute z-10 left-3 top-3">
+      <ShadcnDrawer>
+        <ShadcnDrawerTrigger as-child>
+          <ShadcnButton variant="ghost" size="icon" class="lg:hidden">
+            <Settings2 class="size-6" />
+            <span class="sr-only">Settings</span>
+          </ShadcnButton>
+        </ShadcnDrawerTrigger>
+        <ShadcnDrawerContent class="max-h-[90vh] p-2">
+          <ShadcnDrawerHeader>
+            <ShadcnDrawerTitle>Configuration and Chats</ShadcnDrawerTitle>
+            <ShadcnDrawerDescription>
+              Configure the settings for the model and switch between chats.
+            </ShadcnDrawerDescription>
+          </ShadcnDrawerHeader>
+          <AiChatModelConfiguration />
+          <ShadcnSeparator class="my-2 bg-transparent" />
+          <AiChats :useSmall="true" />
+        </ShadcnDrawerContent>
+      </ShadcnDrawer>
       <ShadcnButton
         type="button"
         size="icon"
@@ -357,12 +414,7 @@ watchOnce(isLoading, () => {
     </div>
 
     <form
-      @submit.prevent="
-        () => {
-          if (currentChatMessage.trim() === '') return;
-          handleChatMessageSubmit();
-        }
-      "
+      @submit.prevent="submitMessage"
       class="relative flex-shrink-0 overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring"
     >
       <ShadcnLabel for="message" class="sr-only"> Message </ShadcnLabel>
@@ -373,7 +425,7 @@ watchOnce(isLoading, () => {
         class="p-3 border-0 shadow-none resize-none max-h-28 focus-visible:ring-0"
         @keydown="handleInputFieldKeyboardEvents"
       />
-      <div class="flex items-center p-3 pt-0">
+      <div class="flex flex-wrap items-center p-3 pt-0">
         <ShadcnTooltipProvider>
           <ShadcnTooltip>
             <ShadcnTooltipTrigger as-child>
@@ -421,17 +473,7 @@ watchOnce(isLoading, () => {
                   type="button"
                   variant="outline"
                   class="w-full"
-                  @click="
-                    async () => {
-                      const updatedCurrentChatMessage =
-                        await generateMarkdownFromUrl(
-                          urlToFetchHtmlFrom,
-                          currentChatMessage
-                        );
-                      if (updatedCurrentChatMessage)
-                        currentChatMessage = updatedCurrentChatMessage;
-                    }
-                  "
+                  @click="async () => await generateMarkdown()"
                 >
                   Add URL for further context
                 </ShadcnButton>
@@ -530,7 +572,7 @@ watchOnce(isLoading, () => {
             </ShadcnTooltipContent>
           </ShadcnTooltip>
         </ShadcnTooltipProvider>
-        <div class="flex items-center gap-1 ml-auto">
+        <div class="flex items-center w-full gap-1 sm:ml-auto sm:w-fit">
           <ShadcnTooltipProvider>
             <ShadcnTooltip>
               <ShadcnTooltipTrigger as-child>
@@ -538,6 +580,7 @@ watchOnce(isLoading, () => {
                   type="button"
                   variant="outline"
                   size="icon"
+                  class="px-2"
                   @click="currentChatMessage = ''"
                   :disabled="currentChatMessage.trim() === ''"
                 >
@@ -552,7 +595,7 @@ watchOnce(isLoading, () => {
           <ShadcnButton
             type="submit"
             size="sm"
-            class="gap-1.5"
+            class="gap-1.5 w-full"
             :disabled="
               chatResponseIsLoading || currentChatMessage.trim() === ''
             "

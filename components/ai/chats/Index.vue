@@ -10,8 +10,12 @@ import {
 } from 'lucide-vue-next';
 import type { AllowedAiModels } from '~/lib/types/ai.models';
 import type { MinimalChat, FullyFeaturedChat } from '~/lib/types/chat';
-const { console } = useLogger();
 
+defineProps<{
+  useSmall?: boolean;
+}>();
+
+const { console } = useLogger();
 const { persistChatConversationEdit, persistChatConversationDelete } = useAPI();
 const { user } = useUserSession();
 const { selectedAiChat, resetSelectedAiChatToDefaults } = useSelectedAiChat();
@@ -162,7 +166,7 @@ let filteredChats = computed(() => {
 <template>
   <div class="relative h-full p-2 border rounded-md">
     <div class="pb-2 bg-background">
-      <div class="flex items-center w-full gap-1">
+      <div class="flex flex-wrap items-center w-full gap-1">
         <div class="relative w-full">
           <ShadcnInput
             v-model="searchQuery"
@@ -293,6 +297,7 @@ let filteredChats = computed(() => {
       </div>
       <ShadcnScrollArea
         class="h-full"
+        :class="{ 'h-40': useSmall }"
         v-if="
           filteredChats &&
           Array.isArray(filteredChats) &&
@@ -302,7 +307,7 @@ let filteredChats = computed(() => {
         <div class="flex flex-col h-full gap-1">
           <div
             nuxt-client
-            class="flex justify-between flex-grow w-full gap-8 p-4 border rounded-sm border-border bg-background"
+            class="flex flex-wrap justify-between flex-grow w-full gap-3 p-4 border rounded-sm lg:gap-8 border-border bg-background"
             :id="String(chat?.id)"
             v-for="chat in filteredChats"
             :key="chat?.id"
@@ -311,13 +316,14 @@ let filteredChats = computed(() => {
             }"
           >
             <div class="hidden border-green-600"></div>
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col flex-grow gap-1">
               <div class="flex items-center gap-1">
                 <template v-if="chatToEdit.id === chat.id">
                   <ShadcnInput
                     @keydown.enter="saveEdit(chat.id, chat.name)"
                     @keydown.escape="chatToEdit.id = -1"
                     v-model="chatToEdit.name"
+                    class="flex-grow"
                   />
                   <ShadcnButton
                     variant="outline"
@@ -331,6 +337,7 @@ let filteredChats = computed(() => {
                       selectedAiChat?.id === chat?.id ? 'secondary' : 'outline'
                     "
                     @click="setSelectedChat(chat.id, chat.name, chat.model)"
+                    class="flex-grow"
                     >{{ chat?.name }}</ShadcnButton
                   >
                   <ShadcnButton
@@ -377,10 +384,11 @@ let filteredChats = computed(() => {
                 </ShadcnAlertDialogContent>
               </ShadcnAlertDialog>
             </div>
-            <div class="grid text-right">
+            <div class="text-left sm:text-right">
               <span class="truncate text-muted-foreground">{{
                 chat?.model
-              }}</span>
+              }}</span
+              ><br />
               <NuxtTime
                 class="text-muted-foreground"
                 :datetime="chat?.created_at ?? new Date()"
@@ -389,7 +397,7 @@ let filteredChats = computed(() => {
                 year="numeric"
                 hour="numeric"
                 minute="numeric"
-              />
+              /><br />
               <NuxtTime
                 class="text-muted-foreground"
                 :datetime="chat?.updated_at ?? new Date()"

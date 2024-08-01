@@ -2,7 +2,6 @@
 import {
   Book,
   LifeBuoy,
-  Settings,
   Settings2,
   Share,
   Import,
@@ -12,20 +11,11 @@ import {
 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
   DialogClose,
@@ -36,6 +26,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable';
 
 definePageMeta({
   name: 'Dashboard',
@@ -54,22 +49,7 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
   headerNavigationHeight.value = height.value;
 });
 
-type possibleDashboardTabs = 'chat' | 'chats';
-const selectedDashboardTab = ref<possibleDashboardTabs>('chat');
-const selectedDashboardTabFromLocalStorage =
-  useLocalStorage<possibleDashboardTabs>(
-    localStorageTopicKey('selected-dashboard-tab'),
-    'chat'
-  );
-
-watch(selectedDashboardTab, () => {
-  selectedDashboardTabFromLocalStorage.value = selectedDashboardTab.value;
-});
-
-onMounted(() => {
-  selectedDashboardTab.value = selectedDashboardTabFromLocalStorage.value;
-});
-
+const { width } = useWindowSize();
 // TODO: fix `[Vue warn]: Hydration node mismatch` on some Tooltip
 </script>
 
@@ -211,69 +191,55 @@ onMounted(() => {
         :style="{ top: headerNavigationHeight + 'px' }"
       >
         <div class="flex items-center gap-2">
-          <h1 class="text-xl font-semibold">Configuration Generator</h1>
-          <Drawer>
-            <DrawerTrigger as-child>
-              <Button variant="ghost" size="icon" class="md:hidden">
-                <Settings class="size-4" />
-                <span class="sr-only">Settings</span>
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent class="max-h-[80vh]">
-              <DrawerHeader>
-                <DrawerTitle>Configuration</DrawerTitle>
-                <DrawerDescription>
-                  Configure the settings for the model
-                </DrawerDescription>
-              </DrawerHeader>
-              <AiChatModelConfiguration />
-            </DrawerContent>
-          </Drawer>
+          <h1 class="text-xl font-semibold truncate">Chat</h1>
         </div>
         <div class="flex gap-2 pr-5">
           <Button
             variant="outline"
             size="sm"
-            class="ml-auto gap-1.5 text-sm"
+            class="ml-auto gap-1.5 text-sm truncate"
             disabled
           >
             <Import class="size-3.5" />
-            Import Code Repository To Analyze
+            <!-- Import Code Repository To Analyze -->
           </Button>
           <Button
             variant="outline"
             size="sm"
-            class="ml-auto gap-1.5 text-sm"
+            class="ml-auto gap-1.5 text-sm truncate"
             disabled
           >
             <Share class="size-3.5" />
-            Share
+            <!-- Share -->
           </Button>
         </div>
       </header>
-      <main
-        class="grid flex-1 w-full max-w-full grid-cols-1 gap-4 p-4 2xl:grid-cols-[33%,1fr]"
-      >
-        <Tabs
-          v-model="selectedDashboardTab"
-          default-value="chat"
-          class="h-screen max-h-[calc(100%-3rem)]"
+      <template v-if="width >= 1024">
+        <ResizablePanelGroup
+          id="handle-group-1"
+          direction="horizontal"
+          class="max-w-full mt-2"
         >
-          <TabsList class="flex justify-start w-full bg-muted/50">
-            <TabsTrigger value="chats"> All Chats </TabsTrigger>
-            <TabsTrigger value="chat"> Active Chat Information </TabsTrigger>
-          </TabsList>
-          <TabsContent value="chats" class="h-full">
-            <AiChats />
-          </TabsContent>
-          <TabsContent value="chat" class="h-full">
-            <AiChatInformation />
-            <!-- FILES OF CHAT -->
-          </TabsContent>
-        </Tabs>
-        <AiChat :key="selectedAiChatKey" />
-        <!-- MESSAGES OF CHAT (needs key, to rerender chat, so that useChat gets a new ID, useChat can not be put anywhere als then the setup script, because some functionality depends on that environment) -->
-      </main>
+          <ResizablePanel
+            id="handle-panel-1"
+            :default-size="40"
+            :min-size="30"
+            :max-size="50"
+          >
+            <AiChatTabs />
+          </ResizablePanel>
+          <ResizableHandle id="handle-handle-1" with-handle />
+          <ResizablePanel id="handle-panel-2" :default-size="60" class="px-2">
+            <AiChat :key="selectedAiChatKey" />
+            <!-- MESSAGES OF CHAT (needs key, to rerender chat, so that useChat gets a new ID, useChat can not be put anywhere als then the setup script, because some functionality depends on that environment) -->
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </template>
+      <template v-else>
+        <div class="pt-2 pr-2">
+          <AiChat :key="selectedAiChatKey" />
+        </div>
+      </template>
     </div>
   </div>
 </template>

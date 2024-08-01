@@ -69,7 +69,7 @@ onMounted(async () => {
         Generated Configuration File
       </legend>
       <div
-        class="grid grid-cols-2 gap-3"
+        class="grid grid-cols-1 gap-3 xl:grid-cols-2"
         v-if="!selectedAiChatIsPlayground && fetchedFiles.length > 0"
       >
         <div>
@@ -187,7 +187,7 @@ onMounted(async () => {
           </template></ShadcnLabel
         >
         <ShadcnScrollArea
-          class="h-[14.45rem] flex-grow border rounded-sm bg-primary/10 max-w-[35rem]"
+          class="h-[14.45rem] flex-grow border rounded-sm bg-primary/10 max-w-full"
         >
           <template v-if="isLoading">
             <p class="px-4 py-4">
