@@ -21,6 +21,9 @@ export default defineNuxtConfig({
     timeline: {
       enabled: true,
     },
+    vscode: {
+      reuseExistingServer: true
+    },
   },
 
   devServer: {
