@@ -178,8 +178,9 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-time',
     'nuxt-security',
-    '@nuxtjs/robots',
     // "nuxt-og-image"
+    '@nuxtjs/robots',
+    "nuxt-monaco-editor"
   ],
 
   mdc: {

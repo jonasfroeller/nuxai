@@ -1,85 +1,21 @@
 <script lang="ts" setup>
 import { cn } from '~/lib/utils';
-import { Check, ChevronsUpDown, Loader2 } from 'lucide-vue-next';
-import { uniqWith } from 'es-toolkit';
+import { Check, ChevronsUpDown, Loader2, Diff } from 'lucide-vue-next';
 
-const { fetchedFiles, loadFiles } = useFetchFiles();
 const { user } = useUserSession();
 const { selectedAiChat, selectedAiChatIsPlayground } = useSelectedAiChat();
-
-const selectedFileVersionId = ref<string>();
-const selectedFileVersion = computed(() => {
-  return versionsForSelectedFileType.value.find(
-    (file) => file.id === Number(selectedFileVersionId.value)
-  );
-});
-
-watch(selectedFileVersionId, () => {
-  if (selectedFileVersion.value) {
-    fileNameOfFileToDownload.value = `${
-      selectedFileVersion.value?.title
-        ? `${selectedFileVersion.value?.title}-`
-        : ''
-    }${new Date(
-      selectedFileVersion.value?.updated_at ?? Date.now()
-    ).getTime()}`;
-  }
-});
-
-const selectedFileVersionDate = computed(() => {
-  return selectedFileVersion.value?.updated_at
-    ? new Date(selectedFileVersion.value?.updated_at)
-    : null;
-});
-const selectedFileVersionMarkdown = computed(() => {
-  return `\`\`\`${selectedFileVersion.value?.language}${
-    selectedFileVersion.value?.title
-      ? `:${selectedFileVersion.value?.title}`
-      : ''
-  }\n${selectedFileVersion.value?.text}\n\`\`\``;
-});
-const fileNameOfFileToDownload = ref<string>();
-const downloadFile = () => {
-  const fileContent = selectedFileVersion.value
-    ? selectedFileVersion.value.text
-    : '';
-  const fileType =
-    selectedFileVersion.value?.extension ?? selectedFileVersion.value?.language;
-  const blob = new Blob([fileContent], {
-    type: 'text/plain',
-  });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `${fileNameOfFileToDownload.value}.${fileType}`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-};
-
-const filetypeSearchIsOpen = ref(false);
-const filetypeSearchSelectedValue = ref<string>(''); // BundledLanguage
-const filetypeSearchSelectableValues = computed(() => {
-  return uniqWith(
-    fetchedFiles.value.map((file) => {
-      return {
-        value: file.language,
-        label:
-          supportedShikiLanguagesWithInfo.find(
-            (language) => language.id === file.language
-          )?.name ?? 'Unknown',
-      };
-    }),
-    (a, b) => a.value === b.value
-  );
-});
-
-const versionsForSelectedFileType = computed(() => {
-  return fetchedFiles.value.filter(
-    (file) => file.language === filetypeSearchSelectedValue.value
-  );
-});
+const { loadFiles, fetchedFiles } = useFetchFiles();
+const {
+  filetypeSearchIsOpen,
+  filetypeSearchSelectedValue,
+  filetypeSearchSelectableValues,
+  selectedFileVersion,
+  selectedFileVersionMarkdown,
+  downloadFile,
+  fileNameOfFileToDownload,
+  fileToCompareTo,
+  versionsForSelectedFileType,
+} = useFiles();
 
 const isLoading = ref(true);
 onMounted(async () => {
@@ -88,11 +24,7 @@ onMounted(async () => {
   });
 });
 
-/* (async () => {
-  await loadFiles(user.value?.id ?? -1, selectedAiChat.value.id).then(() => {
-    isLoading.value = false;
-  });
-})(); */
+const colorMode = useColorMode();
 </script>
 
 <template>
@@ -167,47 +99,9 @@ onMounted(async () => {
           </ShadcnPopover>
         </div>
         <div class="flex-grow">
-          <ShadcnLabel
-            >Message/Version<template v-if="selectedFileVersionDate">
-              (<NuxtTime
-                class="text-muted-foreground"
-                :datetime="selectedFileVersionDate"
-                day="numeric"
-                month="numeric"
-                year="numeric"
-                hour="numeric"
-                minute="numeric"
-              />)
-            </template>
-          </ShadcnLabel>
-          <ShadcnSelect
-            :disabled="filetypeSearchSelectedValue === ''"
-            v-model="selectedFileVersionId"
-          >
-            <ShadcnSelectTrigger>
-              <ShadcnSelectValue placeholder="Select a version..." />
-            </ShadcnSelectTrigger>
-            <ShadcnSelectContent>
-              <ShadcnSelectItem
-                :value="String(file.id)"
-                v-for="file in versionsForSelectedFileType"
-              >
-                {{ file.title }} {{ file.chat_conversation_message_id }}/{{
-                  file.id
-                }}
-                (<NuxtTime
-                  class="text-muted-foreground"
-                  :datetime="new Date(file.updated_at ?? new Date())"
-                  day="numeric"
-                  month="long"
-                  year="numeric"
-                  hour="numeric"
-                  minute="numeric"
-                  second="numeric"
-                />)
-              </ShadcnSelectItem>
-            </ShadcnSelectContent>
-          </ShadcnSelect>
+          <AiChatFileVersionsSelect
+            :is-disabled="filetypeSearchSelectedValue === ''"
+          />
         </div>
       </div>
       <div
@@ -240,8 +134,57 @@ onMounted(async () => {
               <ClientOnly>
                 <MDC :value="selectedFileVersionMarkdown" />
               </ClientOnly>
+              <span class="absolute flex items-center top-2 right-2">
+                <ShadcnDialog v-if="versionsForSelectedFileType.length > 1">
+                  <ShadcnDialogTrigger as-child>
+                    <ShadcnButton variant="link" size="icon" as-child>
+                      <template>
+                        <Diff class="w-5 h-5 cursor-pointer text-foreground" />
+                      </template>
+                    </ShadcnButton>
+                  </ShadcnDialogTrigger>
+                  <ShadcnDialogContent>
+                    <ShadcnDialogHeader>
+                      <ShadcnDialogTitle
+                        >Difference between versions</ShadcnDialogTitle
+                      >
+                      <ShadcnDialogDescription>
+                        Select a version to see the difference.
+                      </ShadcnDialogDescription>
+                    </ShadcnDialogHeader>
 
-              <span class="absolute top-2 right-2">
+                    <AiChatFileVersionsSelect
+                      :is-disabled="filetypeSearchSelectedValue === ''"
+                      :include-diff="true"
+                    />
+                    <MonacoDiffEditor
+                      class="h-96"
+                      :original="selectedFileVersion.text"
+                      v-model="fileToCompareTo"
+                      :options="{
+                        theme:
+                          colorMode.value === 'light' ? 'vs-light' : 'vs-dark',
+                      }"
+                    >
+                      Loading...
+                    </MonacoDiffEditor>
+
+                    <ShadcnDialogFooter>
+                      <ShadcnButton
+                        type="button"
+                        variant="secondary"
+                        @click="downloadFile(fileToCompareTo)"
+                      >
+                        Download modified file
+                      </ShadcnButton>
+                      <ShadcnDialogClose as-child>
+                        <ShadcnButton type="button" variant="secondary">
+                          Close
+                        </ShadcnButton>
+                      </ShadcnDialogClose>
+                    </ShadcnDialogFooter>
+                  </ShadcnDialogContent>
+                </ShadcnDialog>
                 <CopyToClipboard :text="selectedFileVersion?.text" />
               </span>
             </template>
@@ -263,9 +206,13 @@ onMounted(async () => {
           <legend class="px-1 -ml-1 text-sm font-medium">Options</legend>
           <div>
             <ShadcnLabel for="file-name"> File Name </ShadcnLabel>
-            <ShadcnInput id="file-name" v-model="fileNameOfFileToDownload" />
+            <div class="flex flex-col">
+              <ShadcnInput id="file-name" v-model="fileNameOfFileToDownload" />
+              <ShadcnButton class="mt-1" @click="downloadFile">
+                Download
+              </ShadcnButton>
+            </div>
           </div>
-          <ShadcnButton @click="downloadFile">Download</ShadcnButton>
         </fieldset>
       </div>
       <div v-else>
