@@ -106,7 +106,6 @@ export const updateChatConversationMessage = async (
   return updatedChatConversationMessage[0];
 };
 
-// TODO: delete AI response to that message (TODO: maybe store a reference to the message before and after the message)
 export const deleteChatConversationMessage = async (
   id: GetChatConversationMessage['id']
 ) => {
