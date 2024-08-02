@@ -1,16 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Icon } from '@iconify/vue';
-import Separator from '@/components/ui/separator/Separator.vue';
 import {
   validateEmailInput,
   validatePasswordInput,
@@ -62,20 +51,20 @@ async function signIn() {
 
 <template>
   <div>
-    <Card class="mx-2 max-full">
-      <CardHeader>
-        <CardTitle class="text-2xl"> Login </CardTitle>
-        <CardDescription>
+    <ShadcnCard class="mx-2 max-full">
+      <ShadcnCardHeader>
+        <ShadcnCardTitle class="text-2xl"> Login </ShadcnCardTitle>
+        <ShadcnCardDescription>
           Enter your email below to login to your account
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </ShadcnCardDescription>
+      </ShadcnCardHeader>
+      <ShadcnCardContent>
         <form>
           <div class="grid gap-4">
             <div>
               <div class="grid gap-2 mb-1">
-                <Label for="email">Email</Label>
-                <Input
+                <ShadcnLabel for="email">Email</ShadcnLabel>
+                <ShadcnInput
                   @keydown.enter="signIn()"
                   id="email"
                   type="email"
@@ -99,7 +88,7 @@ async function signIn() {
             <div>
               <div class="grid gap-2 mb-1">
                 <div class="flex items-center">
-                  <Label for="password">Password</Label>
+                  <ShadcnLabel for="password">Password</ShadcnLabel>
                   <NuxtLink
                     to="/new-password"
                     class="inline-block ml-auto text-sm underline"
@@ -107,7 +96,7 @@ async function signIn() {
                     Forgot your password?
                   </NuxtLink>
                 </div>
-                <Input
+                <ShadcnInput
                   @keydown.enter="signIn()"
                   id="password"
                   type="password"
@@ -128,12 +117,17 @@ async function signIn() {
               </ul>
             </div>
 
-            <Button type="button" class="w-full" @click="signIn()">
+            <ShadcnButton type="button" class="w-full" @click="signIn()">
               Login
-            </Button>
-            <Separator label="or Oauth" class="my-2" />
+            </ShadcnButton>
+            <ShadcnSeparator label="or Oauth" class="my-2" />
             <div class="flex flex-col gap-1">
-              <Button type="button" variant="outline" class="w-full" as-child>
+              <ShadcnButton
+                type="button"
+                variant="outline"
+                class="w-full"
+                as-child
+              >
                 <a href="/auth/google">
                   <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
                   Sign in/up with Google
@@ -142,8 +136,13 @@ async function signIn() {
                     class="h-[1.2rem] w-[1.2rem] ml-2"
                   />
                 </a>
-              </Button>
-              <Button type="button" variant="outline" class="w-full" as-child>
+              </ShadcnButton>
+              <ShadcnButton
+                type="button"
+                variant="outline"
+                class="w-full"
+                as-child
+              >
                 <a href="/auth/github">
                   <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
                   Sign in/up with GitHub
@@ -152,17 +151,17 @@ async function signIn() {
                     class="h-[1.4rem] w-[1.4rem] ml-2"
                   />
                 </a>
-              </Button>
+              </ShadcnButton>
             </div>
-            <Separator />
+            <ShadcnSeparator />
           </div>
           <div class="mt-4 text-sm text-center">
             Don't have an account?
             <NuxtLink to="/sign-up" class="underline"> Sign up </NuxtLink>
           </div>
         </form>
-      </CardContent>
-    </Card>
+      </ShadcnCardContent>
+    </ShadcnCard>
   </div>
 </template>
 

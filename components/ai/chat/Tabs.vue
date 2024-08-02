@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
 type possibleDashboardTabs = 'chat' | 'chats';
 const selectedDashboardTab = ref<possibleDashboardTabs>('chat');
 const selectedDashboardTabFromLocalStorage =
@@ -20,23 +18,25 @@ onMounted(() => {
 
 <template>
   <div>
-    <Tabs
+    <ShadcnTabs
       v-model="selectedDashboardTab"
       default-value="chat"
       class="h-screen max-h-[calc(100%-3rem)] pr-2"
     >
-      <TabsList class="flex justify-start w-full bg-muted/50">
-        <TabsTrigger value="chats"> All Chats </TabsTrigger>
-        <TabsTrigger value="chat"> Active Chat Information </TabsTrigger>
-      </TabsList>
-      <TabsContent value="chats" class="h-full">
+      <ShadcnTabsList class="flex justify-start w-full bg-muted/50">
+        <ShadcnTabsTrigger value="chats"> All Chats </ShadcnTabsTrigger>
+        <ShadcnTabsTrigger value="chat">
+          Active Chat Information
+        </ShadcnTabsTrigger>
+      </ShadcnTabsList>
+      <ShadcnTabsContent value="chats" class="h-full">
         <AiChats />
-      </TabsContent>
-      <TabsContent value="chat" class="h-full">
+      </ShadcnTabsContent>
+      <ShadcnTabsContent value="chat" class="h-full">
         <AiChatInformation />
         <!-- FILES OF CHAT -->
-      </TabsContent>
-    </Tabs>
+      </ShadcnTabsContent>
+    </ShadcnTabs>
   </div>
 </template>
 

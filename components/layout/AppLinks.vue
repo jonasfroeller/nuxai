@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Menu } from 'lucide-vue-next';
 
 defineProps({
@@ -38,16 +32,16 @@ const useSsrSaveId = () => useId();
 <template>
   <div nuxt-client class="flex justify-center">
     <div v-if="windowWidth <= 700 && layout === 'navigation'">
-      <DropdownMenu>
-        <DropdownMenuTrigger><Menu /></DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem v-for="route in visibleRoutes">
+      <ShadcnDropdownMenu>
+        <ShadcnDropdownMenuTrigger><Menu /></ShadcnDropdownMenuTrigger>
+        <ShadcnDropdownMenuContent>
+          <ShadcnDropdownMenuItem v-for="route in visibleRoutes">
             <NuxtLink :to="route.path" activeClass="underline">
               <p :key="useSsrSaveId">{{ route.name }}</p>
             </NuxtLink>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </ShadcnDropdownMenuItem>
+        </ShadcnDropdownMenuContent>
+      </ShadcnDropdownMenu>
     </div>
 
     <ul

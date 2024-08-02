@@ -1,16 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Icon } from '@iconify/vue';
-import Separator from '@/components/ui/separator/Separator.vue';
 import {
   validateEmailInput,
   validatePasswordInput,
@@ -62,20 +51,20 @@ async function signUp() {
 
 <template>
   <div>
-    <Card class="max-w-full mx-2">
-      <CardHeader>
-        <CardTitle class="text-xl"> Sign Up </CardTitle>
-        <CardDescription>
+    <ShadcnCard class="max-w-full mx-2">
+      <ShadcnCardHeader>
+        <ShadcnCardTitle class="text-xl"> Sign Up </ShadcnCardTitle>
+        <ShadcnCardDescription>
           Enter your information to create an account
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </ShadcnCardDescription>
+      </ShadcnCardHeader>
+      <ShadcnCardContent>
         <form>
           <div class="grid gap-4">
             <div>
               <div class="grid gap-2 mb-1">
-                <Label for="email">Email</Label>
-                <Input
+                <ShadcnLabel for="email">Email</ShadcnLabel>
+                <ShadcnInput
                   id="email"
                   type="email"
                   name="email"
@@ -97,7 +86,7 @@ async function signUp() {
             </div>
             <div>
               <div class="grid gap-2 mb-1">
-                <Input
+                <ShadcnInput
                   id="password"
                   type="password"
                   name="password"
@@ -105,7 +94,7 @@ async function signUp() {
                   required
                   autocomplete="current-password"
                 />
-                <Label for="password">Password</Label>
+                <ShadcnLabel for="password">Password</ShadcnLabel>
               </div>
 
               <ul v-if="passwordErrors?.length > 0" class="pl-5 list-disc">
@@ -117,12 +106,17 @@ async function signUp() {
                 </li>
               </ul>
             </div>
-            <Button type="button" class="w-full" @click="signUp()">
+            <ShadcnButton type="button" class="w-full" @click="signUp()">
               Create an account
-            </Button>
-            <Separator label="or Oauth" class="my-2" />
+            </ShadcnButton>
+            <ShadcnSeparator label="or Oauth" class="my-2" />
             <div class="flex flex-col gap-1">
-              <Button type="button" variant="outline" class="w-full" as-child>
+              <ShadcnButton
+                type="button"
+                variant="outline"
+                class="w-full"
+                as-child
+              >
                 <a href="/auth/google">
                   <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
                   Sign in/up with Google
@@ -131,8 +125,13 @@ async function signUp() {
                     class="h-[1.2rem] w-[1.2rem] ml-2"
                   />
                 </a>
-              </Button>
-              <Button type="button" variant="outline" class="w-full" as-child>
+              </ShadcnButton>
+              <ShadcnButton
+                type="button"
+                variant="outline"
+                class="w-full"
+                as-child
+              >
                 <a href="/auth/github">
                   <!-- needs to be a instead of NuxtLink, because it is not recognized by the Nuxt router, but does exist -->
                   Sign in/up with GitHub
@@ -141,7 +140,7 @@ async function signUp() {
                     class="h-[1.4rem] w-[1.4rem] ml-2"
                   />
                 </a>
-              </Button>
+              </ShadcnButton>
             </div>
           </div>
           <div class="mt-4 text-sm text-center">
@@ -149,8 +148,8 @@ async function signUp() {
             <NuxtLink to="/login" class="underline"> Sign in </NuxtLink>
           </div>
         </form>
-      </CardContent>
-    </Card>
+      </ShadcnCardContent>
+    </ShadcnCard>
   </div>
 </template>
 

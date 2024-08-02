@@ -9,23 +9,6 @@ import {
   SquareUser,
   Home,
 } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 
 definePageMeta({
   name: 'Dashboard',
@@ -43,7 +26,7 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
   headerNavigationHeight.value = height.value;
 });
 
-// TODO: fix `[Vue warn]: Hydration node mismatch` on some Tooltip
+// TODO: fix `[Vue warn]: Hydration node mismatch` on some ShadcnTooltip
 </script>
 
 <template>
@@ -52,32 +35,32 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
       class="fixed top-0 left-0 flex flex-col h-full border-t border-r inset-y bg-[hsl(var(--background))] z-50"
     >
       <div class="p-2 border-b">
-        <Button variant="outline" size="icon" aria-label="Home" as-child>
+        <ShadcnButton variant="outline" size="icon" aria-label="Home" as-child>
           <NuxtLink to="/home">
             <Home class="size-5 fill-foreground" />
           </NuxtLink>
-        </Button>
+        </ShadcnButton>
       </div>
       <nav class="grid gap-1 p-2">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button
+        <ShadcnTooltipProvider>
+          <ShadcnTooltip>
+            <ShadcnTooltipTrigger as-child>
+              <ShadcnButton
                 variant="ghost"
                 size="icon"
                 class="rounded-lg bg-muted"
                 aria-label="Playground"
               >
                 <SquareTerminal class="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" :side-offset="5">
+              </ShadcnButton>
+            </ShadcnTooltipTrigger>
+            <ShadcnTooltipContent side="right" :side-offset="5">
               Playground
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button
+            </ShadcnTooltipContent>
+          </ShadcnTooltip>
+          <ShadcnTooltip>
+            <ShadcnTooltipTrigger as-child>
+              <ShadcnButton
                 variant="ghost"
                 size="icon"
                 class="rounded-lg"
@@ -91,53 +74,57 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
                 >
                   <Book class="size-5" />
                 </NuxtLink>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" :side-offset="5">
+              </ShadcnButton>
+            </ShadcnTooltipTrigger>
+            <ShadcnTooltipContent side="right" :side-offset="5">
               Documentation
               <!-- TODO: waiting for https://github.com/scalar/scalar/issues/2431 -->
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <Dialog>
-              <DialogTrigger as-child>
-                <TooltipTrigger as-child>
-                  <Button
+            </ShadcnTooltipContent>
+          </ShadcnTooltip>
+          <ShadcnTooltip>
+            <ShadcnDialog>
+              <ShadcnDialogTrigger as-child>
+                <ShadcnTooltipTrigger as-child>
+                  <ShadcnButton
                     variant="ghost"
                     size="icon"
                     class="rounded-lg"
                     aria-label="Settings"
                   >
                     <Settings2 class="size-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right" :side-offset="5">
+                  </ShadcnButton>
+                </ShadcnTooltipTrigger>
+                <ShadcnTooltipContent side="right" :side-offset="5">
                   Settings
-                </TooltipContent>
-              </DialogTrigger>
-              <DialogContent class="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Settings</DialogTitle>
-                  <DialogDescription>Theme Settings</DialogDescription>
-                </DialogHeader>
+                </ShadcnTooltipContent>
+              </ShadcnDialogTrigger>
+              <ShadcnDialogContent class="sm:max-w-md">
+                <ShadcnDialogHeader>
+                  <ShadcnDialogTitle>Settings</ShadcnDialogTitle>
+                  <ShadcnDialogDescription
+                    >Theme Settings</ShadcnDialogDescription
+                  >
+                </ShadcnDialogHeader>
                 <div class="flex items-center space-x-2">
                   <ThemeToggle />
                 </div>
-                <DialogFooter class="sm:justify-start">
-                  <DialogClose as-child>
-                    <Button type="button" variant="secondary"> Close </Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </Tooltip>
-        </TooltipProvider>
+                <ShadcnDialogFooter class="sm:justify-start">
+                  <ShadcnDialogClose as-child>
+                    <ShadcnButton type="button" variant="secondary">
+                      Close
+                    </ShadcnButton>
+                  </ShadcnDialogClose>
+                </ShadcnDialogFooter>
+              </ShadcnDialogContent>
+            </ShadcnDialog>
+          </ShadcnTooltip>
+        </ShadcnTooltipProvider>
       </nav>
       <nav class="grid gap-1 p-2 mt-auto">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button
+        <ShadcnTooltipProvider>
+          <ShadcnTooltip>
+            <ShadcnTooltipTrigger as-child>
+              <ShadcnButton
                 variant="ghost"
                 size="icon"
                 class="mt-auto rounded-lg"
@@ -151,15 +138,15 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
                 >
                   <LifeBuoy class="size-5" />
                 </NuxtLink>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" :side-offset="5">
+              </ShadcnButton>
+            </ShadcnTooltipTrigger>
+            <ShadcnTooltipContent side="right" :side-offset="5">
               Help
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button
+            </ShadcnTooltipContent>
+          </ShadcnTooltip>
+          <ShadcnTooltip>
+            <ShadcnTooltipTrigger as-child>
+              <ShadcnButton
                 variant="ghost"
                 size="icon"
                 class="mt-auto rounded-lg"
@@ -169,13 +156,13 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
                 <NuxtLink to="/account">
                   <SquareUser class="size-5" />
                 </NuxtLink>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" :side-offset="5">
+              </ShadcnButton>
+            </ShadcnTooltipTrigger>
+            <ShadcnTooltipContent side="right" :side-offset="5">
               Account
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </ShadcnTooltipContent>
+          </ShadcnTooltip>
+        </ShadcnTooltipProvider>
       </nav>
     </aside>
     <div class="flex flex-col">
@@ -187,7 +174,7 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
           <h1 class="text-xl font-semibold truncate">Chat</h1>
         </div>
         <div class="flex gap-2 pr-5">
-          <Button
+          <ShadcnButton
             variant="outline"
             size="sm"
             class="ml-auto gap-1.5 text-sm truncate"
@@ -195,8 +182,8 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
           >
             <Import class="size-3.5" />
             <!-- Import Code Repository To Analyze -->
-          </Button>
-          <Button
+          </ShadcnButton>
+          <ShadcnButton
             variant="outline"
             size="sm"
             class="ml-auto gap-1.5 text-sm truncate"
@@ -204,7 +191,7 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
           >
             <Share class="size-3.5" />
             <!-- Share -->
-          </Button>
+          </ShadcnButton>
         </div>
       </header>
       <Dashboard />

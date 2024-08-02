@@ -1,19 +1,4 @@
 <script setup lang="ts">
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import Button from '~/components/ui/button/Button.vue';
-import Separator from '~/components/ui/separator/Separator.vue';
-import Input from '~/components/ui/input/Input.vue';
-import Label from '~/components/ui/label/Label.vue';
 import { Loader2 } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 
@@ -71,14 +56,14 @@ definePageMeta({
 <template>
   <div class="p-8">
     <h1 class="text-3xl font-bold">Account</h1>
-    <Separator class="h-1 my-2" />
+    <ShadcnSeparator class="h-1 my-2" />
     <AuthState>
       <template #default="{ loggedIn }">
         <div class="flex flex-wrap gap-8">
           <div>
-            <Label for="email">Email</Label>
+            <ShadcnLabel for="email">Email</ShadcnLabel>
             <div class="flex gap-2">
-              <Input
+              <ShadcnInput
                 id="email"
                 type="email"
                 name="email"
@@ -87,21 +72,21 @@ definePageMeta({
                 :placeholder="session?.user?.primary_email"
                 required
               />
-              <Button
+              <ShadcnButton
                 type="button"
                 v-if="loggedIn"
                 @click="updateAccount"
                 :disabled="!emailIsNew || updatedUser.email?.trim() === ''"
               >
                 Update
-              </Button>
+              </ShadcnButton>
             </div>
           </div>
           <div>
-            <Label for="password">Password</Label>
+            <ShadcnLabel for="password">Password</ShadcnLabel>
             <div class="flex gap-2">
               <!-- &bull; -->
-              <Input
+              <ShadcnInput
                 id="password"
                 type="password"
                 name="password"
@@ -109,7 +94,7 @@ definePageMeta({
                 placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
                 required
               />
-              <Input
+              <ShadcnInput
                 id="password"
                 type="password"
                 name="password"
@@ -117,7 +102,7 @@ definePageMeta({
                 placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
                 required
               />
-              <Button
+              <ShadcnButton
                 type="button"
                 v-if="loggedIn"
                 @click="updateAccount"
@@ -128,50 +113,59 @@ definePageMeta({
                 "
               >
                 Update
-              </Button>
+              </ShadcnButton>
             </div>
           </div>
         </div>
         <DevOnly>
-          <Separator class="h-1 my-2" />
+          <ShadcnSeparator class="h-1 my-2" />
           <b>Debug:</b> {{ session }}
         </DevOnly>
-        <Separator class="h-1 my-2" />
-        <Button class="mr-1" type="button" v-if="loggedIn" @click="signOut">
+        <ShadcnSeparator class="h-1 my-2" />
+        <ShadcnButton
+          class="mr-1"
+          type="button"
+          v-if="loggedIn"
+          @click="signOut"
+        >
           Logout
-        </Button>
-        <AlertDialog v-if="loggedIn">
-          <AlertDialogTrigger as-child>
-            <Button type="button" variant="destructive"> Delete </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
+        </ShadcnButton>
+        <ShadcnAlertDialog v-if="loggedIn">
+          <ShadcnAlertDialogTrigger as-child>
+            <ShadcnButton type="button" variant="destructive">
+              Delete
+            </ShadcnButton>
+          </ShadcnAlertDialogTrigger>
+          <ShadcnAlertDialogContent>
+            <ShadcnAlertDialogHeader>
+              <ShadcnAlertDialogTitle
+                >Are you absolutely sure?</ShadcnAlertDialogTitle
+              >
+              <ShadcnAlertDialogDescription>
                 This action cannot be undone. This will permanently delete your
                 account and remove your data from our servers.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction as-child>
-                <Button
+              </ShadcnAlertDialogDescription>
+            </ShadcnAlertDialogHeader>
+            <ShadcnAlertDialogFooter>
+              <ShadcnAlertDialogCancel>Cancel</ShadcnAlertDialogCancel>
+              <ShadcnAlertDialogAction as-child>
+                <ShadcnButton
                   type="button"
                   variant="destructive"
                   @click="deleteAccount"
                 >
                   Delete
-                </Button>
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                </ShadcnButton>
+              </ShadcnAlertDialogAction>
+            </ShadcnAlertDialogFooter>
+          </ShadcnAlertDialogContent>
+        </ShadcnAlertDialog>
       </template>
       <template #placeholder>
-        <Button disabled>
+        <ShadcnButton disabled>
           <Loader2 class="w-4 h-4 mr-2 animate-spin" />
           Loading Account Data...
-        </Button>
+        </ShadcnButton>
       </template>
     </AuthState>
   </div>

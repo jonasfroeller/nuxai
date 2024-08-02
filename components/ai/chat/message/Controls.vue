@@ -1,15 +1,9 @@
 <script lang="ts" setup>
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
-import remarkStringify from 'remark-stringify';
 import strip from 'strip-markdown';
+import remarkStringify from 'remark-stringify';
 import { Volume2, CirclePause } from 'lucide-vue-next';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 const props = defineProps<{
   message: string;
@@ -50,9 +44,9 @@ const {
 
 <template>
   <div class="flex flex-wrap items-center gap-1 mb-1">
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger as-child>
+    <ShadcnTooltipProvider>
+      <ShadcnTooltip>
+        <ShadcnTooltipTrigger as-child>
           <ShadcnButton
             variant="ghost"
             size="icon"
@@ -71,16 +65,18 @@ const {
               <Volume2 class="w-6 h-6 text-foreground" />
             </template>
           </ShadcnButton>
-        </TooltipTrigger>
-        <TooltipContent side="top"> Read Message </TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger as-child>
+        </ShadcnTooltipTrigger>
+        <ShadcnTooltipContent side="top"> Read Message </ShadcnTooltipContent>
+      </ShadcnTooltip>
+      <ShadcnTooltip>
+        <ShadcnTooltipTrigger as-child>
           <CopyToClipboard class="text-foreground" :text="messageAsPlainText" />
-        </TooltipTrigger>
-        <TooltipContent side="top"> Copy to Clipboard </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+        </ShadcnTooltipTrigger>
+        <ShadcnTooltipContent side="top">
+          Copy to Clipboard
+        </ShadcnTooltipContent>
+      </ShadcnTooltip>
+    </ShadcnTooltipProvider>
   </div>
 </template>
 

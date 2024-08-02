@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
 import type { HTMLAttributes } from 'vue';
 
 const props = defineProps<{
@@ -22,7 +21,7 @@ const { headerNavigationElement } = storeToRefs(headerNavigationStore); // don't
     >
       <AppLinks layout="navigation" />
       <div class="flex items-center gap-2">
-        <Button
+        <ShadcnButton
           variant="outline"
           v-if="loggedIn"
           class="truncate"
@@ -37,7 +36,7 @@ const { headerNavigationElement } = storeToRefs(headerNavigationStore); // don't
                 : ''
             }}</span
           >
-        </Button>
+        </ShadcnButton>
         <ThemeToggle />
       </div>
     </nav>

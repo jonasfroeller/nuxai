@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ConfigProvider } from 'radix-vue';
-import { Toaster } from '@/components/ui/sonner';
 
 const router = useRouter();
 const currentRouteName = computed(() => router.currentRoute.value.name);
@@ -18,7 +17,7 @@ const useSsrSaveId = () => useId();
 <template>
   <div>
     <ConfigProvider :use-id="useSsrSaveId">
-      <Toaster closeButton />
+      <ShadcnToaster closeButton />
       <NuxtLoadingIndicator
         color="hsl(var(--primary) / 0.9)"
         errorColor="hsl(var(--destructive))"
