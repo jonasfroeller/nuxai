@@ -109,25 +109,6 @@ watch(
   }
 );
 
-// Uncaught (in promise) Maximum recursive updates exceeded in component <Toaster>.
-// This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself.
-// Possible sources include component template, render function, updated hook or watcher source function.
-
-/* let toastIdAiIsResponding: string | number;
-let toastIdAiIsNotResponding: string | number;
-watch(chatResponseIsLoading, (newValue) => {
-  if (!newValue) {
-    console.info('AI is done responding...');
-    toastIdAiIsNotResponding = toast.success('AI is done responding!');
-    toast.dismiss(toastIdAiIsResponding);
-    return;
-  }
-
-  console.info('AI is responding...');
-  toastIdAiIsResponding = toast.info('AI is responding...');
-  toast.dismiss(toastIdAiIsNotResponding);
-}); */
-
 /* SPEECH RECOGNITION */
 const {
   isSupported: isSpeechRecognitionSupported,
@@ -216,7 +197,7 @@ async function loadChatMessages(user_id: number, chat_id: number) {
             id: `${String(id)}-${String(Date.now())}`,
             content: message,
             role: actor,
-          }) as Message
+          } as Message)
       );
 
       setChatMessages(messages);
@@ -302,6 +283,24 @@ const {
 } = useManualRefHistory(currentChatMessage, {
   capacity: 3,
 });
+
+async function reloadLast() {
+  await $fetch(`/api/users/2/chats/214/messages/last`, {
+    method: 'DELETE',
+  })
+    .then(async () => {
+      await reloadLastChatMessage()
+        .then(() => {
+          toast.success('Chat message reloaded!');
+        })
+        .catch(() => {
+          toast.error('Failed to reload chat message!');
+        });
+    })
+    .catch(() => {
+      toast.error('Failed to reload chat message!');
+    });
+}
 
 // const isDesktop = useMediaQuery('(min-width: 768px)');
 </script>
@@ -394,19 +393,7 @@ const {
           class="flex flex-wrap items-center w-full p-4 mt-8 font-black uppercase border-2 rounded-md text-ellipsis border-destructive"
         >
           <p class="flex-grow">Something went wrong!</p>
-          <ShadcnButton
-            variant="outline"
-            @click="
-              async () => {
-                await reloadLastChatMessage()
-                  .then(() => {
-                    toast.success('Chat message reloaded!');
-                  })
-                  .catch(() => {
-                    toast.error('Failed to reload chat message!');
-                  });
-              }
-            "
+          <ShadcnButton variant="outline" @click="reloadLast"
             >Try again</ShadcnButton
           >
         </div>
@@ -560,7 +547,7 @@ const {
                 type="button"
                 variant="ghost"
                 size="icon"
-                @click="reloadLastChatMessage"
+                @click="reloadLast"
                 :disabled="chatResponseIsLoading || chatMessages.length === 0"
               >
                 <RefreshCcw class="size-4" />
