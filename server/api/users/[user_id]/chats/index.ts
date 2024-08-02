@@ -93,10 +93,11 @@ export default defineEventHandler(async (event) => {
     }
     const order_by = maybeOrderBy.data?.order_by;
 
-    if (LOG_BACKEND)
+    if (LOG_BACKEND) {
       console.info(
         `fetching all chats of user ${user_id} with order_by(${order_by})...`
       );
+    }
 
     const fetchedChatConversations = await readAllChatConversationsOfUser(
       user_id,

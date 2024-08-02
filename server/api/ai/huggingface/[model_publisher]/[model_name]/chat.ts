@@ -14,12 +14,19 @@ import type { H3Event, EventHandlerRequest } from 'h3';
 import type { Actor } from '~/server/utils/validate';
 import { getCodeBlocksFromMarkdown } from '~/utils/parse';
 
-async function persistCodeBlocks(user_id: number, chat_id: number, message_id: number, markdown: string, event: H3Event<EventHandlerRequest>) {
+async function persistCodeBlocks(
+  user_id: number,
+  chat_id: number,
+  message_id: number,
+  markdown: string,
+  event: H3Event<EventHandlerRequest>
+) {
   const codeBlocks = await getCodeBlocksFromMarkdown(markdown);
 
   if (LOG_BACKEND) console.log('codeBlocks', codeBlocks);
   if (codeBlocks.length > 0) {
-    if (LOG_BACKEND) console.log(`persisting ${codeBlocks.length} code block(s)...`);
+    if (LOG_BACKEND)
+      console.log(`persisting ${codeBlocks.length} code block(s)...`);
 
     const persistedCodeBlocks = await event.$fetch(
       `/api/users/${user_id}/chats/${chat_id}/files/${message_id}`,
@@ -32,7 +39,7 @@ async function persistCodeBlocks(user_id: number, chat_id: number, message_id: n
       }
     );
 
-    if (LOG_BACKEND)
+    if (LOG_BACKEND) {
       console.info(
         'persistCodeBlocks:',
         persistedCodeBlocks,
@@ -40,6 +47,7 @@ async function persistCodeBlocks(user_id: number, chat_id: number, message_id: n
         chat_id,
         message_id
       );
+    }
 
     return persistedCodeBlocks;
   }
@@ -76,7 +84,12 @@ async function persistChatMessage(
         messageText
       );
 
-    const chatMessage = persistedChatMessage && 'chatMessage' in persistedChatMessage ? (persistedChatMessage.chatMessage ? persistedChatMessage.chatMessage[0] : null) : null;
+    const chatMessage =
+      persistedChatMessage && 'chatMessage' in persistedChatMessage
+        ? persistedChatMessage.chatMessage
+          ? persistedChatMessage.chatMessage[0]
+          : null
+        : null;
     return chatMessage;
   }
 
@@ -89,19 +102,38 @@ async function persistAiChatMessage(
   messageText: string,
   event: H3Event<EventHandlerRequest>
 ) {
-  const persistedChatMessage = await persistChatMessage(user_id, chat_id, messageText, 'assistant', event);
+  const persistedChatMessage = await persistChatMessage(
+    user_id,
+    chat_id,
+    messageText,
+    'assistant',
+    event
+  );
 
   if (!persistedChatMessage) return persistedChatMessage;
-  if ('chatMessage' in persistedChatMessage && persistedChatMessage.chatMessage) {
-    const { chat_user_id, chat_conversation_id, id: message_id, message } = persistedChatMessage;
-    const persistedCodeBlocks = await persistCodeBlocks(chat_user_id, chat_conversation_id, message_id, message, event);
+  const {
+    chat_user_id,
+    chat_conversation_id,
+    id: message_id,
+    message,
+  } = persistedChatMessage;
+  const persistedCodeBlocks = await persistCodeBlocks(
+    chat_user_id,
+    chat_conversation_id,
+    message_id,
+    message,
+    event
+  );
 
-    if (persistedCodeBlocks && 'chatFiles' in persistedCodeBlocks && persistedCodeBlocks.chatFiles) {
-      return {
-        chat_message: persistedChatMessage.chatMessage,
-        code_blocks: persistedCodeBlocks.chatFiles, // TODO: find out how to get type, if not clear, what route it is (made it [message_id]/[file_id] instead of /[message_id] and /[file_id] for now)
-      }
-    }
+  if (
+    persistedCodeBlocks &&
+    'chatFiles' in persistedCodeBlocks &&
+    persistedCodeBlocks.chatFiles
+  ) {
+    return {
+      chat_message: persistedChatMessage,
+      code_blocks: persistedCodeBlocks.chatFiles, // TODO: find out how to get type, if not clear, what route it is (made it [message_id]/[file_id] instead of /[message_id] and /[file_id] for now)
+    };
   }
 }
 
@@ -172,9 +204,13 @@ export default defineLazyEventHandler(async () => {
     const validatedBody = body.data;
     const { messages } = validatedBody;
 
-    const SYSTEM_MESSAGE = "You have to answer all my questions and provide all information using Markdown syntax. This includes formatting text, adding lists, inserting links, using code blocks, and any other Markdown features that are appropriate for your responses.";
+    const SYSTEM_MESSAGE =
+      'You have to answer all my questions and provide all information using Markdown syntax. This includes formatting text, adding lists, inserting links, using code blocks, and any other Markdown features that are appropriate for your responses.';
     if (!messages.some((message) => message.content === SYSTEM_MESSAGE)) {
-      if (LOG_BACKEND) console.info('No system message found. Adding initial system message...');
+      if (LOG_BACKEND)
+        console.info(
+          'No system message found. Adding initial system message...'
+        );
 
       // TODO: freshly add this every time the context is truncated
       messages.unshift({

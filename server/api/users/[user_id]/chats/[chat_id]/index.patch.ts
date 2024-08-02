@@ -41,8 +41,9 @@ export default defineEventHandler(async (event) => {
     name,
   });
 
-  if (LOG_BACKEND)
+  if (LOG_BACKEND) {
     console.info('updatedChatConversation:', updatedChatConversation);
+  }
 
   return {
     chat: updatedChatConversation,

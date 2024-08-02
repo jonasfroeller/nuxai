@@ -16,7 +16,8 @@ export default defineEventHandler(async (event) => {
   }
   const chat_id = maybeChatId.data?.chat_id;
 
-  const fetchedChatFiles = await readAllChatConversationFilesOfChatConversation(chat_id);
+  const fetchedChatFiles =
+    await readAllChatConversationFilesOfChatConversation(chat_id);
 
   return {
     chatFiles: fetchedChatFiles,

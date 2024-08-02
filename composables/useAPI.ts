@@ -4,7 +4,10 @@ import type { UseFetchOptions } from 'nuxt/app';
 import type { FetchError } from 'ofetch';
 import { toast } from 'vue-sonner';
 import type { FullyFeaturedChat /* , MinimalChat */ } from '~/lib/types/chat';
-import type { ReadChatConversationFile, ReadChatConversationMessage } from '~/lib/types/database.tables/schema';
+import type {
+  ReadChatConversationFile,
+  ReadChatConversationMessage,
+} from '~/lib/types/database.tables/schema';
 import { getCodeBlocksFromMarkdown } from '~/utils/parse';
 const { console } = useLogger();
 
@@ -110,7 +113,12 @@ export const useAPI = () => {
     return response.chat.id;
   };
 
-  async function persistCodeBlocks(user_id: number, chat_id: number, message_id: number, markdown: string) {
+  async function persistCodeBlocks(
+    user_id: number,
+    chat_id: number,
+    message_id: number,
+    markdown: string
+  ) {
     const codeBlocks = await getCodeBlocksFromMarkdown(markdown);
 
     if (codeBlocks.length > 0) {
@@ -158,10 +166,17 @@ export const useAPI = () => {
 
       console.info('Persisting messages...', messages);
 
-      const messagesPersisted = await handleFetch<{ chatMessages: ReadChatConversationMessage[] }>(url, options, toastMessages);
+      const messagesPersisted = await handleFetch<{
+        chatMessages: ReadChatConversationMessage[];
+      }>(url, options, toastMessages);
       for (const message of messagesPersisted.chatMessages) {
         if (message.actor === 'assistant') {
-          await persistCodeBlocks(message.chat_user_id, message.chat_conversation_id, message.id, message.message);
+          await persistCodeBlocks(
+            message.chat_user_id,
+            message.chat_conversation_id,
+            message.id,
+            message.message
+          );
         }
       }
 

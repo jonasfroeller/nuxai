@@ -68,7 +68,7 @@ export type NewChatConversation = typeof chat_conversation.$inferInsert;
 export type GetChatConversation = typeof chat_conversation.$inferSelect;
 
 export interface ChatConversationToCreate
-  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> { }
+  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> {}
 export type ReadChatConversation = GetChatConversation;
 
 export const chat_conversation = pgTable('chat_conversation', {
@@ -94,7 +94,7 @@ export interface ChatConversationMessageToCreate
   extends Omit<
     NewChatConversationMessage,
     'id' | 'created_at' | 'updated_at'
-  > { }
+  > {}
 export type ReadChatConversationMessage = GetChatConversationMessage;
 
 export const chat_conversation_message = pgTable('chat_conversation_message', {
@@ -142,13 +142,17 @@ export type GetChatConversationFile =
   typeof chat_conversation_file.$inferSelect;
 
 export interface ChatConversationFileToCreate
-  extends Omit<
-    NewChatConversationFile,
-    'id' | 'created_at' | 'updated_at'
-  > { }
+  extends Omit<NewChatConversationFile, 'id' | 'created_at' | 'updated_at'> {}
 export type ReadChatConversationFile = GetChatConversationFile;
 
 const InsertFileSchemaBase = createInsertSchema(chat_conversation_file);
-export const InsertFileSchema = InsertFileSchemaBase.pick({ title: true, language: true, extension: true, text: true }); // chat_user_id: true, chat_conversation_id: true, chat_conversation_message_id: true
-export const InsertFileUniversalSchema = z.object({ files: z.array(InsertFileSchema) }).or(InsertFileSchema); // files: [] could be shortened to []
+export const InsertFileSchema = InsertFileSchemaBase.pick({
+  title: true,
+  language: true,
+  extension: true,
+  text: true,
+}); // chat_user_id: true, chat_conversation_id: true, chat_conversation_message_id: true
+export const InsertFileUniversalSchema = z
+  .object({ files: z.array(InsertFileSchema) })
+  .or(InsertFileSchema); // files: [] could be shortened to []
 export const SelectFileSchema = createSelectSchema(chat_conversation_file);

@@ -1,4 +1,7 @@
-import { type ChatConversationFileToCreate, InsertFileUniversalSchema } from '~/lib/types/database.tables/schema';
+import {
+  type ChatConversationFileToCreate,
+  InsertFileUniversalSchema,
+} from '~/lib/types/database.tables/schema';
 import { createChatConversationFiles } from '~/server/database/repositories/chatConversationFiles';
 
 // Create files for chat conversation
@@ -35,7 +38,13 @@ export default defineEventHandler(async (event) => {
   }
   const validatedBody = body.data;
 
-  if (validatedBody && 'text' in validatedBody && 'title' in validatedBody && 'language' in validatedBody && 'extension' in validatedBody) {
+  if (
+    validatedBody &&
+    'text' in validatedBody &&
+    'title' in validatedBody &&
+    'language' in validatedBody &&
+    'extension' in validatedBody
+  ) {
     const { text, title, language, extension } = validatedBody;
 
     const conversationMessageFileToCreate = {
@@ -56,17 +65,17 @@ export default defineEventHandler(async (event) => {
       chatFile: createdFile,
     };
   } else if (validatedBody && 'files' in validatedBody) {
-    const files = validatedBody.files.map(({ text, title, language, extension }) => ({
-      text,
-      title,
-      language,
-      extension,
-      chat_user_id: user_id,
-      chat_conversation_id: chat_id,
-      chat_conversation_message_id: message_id,
-    }));
-
-    console.log('files', files);
+    const files = validatedBody.files.map(
+      ({ text, title, language, extension }) => ({
+        text,
+        title,
+        language,
+        extension,
+        chat_user_id: user_id,
+        chat_conversation_id: chat_id,
+        chat_conversation_message_id: message_id,
+      })
+    );
 
     const createdFiles = await createChatConversationFiles(files);
 

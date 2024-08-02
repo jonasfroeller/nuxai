@@ -38,8 +38,6 @@ function setSelectedChat(
     selectedAiChat.value.name = name;
     selectedAiChat.value.model = model;
   }
-
-  console.info('setSelectedChat', selectedAiChat.value);
 }
 
 const editChat = (id: number, name: string) => {

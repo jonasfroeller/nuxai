@@ -17,8 +17,6 @@ onMounted(() => {
       $messagesList.value,
       (mutations) => {
         const shikiElement = $messagesList.value?.querySelectorAll('.shiki');
-        // console.log('shikiElement', shikiElement);
-
         if (shikiElement) {
           // pre tag with class="language-<some-language> shiki"
           for (const codeBlock of shikiElement) {
