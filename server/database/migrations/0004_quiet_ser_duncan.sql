@@ -1,0 +1,1 @@
+ALTER TABLE "chat_conversation_file" ADD COLUMN "_extension" text NOT NULL;

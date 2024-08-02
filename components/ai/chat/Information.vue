@@ -9,12 +9,23 @@ const { selectedAiChat, selectedAiChatIsPlayground } = useSelectedAiChat();
 
 const selectedFileVersionId = ref<string>();
 const selectedFileVersion = computed(() => {
-  console.log('Selected File Version ID:', selectedFileVersionId.value);
-
   return versionsForSelectedFileType.value.find(
     (file) => file.id === Number(selectedFileVersionId.value)
   );
 });
+
+watch(selectedFileVersionId, () => {
+  if (selectedFileVersion.value) {
+    fileNameOfFileToDownload.value = `${
+      selectedFileVersion.value?.title
+        ? `${selectedFileVersion.value?.title}-`
+        : ''
+    }${new Date(
+      selectedFileVersion.value?.updated_at ?? Date.now()
+    ).getTime()}`;
+  }
+});
+
 const selectedFileVersionDate = computed(() => {
   return selectedFileVersion.value?.updated_at
     ? new Date(selectedFileVersion.value?.updated_at)
@@ -27,6 +38,26 @@ const selectedFileVersionMarkdown = computed(() => {
       : ''
   }\n${selectedFileVersion.value?.text}\n\`\`\``;
 });
+const fileNameOfFileToDownload = ref<string>();
+const downloadFile = () => {
+  const fileContent = selectedFileVersion.value
+    ? selectedFileVersion.value.text
+    : '';
+  const fileType =
+    selectedFileVersion.value?.extension ?? selectedFileVersion.value?.language;
+  const blob = new Blob([fileContent], {
+    type: 'text/plain',
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${fileNameOfFileToDownload.value}.${fileType}`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
 const filetypeSearchIsOpen = ref(false);
 const filetypeSearchSelectedValue = ref<string>(''); // BundledLanguage
 const filetypeSearchSelectableValues = computed(() => {
@@ -56,11 +87,16 @@ onMounted(async () => {
     isLoading.value = false;
   });
 });
+
+/* (async () => {
+  await loadFiles(user.value?.id ?? -1, selectedAiChat.value.id).then(() => {
+    isLoading.value = false;
+  });
+})(); */
 </script>
 
 <template>
   <div class="relative flex flex-col items-start order-2 gap-8 2xl:order-1">
-    <!-- hidden md:flex -->
     <AiChatModelConfiguration />
     <fieldset class="flex flex-col w-full h-full gap-6 p-4 border rounded-lg">
       <legend class="px-1 -ml-1 text-sm font-medium">
@@ -220,6 +256,17 @@ onMounted(async () => {
           <ShadcnScrollBar class="bg-primary" orientation="horizontal" />
           <ShadcnScrollBar class="bg-primary" orientation="vertical" />
         </ShadcnScrollArea>
+        <fieldset
+          v-if="selectedFileVersion?.text"
+          class="flex flex-col w-full h-full gap-6 p-4 border rounded-lg"
+        >
+          <legend class="px-1 -ml-1 text-sm font-medium">Options</legend>
+          <div>
+            <ShadcnLabel for="file-name"> File Name </ShadcnLabel>
+            <ShadcnInput id="file-name" v-model="fileNameOfFileToDownload" />
+          </div>
+          <ShadcnButton @click="downloadFile">Download</ShadcnButton>
+        </fieldset>
       </div>
       <div v-else>
         <template v-if="selectedAiChatIsPlayground">

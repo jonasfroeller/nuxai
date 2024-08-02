@@ -1,0 +1,1 @@
+ALTER TABLE "chat_conversation_file" RENAME COLUMN "_extension" TO "file_extension";

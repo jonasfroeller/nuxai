@@ -29,6 +29,41 @@
       "when": 1722424453681,
       "tag": "0003_grey_jamie_braddock",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1722603344018,
+      "tag": "0004_quiet_ser_duncan",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1722604288838,
+      "tag": "0005_chubby_paibok",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1722604482411,
+      "tag": "0006_aromatic_maggott",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1722604702066,
+      "tag": "0007_unknown_jazinda",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1722604966543,
+      "tag": "0008_lumpy_beyonder",
+      "breakpoints": true
     }
   ]
 }

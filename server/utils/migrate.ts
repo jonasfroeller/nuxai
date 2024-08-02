@@ -24,12 +24,12 @@ async function migrateDatabase() {
       })
       .catch((e) => {
         if (IS_DEV) console.error('Failed to migrate database:', e);
-        throw createError({
+        /* throw createError({
           statusCode: 500,
           statusMessage: 'Internal Server Error',
           message: 'Failed to migrate database',
           fatal: true,
-        });
+        }); */
       })
       .finally(async () => {
         if (IS_DEV) console.info('Closing database connection...');
@@ -52,12 +52,12 @@ async function migrateDatabase() {
     })
     .catch((e) => {
       if (IS_DEV) console.error('Failed to migrate database:', e);
-      throw createError({
+      /* throw createError({
         statusCode: 500,
         statusMessage: 'Internal Server Error',
         message: 'Failed to migrate database',
         fatal: true,
-      });
+      }); */
     })
     .finally(async () => {
       if (IS_DEV) console.info('Closing database connection...');

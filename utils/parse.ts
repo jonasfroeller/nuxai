@@ -1,5 +1,6 @@
 import { supportedShikiLanguages } from "~/utils/formatters";
 import type { BundledLanguage } from 'shiki';
+import { supportedFileExtensionsMap } from "~/utils/formatters";
 
 // `remark-code-blocks` doesn't work anymore and writing remark plugins is a pain (spent about 2 hours on it...), that's why I am trying to do this using regex magic
 export async function getCodeBlocksFromMarkdown(markdown: string): Promise<CodeBlock[]> {
@@ -11,9 +12,13 @@ export async function getCodeBlocksFromMarkdown(markdown: string): Promise<CodeB
     while ((match = codeBlockRegex.exec(markdown)) !== null) {
         const { language, title, code } = match.groups!;
 
+        const validatedLanguage = getValidatedCodeBlockLanguage(language) as keyof typeof supportedFileExtensionsMap;
+        const fileExtension = supportedFileExtensionsMap[validatedLanguage] ?? 'txt';
+
         codeBlocks.push({
-            language: getValidatedCodeBlockLanguage(language || 'text'),
-            title: title || '',
+            language: validatedLanguage as string,
+            extension: fileExtension,
+            title: title ? title.trim() : '',
             text: code.trim()
         });
     }
@@ -32,5 +37,6 @@ function getValidatedCodeBlockLanguage(language: string) {
 interface CodeBlock {
     title: string;
     language: string;
+    extension: string;
     text: string;
 }

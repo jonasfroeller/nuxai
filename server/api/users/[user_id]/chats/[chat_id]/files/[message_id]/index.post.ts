@@ -35,13 +35,14 @@ export default defineEventHandler(async (event) => {
   }
   const validatedBody = body.data;
 
-  if (validatedBody && 'text' in validatedBody && 'title' in validatedBody && 'language' in validatedBody) {
-    const { text, title, language } = validatedBody;
+  if (validatedBody && 'text' in validatedBody && 'title' in validatedBody && 'language' in validatedBody && 'extension' in validatedBody) {
+    const { text, title, language, extension } = validatedBody;
 
     const conversationMessageFileToCreate = {
       text: text,
       title: title,
       language: language,
+      extension: extension,
       chat_user_id: user_id,
       chat_conversation_id: chat_id,
       chat_conversation_message_id: message_id,
@@ -55,14 +56,17 @@ export default defineEventHandler(async (event) => {
       chatFile: createdFile,
     };
   } else if (validatedBody && 'files' in validatedBody) {
-    const files = validatedBody.files.map(({ text, title, language }) => ({
+    const files = validatedBody.files.map(({ text, title, language, extension }) => ({
       text,
       title,
       language,
+      extension,
       chat_user_id: user_id,
       chat_conversation_id: chat_id,
       chat_conversation_message_id: message_id,
     }));
+
+    console.log('files', files);
 
     const createdFiles = await createChatConversationFiles(files);
 

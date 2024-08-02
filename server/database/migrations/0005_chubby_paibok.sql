@@ -1,0 +1,1 @@
+ALTER TABLE "chat_conversation_file" ALTER COLUMN "_extension" SET DEFAULT 'txt';

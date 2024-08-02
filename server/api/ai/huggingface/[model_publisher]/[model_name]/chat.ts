@@ -12,6 +12,7 @@ import {
 import type { User } from '#auth-utils';
 import type { H3Event, EventHandlerRequest } from 'h3';
 import type { Actor } from '~/server/utils/validate';
+import { getCodeBlocksFromMarkdown } from '~/utils/parse';
 
 async function persistCodeBlocks(user_id: number, chat_id: number, message_id: number, markdown: string, event: H3Event<EventHandlerRequest>) {
   const codeBlocks = await getCodeBlocksFromMarkdown(markdown);
@@ -74,7 +75,9 @@ async function persistChatMessage(
         chat_id,
         messageText
       );
-    return persistedChatMessage;
+
+    const chatMessage = persistedChatMessage && 'chatMessage' in persistedChatMessage ? (persistedChatMessage.chatMessage ? persistedChatMessage.chatMessage[0] : null) : null;
+    return chatMessage;
   }
 
   return null;
@@ -90,7 +93,7 @@ async function persistAiChatMessage(
 
   if (!persistedChatMessage) return persistedChatMessage;
   if ('chatMessage' in persistedChatMessage && persistedChatMessage.chatMessage) {
-    const { chat_user_id, chat_conversation_id, id: message_id, message } = persistedChatMessage.chatMessage;
+    const { chat_user_id, chat_conversation_id, id: message_id, message } = persistedChatMessage;
     const persistedCodeBlocks = await persistCodeBlocks(chat_user_id, chat_conversation_id, message_id, message, event);
 
     if (persistedCodeBlocks && 'chatFiles' in persistedCodeBlocks && persistedCodeBlocks.chatFiles) {

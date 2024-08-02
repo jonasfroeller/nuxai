@@ -9,7 +9,7 @@ import { eq, asc } from 'drizzle-orm';
 export const createChatConversationMessages = async (
   messages: ChatConversationMessageToCreate[]
 ) => {
-  const createdChatConversationMessage = await db
+  const createdChatConversationMessages = await db
     .insert(chat_conversation_message)
     .values(messages)
     .returning()
@@ -22,9 +22,9 @@ export const createChatConversationMessages = async (
       return null;
     });
 
-  if (!createdChatConversationMessage) return null;
+  if (!createdChatConversationMessages) return null;
 
-  return createdChatConversationMessage[0];
+  return createdChatConversationMessages;
 };
 
 export const readChatConversationMessage = async (

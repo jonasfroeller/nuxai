@@ -118,6 +118,7 @@ export const chat_conversation_file = pgTable('chat_conversation_file', {
   id: serial('id').primaryKey(),
   title: text('title'),
   language: text('language').default('text').notNull(),
+  extension: text('file_extension').default('txt').notNull(),
   text: text('text').notNull(),
   created_at: timestamp('created_at').defaultNow(),
   updated_at: timestamp('updated_at')
@@ -148,6 +149,6 @@ export interface ChatConversationFileToCreate
 export type ReadChatConversationFile = GetChatConversationFile;
 
 const InsertFileSchemaBase = createInsertSchema(chat_conversation_file);
-export const InsertFileSchema = InsertFileSchemaBase.pick({ title: true, language: true, text: true }); // chat_user_id: true, chat_conversation_id: true, chat_conversation_message_id: true
+export const InsertFileSchema = InsertFileSchemaBase.pick({ title: true, language: true, extension: true, text: true }); // chat_user_id: true, chat_conversation_id: true, chat_conversation_message_id: true
 export const InsertFileUniversalSchema = z.object({ files: z.array(InsertFileSchema) }).or(InsertFileSchema); // files: [] could be shortened to []
 export const SelectFileSchema = createSelectSchema(chat_conversation_file);

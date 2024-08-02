@@ -4,7 +4,8 @@ import type { UseFetchOptions } from 'nuxt/app';
 import type { FetchError } from 'ofetch';
 import { toast } from 'vue-sonner';
 import type { FullyFeaturedChat /* , MinimalChat */ } from '~/lib/types/chat';
-import type { ReadChatConversationFile } from '~/lib/types/database.tables/schema';
+import type { ReadChatConversationFile, ReadChatConversationMessage } from '~/lib/types/database.tables/schema';
+import { getCodeBlocksFromMarkdown } from '~/utils/parse';
 const { console } = useLogger();
 
 /* import type { UseFetchOptions } from '#app'; */
@@ -109,6 +110,26 @@ export const useAPI = () => {
     return response.chat.id;
   };
 
+  async function persistCodeBlocks(user_id: number, chat_id: number, message_id: number, markdown: string) {
+    const codeBlocks = await getCodeBlocksFromMarkdown(markdown);
+
+    if (codeBlocks.length > 0) {
+      const persistedCodeBlocks = await $fetch(
+        `/api/users/${user_id}/chats/${chat_id}/files/${message_id}`,
+        {
+          method: 'POST',
+          body: {
+            files: codeBlocks,
+          },
+        }
+      );
+
+      return persistedCodeBlocks;
+    }
+
+    return null;
+  }
+
   const persistChatConversationMessagesOfPlayground = async (
     user_id: number,
     chat_id: number /* , messages: Message[] */
@@ -137,7 +158,13 @@ export const useAPI = () => {
 
       console.info('Persisting messages...', messages);
 
-      await handleFetch(url, options, toastMessages);
+      const messagesPersisted = await handleFetch<{ chatMessages: ReadChatConversationMessage[] }>(url, options, toastMessages);
+      for (const message of messagesPersisted.chatMessages) {
+        if (message.actor === 'assistant') {
+          await persistCodeBlocks(message.chat_user_id, message.chat_conversation_id, message.id, message.message);
+        }
+      }
+
       messagesRef.value = [];
     }
   };
@@ -268,6 +295,7 @@ export function useFetchFiles() {
   );
 
   async function loadFiles(user_id: number, chat_id: number) {
+    fetchedFiles.value = [];
     if (user_id !== -1) {
       if (chat_id === -1) {
         return;
