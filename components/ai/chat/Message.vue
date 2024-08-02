@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <div
-    class="flex max-w-full my-2 prose"
+    class="flex max-w-full my-2 prose text-foreground"
     v-bind:class="{
       'justify-start': message.role === 'assistant',
       'justify-end': message.role === 'user',

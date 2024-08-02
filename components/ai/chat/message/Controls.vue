@@ -65,10 +65,10 @@ const {
             "
           >
             <template v-if="isSpeaking">
-              <CirclePause class="w-6 h-6" />
+              <CirclePause class="w-6 h-6 text-foreground" />
             </template>
             <template v-else>
-              <Volume2 class="w-6 h-6" />
+              <Volume2 class="w-6 h-6 text-foreground" />
             </template>
           </ShadcnButton>
         </TooltipTrigger>
@@ -76,7 +76,7 @@ const {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger as-child>
-          <CopyToClipboard :text="messageAsPlainText" />
+          <CopyToClipboard class="text-foreground" :text="messageAsPlainText" />
         </TooltipTrigger>
         <TooltipContent side="top"> Copy to Clipboard </TooltipContent>
       </Tooltip>
