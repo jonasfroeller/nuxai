@@ -1,8 +1,8 @@
 import {
   chat_conversation,
-  type GetUser,
+  type ReadUser,
   type ChatConversationToCreate,
-  type GetChatConversation,
+  type ReadChatConversation,
 } from '../../../lib/types/database.tables/schema';
 import { eq, inArray, desc, asc } from 'drizzle-orm';
 
@@ -24,7 +24,7 @@ export async function createChatConversation(
   return createdChatConversation[0];
 }
 
-export async function readChatConversation(id: GetChatConversation['id']) {
+export async function readChatConversation(id: ReadChatConversation['id']) {
   const fetchedChatConversation = await db
     .select()
     .from(chat_conversation)
@@ -45,7 +45,7 @@ export async function readChatConversation(id: GetChatConversation['id']) {
 // 2. https://orm.drizzle.team/docs/dynamic-query-building
 // 2.5. https://github.com/drizzle-team/drizzle-orm/issues/1644#issuecomment-1893746141
 export async function readAllChatConversationsOfUser(
-  user_id: GetUser['id'],
+  user_id: ReadUser['id'],
   order_by?: string
 ) {
   let query = db
@@ -81,10 +81,10 @@ export async function readAllChatConversationsOfUser(
 }
 
 export async function updateChatConversation(
-  id: GetChatConversation['id'],
+  id: ReadChatConversation['id'],
   fields: Partial<
     Omit<
-      GetChatConversation,
+      ReadChatConversation,
       'id' | 'model' | 'created_at' | 'updated_at' | 'chat_user_id'
     >
   >
@@ -105,7 +105,7 @@ export async function updateChatConversation(
   return updatedChatConversation[0];
 }
 
-export async function deleteChatConversation(id: GetChatConversation['id']) {
+export async function deleteChatConversation(id: ReadChatConversation['id']) {
   const successfullyDeleted = await db
     .delete(chat_conversation)
     .where(eq(chat_conversation.id, id))
@@ -120,7 +120,7 @@ export async function deleteChatConversation(id: GetChatConversation['id']) {
 }
 
 export async function deleteChatConversations(
-  ids: GetChatConversation['id'][]
+  ids: ReadChatConversation['id'][]
 ) {
   const successfullyDeleted = await db
     .delete(chat_conversation)

@@ -1,4 +1,5 @@
 import { createChatConversationMessages } from '~/server/database/repositories/chatConversationMessages';
+import { ChatConversationMessagesToCreateUniversalSchema } from '~/lib/types/database.tables/schema';
 
 // Create messages for chat conversation
 export default defineEventHandler(async (event) => {

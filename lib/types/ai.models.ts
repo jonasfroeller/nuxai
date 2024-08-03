@@ -90,7 +90,7 @@ export const ALLOWED_AI_MODELS = Object.keys(POSSIBLE_AI_MODELS).flatMap(
     )
 );
 
-const allowedModelsConst = [
+export const allowedModelsConst = [
   'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
   'mistralai/Mistral-7B-Instruct-v0.1',
 ] as const;

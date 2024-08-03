@@ -1,4 +1,5 @@
 import { updateChatConversation } from '~/server/database/repositories/chatConversations';
+import { ChatConversationAttributesToUpdateSchema } from '~/lib/types/database.tables/schema';
 
 // Update chat conversation
 export default defineEventHandler(async (event) => {

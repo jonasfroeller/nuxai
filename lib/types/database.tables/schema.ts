@@ -1,5 +1,8 @@
-import { z } from 'zod';
+// import { supportedShikiLanguages, supportedFileExtensionsMap } from '../../../utils/formatters'; // || '#imports' // causes cjs, mjs compatibility issues, thanks for nothing drizzle :|
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { AllowedAiModelsEnum, allowedModelsConst } from '../ai.models';
+import type { Message } from 'ai';
+import { z } from 'zod';
 import {
   integer,
   pgEnum,
@@ -9,13 +12,13 @@ import {
   timestamp,
 } from 'drizzle-orm/pg-core';
 
-export type NewUser = typeof chat_user.$inferInsert;
-export type GetUser = typeof chat_user.$inferSelect;
+// Types used, and not interfaces, because you do not get full intellisense on interfaces and we do not need any features that interfaces provide...
+// Enums do not apply to all norm forms of relational databases, I know. They are nice tho, at least, till they are not, because you have to update them...
+// TODO: create a setup script that generates tables with entries for possible values instead of enums.
 
-export interface UserToCreate extends Omit<NewUser, 'id' | 'hashed_password'> {
-  password: string;
-}
-export type ReadUser = Omit<GetUser, 'hashed_password'>;
+export const primaryIdSchema = z.number().positive().int();
+
+/* USERS */
 
 export const chat_user = pgTable('chat_user', {
   id: serial('id').primaryKey(),
@@ -30,20 +33,29 @@ export const chat_user = pgTable('chat_user', {
     .$onUpdate(() => new Date()),
 });
 
-export type NewOauthAccount = typeof chat_user_oauth_account.$inferInsert;
-export type GetOauthAccount = typeof chat_user_oauth_account.$inferSelect;
+type NewUser = typeof chat_user.$inferInsert;
+export type GetUser = typeof chat_user.$inferSelect;
 
-export interface OauthAccountToCreate
-  extends Omit<
-    NewOauthAccount,
-    'id' | 'created_at' | 'updated_at' | 'chat_user_id'
-  > {
-  chat_user_id?: number /* so that a oauth account can be linked to an existing user */;
-}
-export type ReadOauthAccount = Omit<
-  GetOauthAccount,
-  /* "id" | "chat_user_id" | */ 'provider' | 'created_at' | 'updated_at'
->;
+export type UserToCreate = Omit<NewUser, 'id' | 'hashed_password'> & {
+  password: string;
+};
+export type ReadUser = Omit<GetUser, 'hashed_password'>;
+
+const InsertUserSchemaBase = createInsertSchema(chat_user);
+export const InsertUserSchema = InsertUserSchemaBase.pick({
+  primary_email: true,
+  created_at: true,
+  updated_at: true,
+})
+const SelectUserSchemaBase = createSelectSchema(chat_user);
+export const SelectUserSchema = SelectUserSchemaBase.pick({
+  id: true,
+  primary_email: true,
+  created_at: true,
+  updated_at: true,
+})
+
+/* OAuth ACCOUNTS */
 
 export const POSSIBLE_OAUTH_PROVIDERS = pgEnum('oauth_provider_enum', [
   'github',
@@ -64,17 +76,44 @@ export const chat_user_oauth_account = pgTable('chat_user_oauth_account', {
     .references(() => chat_user.id, { onDelete: 'cascade' }),
 });
 
-export type NewChatConversation = typeof chat_conversation.$inferInsert;
-export type GetChatConversation = typeof chat_conversation.$inferSelect;
+type NewOauthAccount = typeof chat_user_oauth_account.$inferInsert;
+type GetOauthAccount = typeof chat_user_oauth_account.$inferSelect;
 
-export interface ChatConversationToCreate
-  extends Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'> {}
-export type ReadChatConversation = GetChatConversation;
+export type OauthAccountToCreate = Omit<
+  NewOauthAccount,
+  'id' | 'chat_user_id' | 'created_at' | 'updated_at'
+> & {
+  chat_user_id?: number /* so that a oauth account can be linked to an existing user */;
+}
+export type ReadOauthAccount = Omit<
+  GetOauthAccount,
+  'created_at' | 'updated_at'
+>;
 
+const InsertOauthAccountSchemaBase = createInsertSchema(chat_user_oauth_account);
+export const InsertOauthAccountSchema = InsertOauthAccountSchemaBase.pick({
+  oauth_user_id: true,
+  oauth_email: true,
+  provider: true,
+})
+const SelectOauthAccountSchemaBase = createSelectSchema(
+  chat_user_oauth_account
+);
+export const SelectOauthAccountSchema = SelectOauthAccountSchemaBase.pick({
+  id: true,
+  chat_user_id: true,
+  oauth_user_id: true,
+  oauth_email: true,
+  provider: true,
+})
+
+/* CHATS */
+
+export const POSSIBLE_AI_MODELS = pgEnum('ai_model_enum', allowedModelsConst);
 export const chat_conversation = pgTable('chat_conversation', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
-  model: text('model').notNull(),
+  model: POSSIBLE_AI_MODELS('model').notNull(),
   created_at: timestamp('created_at').defaultNow(),
   updated_at: timestamp('updated_at')
     .defaultNow()
@@ -85,22 +124,50 @@ export const chat_conversation = pgTable('chat_conversation', {
     .references(() => chat_user.id, { onDelete: 'cascade' }),
 });
 
-export type NewChatConversationMessage =
-  typeof chat_conversation_message.$inferInsert;
-export type GetChatConversationMessage =
-  typeof chat_conversation_message.$inferSelect;
+type NewChatConversation = typeof chat_conversation.$inferInsert;
+type GetChatConversation = typeof chat_conversation.$inferSelect;
 
-export interface ChatConversationMessageToCreate
-  extends Omit<
-    NewChatConversationMessage,
-    'id' | 'created_at' | 'updated_at'
-  > {}
-export type ReadChatConversationMessage = GetChatConversationMessage;
+export type ChatConversationToCreate = Omit<NewChatConversation, 'id' | 'created_at' | 'updated_at'>
+export type ReadChatConversation = GetChatConversation;
 
+const InsertChatConversationSchemaBase = createInsertSchema(chat_conversation);
+export const InsertChatConversationSchema = InsertChatConversationSchemaBase.pick({
+  name: true,
+  model: true,
+}) /* chat_user_id: true */
+export const ChatConversationToCreateSchema = z.object({
+  model: z.nativeEnum(AllowedAiModelsEnum),
+  name: z.string().min(3),
+});
+export const ChatConversationsToDelete = z.object({
+  chat_ids: z.array(primaryIdSchema),
+});
+export const ChatConversationAttributesToUpdateSchema = z.object({
+  name: z.string().min(3),
+});
+export const SelectChatConversationSchema = createSelectSchema(
+  chat_conversation
+);
+
+/* MESSAGES */
+
+/**
+ * role: 'system' | **'user'** | **'assistant'** | 'function' | 'data' | 'tool'
+ */
+export enum Actor {
+  'user' = 'user',
+  'assistant' = 'assistant',
+}
+const Actors = [
+  'user',
+  'assistant',
+] as const;
+const typedActors: readonly Message['role'][] = Actors;
+export const POSSIBLE_CHAT_CONVERSATION_MESSAGE_ACTORS = pgEnum('chat_conversation_message_actor_enum', typedActors as [string, ...string[]]);
 export const chat_conversation_message = pgTable('chat_conversation_message', {
   id: serial('id').primaryKey(),
   message: text('message').notNull(),
-  actor: text('actor').notNull().default('user'),
+  actor: POSSIBLE_CHAT_CONVERSATION_MESSAGE_ACTORS('actor').notNull().default('user'),
   created_at: timestamp('created_at').defaultNow(),
   updated_at: timestamp('updated_at')
     .defaultNow()
@@ -114,6 +181,48 @@ export const chat_conversation_message = pgTable('chat_conversation_message', {
     .references(() => chat_conversation.id, { onDelete: 'cascade' }),
 });
 
+type NewChatConversationMessage =
+  typeof chat_conversation_message.$inferInsert;
+type GetChatConversationMessage =
+  typeof chat_conversation_message.$inferSelect;
+
+export type ChatConversationMessageToCreate = Omit<
+  NewChatConversationMessage,
+  'id' | 'created_at' | 'updated_at'
+>
+export type ReadChatConversationMessage = GetChatConversationMessage;
+
+const InsertChatConversationMessageSchemaBase = createInsertSchema(
+  chat_conversation_message
+);
+export const InsertChatConversationMessageSchema = InsertChatConversationMessageSchemaBase.pick({
+  message: true,
+  actor: true,
+}) /* chat_conversation_id: true, chat_user_id: true */
+export const ChatConversationMessagesToCreateSchema = z.object({
+  messages: z.array(
+    z.object({
+      content: z.string().trim().min(1),
+      role: z.nativeEnum(Actor),
+    })
+  ),
+});
+export const ChatConversationMessagesToCreateUniversalSchema =
+  ChatConversationMessagesToCreateSchema.or(
+    z.object({
+      message: z.string().trim().min(1),
+      actor: z.nativeEnum(Actor),
+    })
+  );
+export const SelectChatConversationMessageSchema = createSelectSchema(
+  chat_conversation_message
+);
+
+/* FILES */
+
+// TODO: add check, when drizzle supports checks, to check if language matches extension
+// const POSSIBLE_CHAT_CONVERSATION_FILE_LANGUAGES = pgEnum('chat_conversation_file_languages_enum', Object.values(supportedShikiLanguages) as [string, ...string[]]);
+// const POSSIBLE_CHAT_CONVERSATION_FILE_EXTENSIONS = pgEnum('chat_conversation_file_extensions_enum', Object.values(supportedFileExtensionsMap) as [string, ...string[]]);
 export const chat_conversation_file = pgTable('chat_conversation_file', {
   id: serial('id').primaryKey(),
   title: text('title'),
@@ -136,13 +245,12 @@ export const chat_conversation_file = pgTable('chat_conversation_file', {
     .references(() => chat_conversation_message.id, { onDelete: 'cascade' }),
 });
 
-export type NewChatConversationFile =
+type NewChatConversationFile =
   typeof chat_conversation_file.$inferInsert;
-export type GetChatConversationFile =
+type GetChatConversationFile =
   typeof chat_conversation_file.$inferSelect;
 
-export interface ChatConversationFileToCreate
-  extends Omit<NewChatConversationFile, 'id' | 'created_at' | 'updated_at'> {}
+export type ChatConversationFileToCreate = Omit<NewChatConversationFile, 'id' | 'created_at' | 'updated_at'>
 export type ReadChatConversationFile = GetChatConversationFile;
 
 const InsertFileSchemaBase = createInsertSchema(chat_conversation_file);

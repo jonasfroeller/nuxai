@@ -11,8 +11,9 @@ import {
 } from '~/server/utils/validate';
 import type { User } from '#auth-utils';
 import type { H3Event, EventHandlerRequest } from 'h3';
-import type { Actor } from '~/server/utils/validate';
+import type { Actor } from '~/lib/types/database.tables/schema';
 import { getCodeBlocksFromMarkdown } from '~/utils/parse';
+import { ChatConversationMessagesToCreateSchema } from '~/lib/types/database.tables/schema';
 
 async function persistCodeBlocks(
   user_id: number,

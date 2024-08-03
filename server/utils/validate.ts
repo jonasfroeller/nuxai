@@ -1,11 +1,11 @@
+import { primaryIdSchema } from '~/lib/types/database.tables/schema';
+import type { H3Event, EventHandlerRequest } from 'h3';
+import type { User } from '#auth-utils';
 import {
   AllowedAiModelNamesEnum,
   AllowedAiModelPublishersEnum,
-  AllowedAiModelsEnum,
 } from '~/lib/types/ai.models';
 import { z, ZodError } from 'zod';
-import type { H3Event, EventHandlerRequest } from 'h3';
-import type { User } from '#auth-utils';
 import {
   type ChatConversationKeys,
   type OrderByDirection,
@@ -64,8 +64,8 @@ async function validateParams<S, E = S>(
     data,
     success,
   } = secondValidationStep
-    ? secondValidationStep(maybeValidatedParams.data!)
-    : { success: true, data: null, validationErrorMessage: '' };
+      ? secondValidationStep(maybeValidatedParams.data!)
+      : { success: true, data: null, validationErrorMessage: '' };
   if (secondValidationStep) {
     if (!success || !data) {
       return {
@@ -381,8 +381,6 @@ export async function validateParamAiModelName(
 
 /* ROUTE PARAMETER SCHEMAs */
 
-const primaryIdSchema = z.number().positive().int();
-
 export const UserIdSchema = z.object({
   user_id: primaryIdSchema,
 });
@@ -458,45 +456,4 @@ type OrderByQueryType = z.infer<typeof OrderByQuerySchema>;
 
 /* BODY SCHEMAs */
 
-/* const allowedAiModelsValues = Object.values(AllowedAiModelsEnum) as [
-  string,
-  ...string[],
-]; z.enum(allowedAiModelsValues) */
-export const ChatConversationToCreateSchema = z.object({
-  model: z.nativeEnum(AllowedAiModelsEnum),
-  name: z.string().min(3),
-});
-
-export const ChatConversationsToDelete = z.object({
-  chat_ids: z.array(primaryIdSchema),
-});
-
-export const ChatConversationAttributesToUpdateSchema = z.object({
-  name: z.string().min(3),
-});
-
-/**
- * role: 'system' | **'user'** | **'assistant'** | 'function' | 'data' | 'tool'
- */
-export enum Actor {
-  'user' = 'user',
-  'assistant' = 'assistant',
-  'system' = 'system',
-}
-
-export const ChatConversationMessagesToCreateSchema = z.object({
-  messages: z.array(
-    z.object({
-      content: z.string().trim().min(1),
-      role: z.nativeEnum(Actor),
-    })
-  ),
-});
-
-export const ChatConversationMessagesToCreateUniversalSchema =
-  ChatConversationMessagesToCreateSchema.or(
-    z.object({
-      message: z.string().trim().min(1),
-      actor: z.nativeEnum(Actor),
-    })
-  );
+// Inside of schema.ts

@@ -3,6 +3,7 @@ import {
   chat_user,
   chat_user_oauth_account,
   type GetUser,
+  type ReadUser,
   type UserToCreate,
 } from '../../../lib/types/database.tables/schema';
 import { and, eq, like, sql } from 'drizzle-orm';
@@ -59,7 +60,7 @@ export const createEmptyUser = async () => {
   return createdUser[0];
 };
 
-export const readUser = async (id: GetUser['id']) => {
+export const readUser = async (id: ReadUser['id']) => {
   return await db
     .select({
       id: chat_user.id,
@@ -74,7 +75,7 @@ export const readUser = async (id: GetUser['id']) => {
 };
 
 export const readUserUsingPrimaryEmail = async (
-  email: GetUser['primary_email']
+  email: ReadUser['primary_email']
 ) => {
   /* TODO: Improve, so that other emails are checked too */
   const fetchedUser = await db
@@ -95,8 +96,8 @@ export const readUserUsingPrimaryEmail = async (
 };
 
 export const updateUser = async (
-  id: GetUser['id'],
-  primary_email: GetUser['primary_email'] | undefined,
+  id: ReadUser['id'],
+  primary_email: ReadUser['primary_email'] | undefined,
   password: GetUser['hashed_password'] | undefined
 ) => {
   /* TODO: check for old password, before allowing update, only allow email, if verified via email code */
@@ -141,7 +142,7 @@ export const updateUser = async (
   return updatedUser[0];
 };
 
-export const deleteUser = async (id: GetUser['id']) => {
+export const deleteUser = async (id: ReadUser['id']) => {
   return await db
     .delete(chat_user)
     .where(eq(chat_user.id, id))
@@ -154,7 +155,7 @@ export const deleteUser = async (id: GetUser['id']) => {
 };
 
 export const validateUserCredentials = async (
-  email: GetUser['primary_email'],
+  email: ReadUser['primary_email'],
   password: GetUser['hashed_password']
 ) => {
   /* TODO: allow more than one email */

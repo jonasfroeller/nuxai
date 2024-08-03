@@ -80,7 +80,7 @@ export const supportedShikiLanguages: (
   'rust',
   'rs',
   'csv',
-];
+] as const;
 
 export const supportedFileExtensionsMap = {
   js: 'js',
@@ -145,7 +145,7 @@ export const supportedFileExtensionsMap = {
   rust: 'rs',
   rs: 'rs',
   csv: 'csv',
-};
+} as const;
 
 export const supportedShikiLanguagesWithInfo = bundledLanguagesInfo.filter(
   (element) => supportedShikiLanguages.includes(element.id as BundledLanguage)

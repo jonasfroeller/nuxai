@@ -1,8 +1,8 @@
 import {
   chat_conversation_message,
   type ChatConversationMessageToCreate,
-  type GetChatConversation,
-  type GetChatConversationMessage,
+  type ReadChatConversation,
+  type ReadChatConversationMessage,
 } from '../../../lib/types/database.tables/schema';
 import { eq, asc } from 'drizzle-orm';
 
@@ -28,7 +28,7 @@ export const createChatConversationMessages = async (
 };
 
 export const readChatConversationMessage = async (
-  id: GetChatConversationMessage['id']
+  id: ReadChatConversationMessage['id']
 ) => {
   const chatConversationMessage = await db
     .select()
@@ -49,7 +49,7 @@ export const readChatConversationMessage = async (
 };
 
 export const readChatConversationMessages = async (
-  chat_conversation_id: GetChatConversation['id']
+  chat_conversation_id: ReadChatConversation['id']
 ) => {
   const chatConversationMessages = await db
     .select()
@@ -74,10 +74,10 @@ export const readChatConversationMessages = async (
 
 // TODO: only allow to update/edit latest message => triggers regeneration of AI message
 export const updateChatConversationMessage = async (
-  id: GetChatConversationMessage['id'],
+  id: ReadChatConversationMessage['id'],
   fields: Partial<
     Omit<
-      GetChatConversationMessage,
+      ReadChatConversationMessage,
       | 'id'
       | 'actor'
       | 'created_at'
@@ -107,7 +107,7 @@ export const updateChatConversationMessage = async (
 };
 
 export const deleteChatConversationMessage = async (
-  id: GetChatConversationMessage['id']
+  id: ReadChatConversationMessage['id']
 ) => {
   const successfullyDeleted = await db
     .delete(chat_conversation_message)
