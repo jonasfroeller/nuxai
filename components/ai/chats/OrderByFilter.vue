@@ -76,9 +76,9 @@ const applyDrag = (filters: Filter[], dropResult: DropResult): Filter[] => {
       <Container @drop="onDrop" class="flex flex-col gap-1">
         <Draggable v-for="(filter, index) in filters" :key="index">
           <div
-            class="flex flex-wrap items-center gap-2 p-1 border rounded-md draggable-item"
+            class="flex flex-wrap items-center gap-2 p-1 border rounded-md draggable-item bg-background"
           >
-            <div class="flex w-full max-w-full gap-1 xl:w-fit">
+            <div class="flex items-center w-full max-w-full gap-1 xl:w-fit">
               <GripVertical class="w-8 h-8 cursor-grabbing" />
               <ShadcnSelect v-model="filter.column">
                 <ShadcnSelectTrigger>
