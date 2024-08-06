@@ -82,7 +82,7 @@ dependencies:
     version: 3.4.4
   radix-vue:
     specifier: ^1.9.1
-    version: 1.9.2(vue@3.4.35)
+    version: 1.9.3(vue@3.4.35)
   rehype-parse:
     specifier: ^9.0.0
     version: 9.0.0
@@ -106,7 +106,7 @@ dependencies:
     version: 2.4.0
   vaul-vue:
     specifier: ^0.2.0
-    version: 0.2.0(radix-vue@1.9.2)(vue@3.4.35)
+    version: 0.2.0(radix-vue@1.9.3)(vue@3.4.35)
   vue:
     specifier: latest
     version: 3.4.35(typescript@5.5.4)
@@ -1705,28 +1705,28 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
-  /@floating-ui/core@1.6.5:
-    resolution: {integrity: sha512-8GrTWmoFhm5BsMZOTHeGD2/0FLKLQQHvO/ZmQga4tKempYRLz8aqJGqXVuQgisnMObq2YZ2SgkwctN1LOOxcqA==}
+  /@floating-ui/core@1.6.6:
+    resolution: {integrity: sha512-Vkvsw6EcpMHjvZZdMkSY+djMGFbt7CRssW99Ne8tar2WLnZ/l3dbxeTShbLQj+/s35h+Qb4cmnob+EzwtjrXGQ==}
     dependencies:
-      '@floating-ui/utils': 0.2.5
+      '@floating-ui/utils': 0.2.6
     dev: false
 
-  /@floating-ui/dom@1.6.8:
-    resolution: {integrity: sha512-kx62rP19VZ767Q653wsP1XZCGIirkE09E0QUGNYTM/ttbbQHqcGPdSfWFxUyyNLc/W6aoJRBajOSXhP6GXjC0Q==}
+  /@floating-ui/dom@1.6.9:
+    resolution: {integrity: sha512-zB1PcI350t4tkm3rvUhSRKa9sT7vH5CrAbQxW+VaPYJXKAO0gsg4CTueL+6Ajp7XzAQC8CW4Jj1Wgqc0sB6oUQ==}
     dependencies:
-      '@floating-ui/core': 1.6.5
-      '@floating-ui/utils': 0.2.5
+      '@floating-ui/core': 1.6.6
+      '@floating-ui/utils': 0.2.6
     dev: false
 
-  /@floating-ui/utils@0.2.5:
-    resolution: {integrity: sha512-sTcG+QZ6fdEUObICavU+aB3Mp8HY4n14wYHdxK4fXjPmv3PXZZeY5RaguJmGyeH/CJQhX3fqKUtS4qc1LoHwhQ==}
+  /@floating-ui/utils@0.2.6:
+    resolution: {integrity: sha512-0KI3zGxIUs1KDR/pjQPdJH4Z8nGBm0yJ5WRoRfdw1Kzeh45jkIfA0rmD0kBF6fKHH+xaH7g8y4jIXyAV5MGK3g==}
     dev: false
 
-  /@floating-ui/vue@1.1.2(vue@3.4.35):
-    resolution: {integrity: sha512-7pq8HfhVhxOpV6iIMKSslI51fwFYy8G0BF0GjhlhpmUhVwL8jCByvcjzTwEtRWFVRrGD/I9kLp6eUHKumiUTjw==}
+  /@floating-ui/vue@1.1.3(vue@3.4.35):
+    resolution: {integrity: sha512-1YlBnfamNCwT85JZJ2HH9t5DO6DAArhQHAiDQW5l+d9MzlN8atywXw2wI9vitPkoZZSurrDJ2viMzrbhPTmLmQ==}
     dependencies:
-      '@floating-ui/dom': 1.6.8
-      '@floating-ui/utils': 0.2.5
+      '@floating-ui/dom': 1.6.9
+      '@floating-ui/utils': 0.2.6
       vue-demi: 0.14.10(vue@3.4.35)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -3053,8 +3053,8 @@ packages:
     resolution: {integrity: sha512-iO5Ujgw3O1yIxWDe9FgUPNkGjyT657b1WNX52u+Wv1DyBFEpdCdGkuVaky0M3hHFqNWjAmHWTn4wgj9rTr7ZQg==}
     dev: false
 
-  /@tanstack/vue-virtual@3.8.4(vue@3.4.35):
-    resolution: {integrity: sha512-4Pq8odunHQPsTg2iE2yzWdzYed/8LySy2knxqJYkaNOQRXbqJ7O/Owpoon8ZM9L+jLL1faM5TVHV0eJxm68q8A==}
+  /@tanstack/vue-virtual@3.8.5(vue@3.4.35):
+    resolution: {integrity: sha512-JBHw3xFUslYgrbvNlCYtTWwFo8zjzRs7c2rs6B4JKFXWyP5yHuoeivgQgeZ34t6O6lJTNqc/K4ccmmcmKqpMPA==}
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
     dependencies:
@@ -8876,16 +8876,16 @@ packages:
       inherits: 2.0.4
     dev: false
 
-  /radix-vue@1.9.2(vue@3.4.35):
-    resolution: {integrity: sha512-XXwEMmXJmzcy9SebywbQdrZg8UE1jueqPMpxKK6NoquRC0CP4dvlBcuzp4lDWNSsqOgmkXa6CNbwEzdCX96umg==}
+  /radix-vue@1.9.3(vue@3.4.35):
+    resolution: {integrity: sha512-9pewcgzghM+B+FO1h9mMsZa/csVH6hElpN1sqmG4/qoeieiDG0i4nhMjS7p2UOz11EEdVm7eLandHSPyx7hYhg==}
     peerDependencies:
       vue: '>= 3.2.0'
     dependencies:
-      '@floating-ui/dom': 1.6.8
-      '@floating-ui/vue': 1.1.2(vue@3.4.35)
+      '@floating-ui/dom': 1.6.9
+      '@floating-ui/vue': 1.1.3(vue@3.4.35)
       '@internationalized/date': 3.5.5
       '@internationalized/number': 3.5.3
-      '@tanstack/vue-virtual': 3.8.4(vue@3.4.35)
+      '@tanstack/vue-virtual': 3.8.5(vue@3.4.35)
       '@vueuse/core': 10.11.0(vue@3.4.35)
       '@vueuse/shared': 10.11.0(vue@3.4.35)
       aria-hidden: 1.2.4
@@ -10462,14 +10462,14 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vaul-vue@0.2.0(radix-vue@1.9.2)(vue@3.4.35):
+  /vaul-vue@0.2.0(radix-vue@1.9.3)(vue@3.4.35):
     resolution: {integrity: sha512-YV0zqxc8NiVzr1z/Awwbaty0UDDchxj5BfhFbLiYu+Uz0rCfSaDK2zwmuXZvejBJKLGbWw9I5GLHJRse14lQew==}
     peerDependencies:
       radix-vue: ^1.4.0
       vue: ^3.3.0
     dependencies:
       '@vueuse/core': 10.11.0(vue@3.4.35)
-      radix-vue: 1.9.2(vue@3.4.35)
+      radix-vue: 1.9.3(vue@3.4.35)
       vue: 3.4.35(typescript@5.5.4)
     transitivePeerDependencies:
       - '@vue/composition-api'
