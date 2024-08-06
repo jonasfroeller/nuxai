@@ -29,7 +29,9 @@ export const useAPI = () => {
       await useFetch(url, {
         ...options,
         onResponse({ response }: any) {
-          resolve(response._data);
+          if (response.ok) {
+            resolve(response._data);
+          }
         },
         onResponseError({ response }: any) {
           reject(response._data);
