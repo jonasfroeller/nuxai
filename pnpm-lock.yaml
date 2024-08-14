@@ -137,7 +137,7 @@ importers:
         version: 6.12.1(magicast@0.3.4)(rollup@4.19.2)
       '@tailwindcss/typography':
         specifier: ^0.5.13
-        version: 0.5.13(tailwindcss@3.4.7)
+        version: 0.5.13(tailwindcss@3.4.10)
       '@vueuse/core':
         specifier: ^10.11.0
         version: 10.11.0(vue@3.4.37(typescript@5.5.4))
@@ -155,10 +155,10 @@ importers:
         version: 8.4.41
       tailwindcss:
         specifier: ^3.4.4
-        version: 3.4.7
+        version: 3.4.10
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.7)
+        version: 1.0.7(tailwindcss@3.4.10)
       typescript:
         specifier: ^5.5.3
         version: 5.5.4
@@ -3288,8 +3288,8 @@ packages:
       debug:
         optional: true
 
-  foreground-child@3.2.1:
-    resolution: {integrity: sha512-PXUUyLqrR2XCWICfv6ukppP96sdFwWbNEnfEMt7jNsISjMsvaLNinAHNDYyvkyU+SZG2BTSbT5NjG+vZslfGTA==}
+  foreground-child@3.3.0:
+    resolution: {integrity: sha512-Ld2g8rrAyMYFXBhEqMz8ZAHBi4J4uS1i/CxGMDnjyFWddMXLVcDp051DZfu+t7+ab7Wv6SMqpWmyFIj5UbfFvg==}
     engines: {node: '>=14'}
 
   form-data@4.0.0:
@@ -4832,8 +4832,8 @@ packages:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
     engines: {node: '>=4'}
 
-  postcss-selector-parser@6.1.1:
-    resolution: {integrity: sha512-b4dlw/9V8A71rLIDsSwVmak9z2DuBUB7CA1/wSdelNEzqsjoSPeADTWNO09lpH49Diy3/JIZ2bSPB1dI3LJCHg==}
+  postcss-selector-parser@6.1.2:
+    resolution: {integrity: sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==}
     engines: {node: '>=4'}
 
   postcss-svgo@7.0.1:
@@ -5459,8 +5459,8 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
 
-  tailwindcss@3.4.7:
-    resolution: {integrity: sha512-rxWZbe87YJb4OcSopb7up2Ba4U82BoiSGUdoDr3Ydrg9ckxFS/YWsvhN323GMcddgU65QRy7JndC7ahhInhvlQ==}
+  tailwindcss@3.4.10:
+    resolution: {integrity: sha512-KWZkVPm7yJRhdu4SRSl9d4AK2wM3a50UsvgHZO7xY77NQr2V+fIrEuoDGQcbvswWvFGbS2f6e+jC/6WJm1Dl0w==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -6364,13 +6364,13 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@csstools/selector-resolve-nested@1.1.0(postcss-selector-parser@6.1.1)':
+  '@csstools/selector-resolve-nested@1.1.0(postcss-selector-parser@6.1.2)':
     dependencies:
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
-  '@csstools/selector-specificity@3.1.1(postcss-selector-parser@6.1.1)':
+  '@csstools/selector-specificity@3.1.1(postcss-selector-parser@6.1.2)':
     dependencies:
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
   '@drizzle-team/brocli@0.8.2': {}
 
@@ -7339,8 +7339,8 @@ snapshots:
       pathe: 1.1.2
       postcss: 8.4.41
       postcss-nesting: 12.1.5(postcss@8.4.41)
-      tailwind-config-viewer: 2.0.4(tailwindcss@3.4.7)
-      tailwindcss: 3.4.7
+      tailwind-config-viewer: 2.0.4(tailwindcss@3.4.10)
+      tailwindcss: 3.4.10
       ufo: 1.5.4
       unctx: 2.3.1
     transitivePeerDependencies:
@@ -7683,13 +7683,13 @@ snapshots:
     dependencies:
       tslib: 2.6.3
 
-  '@tailwindcss/typography@0.5.13(tailwindcss@3.4.7)':
+  '@tailwindcss/typography@0.5.13(tailwindcss@3.4.10)':
     dependencies:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.4.7
+      tailwindcss: 3.4.10
 
   '@tanstack/virtual-core@3.8.6': {}
 
@@ -9207,7 +9207,7 @@ snapshots:
       globals: 13.24.0
       natural-compare: 1.4.0
       nth-check: 2.1.1
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
       semver: 7.6.3
       vue-eslint-parser: 9.4.3(eslint@8.57.0)
       xml-name-validator: 4.0.0
@@ -9432,7 +9432,7 @@ snapshots:
 
   follow-redirects@1.15.6: {}
 
-  foreground-child@3.2.1:
+  foreground-child@3.3.0:
     dependencies:
       cross-spawn: 7.0.3
       signal-exit: 4.1.0
@@ -9542,7 +9542,7 @@ snapshots:
 
   glob@10.4.5:
     dependencies:
-      foreground-child: 3.2.1
+      foreground-child: 3.3.0
       jackspeak: 3.4.3
       minimatch: 9.0.5
       minipass: 7.1.2
@@ -11332,7 +11332,7 @@ snapshots:
   postcss-calc@10.0.0(postcss@8.4.41):
     dependencies:
       postcss: 8.4.41
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
       postcss-value-parser: 4.2.0
 
   postcss-colormin@7.0.1(postcss@8.4.41):
@@ -11352,7 +11352,7 @@ snapshots:
   postcss-discard-comments@7.0.1(postcss@8.4.41):
     dependencies:
       postcss: 8.4.41
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
   postcss-discard-duplicates@7.0.0(postcss@8.4.41):
     dependencies:
@@ -11397,7 +11397,7 @@ snapshots:
       caniuse-api: 3.0.0
       cssnano-utils: 5.0.0(postcss@8.4.41)
       postcss: 8.4.41
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
   postcss-minify-font-values@7.0.0(postcss@8.4.41):
     dependencies:
@@ -11422,19 +11422,19 @@ snapshots:
     dependencies:
       cssesc: 3.0.0
       postcss: 8.4.41
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
   postcss-nested@6.2.0(postcss@8.4.41):
     dependencies:
       postcss: 8.4.41
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
   postcss-nesting@12.1.5(postcss@8.4.41):
     dependencies:
-      '@csstools/selector-resolve-nested': 1.1.0(postcss-selector-parser@6.1.1)
-      '@csstools/selector-specificity': 3.1.1(postcss-selector-parser@6.1.1)
+      '@csstools/selector-resolve-nested': 1.1.0(postcss-selector-parser@6.1.2)
+      '@csstools/selector-specificity': 3.1.1(postcss-selector-parser@6.1.2)
       postcss: 8.4.41
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
   postcss-normalize-charset@7.0.0(postcss@8.4.41):
     dependencies:
@@ -11503,7 +11503,7 @@ snapshots:
       cssesc: 3.0.0
       util-deprecate: 1.0.2
 
-  postcss-selector-parser@6.1.1:
+  postcss-selector-parser@6.1.2:
     dependencies:
       cssesc: 3.0.0
       util-deprecate: 1.0.2
@@ -11517,7 +11517,7 @@ snapshots:
   postcss-unique-selectors@7.0.1(postcss@8.4.41):
     dependencies:
       postcss: 8.4.41
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
   postcss-value-parser@4.2.0: {}
 
@@ -12204,7 +12204,7 @@ snapshots:
     dependencies:
       browserslist: 4.23.3
       postcss: 8.4.41
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
   sucrase@3.35.0:
     dependencies:
@@ -12280,7 +12280,7 @@ snapshots:
 
   system-architecture@0.1.0: {}
 
-  tailwind-config-viewer@2.0.4(tailwindcss@3.4.7):
+  tailwind-config-viewer@2.0.4(tailwindcss@3.4.10):
     dependencies:
       '@koa/router': 12.0.1
       commander: 6.2.1
@@ -12290,17 +12290,17 @@ snapshots:
       open: 7.4.2
       portfinder: 1.0.32
       replace-in-file: 6.3.5
-      tailwindcss: 3.4.7
+      tailwindcss: 3.4.10
     transitivePeerDependencies:
       - supports-color
 
   tailwind-merge@2.5.1: {}
 
-  tailwindcss-animate@1.0.7(tailwindcss@3.4.7):
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.10):
     dependencies:
-      tailwindcss: 3.4.7
+      tailwindcss: 3.4.10
 
-  tailwindcss@3.4.7:
+  tailwindcss@3.4.10:
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -12321,7 +12321,7 @@ snapshots:
       postcss-js: 4.0.1(postcss@8.4.41)
       postcss-load-config: 4.0.2(postcss@8.4.41)
       postcss-nested: 6.2.0(postcss@8.4.41)
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
       resolve: 1.22.8
       sucrase: 3.35.0
     transitivePeerDependencies:
