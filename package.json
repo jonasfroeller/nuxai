@@ -34,7 +34,7 @@
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
     "es-toolkit": "^1.13.1",
-    "lucide-vue-next": "^0.428.0",
+    "lucide-vue-next": "^0.429.0",
     "nuxt": "^3.12.3",
     "nuxt-auth-utils": "^0.3.0",
     "nuxt-monaco-editor": "^1.2.9",
