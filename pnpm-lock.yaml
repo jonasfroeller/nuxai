@@ -85,7 +85,7 @@ importers:
         version: 3.4.4
       radix-vue:
         specifier: ^1.9.1
-        version: 1.9.4(vue@3.4.38(typescript@5.5.4))
+        version: 1.9.5(vue@3.4.38(typescript@5.5.4))
       rehype-parse:
         specifier: ^9.0.0
         version: 9.0.0
@@ -109,7 +109,7 @@ importers:
         version: 2.5.1
       vaul-vue:
         specifier: ^0.2.0
-        version: 0.2.0(radix-vue@1.9.4(vue@3.4.38(typescript@5.5.4)))(vue@3.4.38(typescript@5.5.4))
+        version: 0.2.0(radix-vue@1.9.5(vue@3.4.38(typescript@5.5.4)))(vue@3.4.38(typescript@5.5.4))
       vue:
         specifier: latest
         version: 3.4.38(typescript@5.5.4)
@@ -1805,11 +1805,11 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
 
-  '@tanstack/virtual-core@3.8.6':
-    resolution: {integrity: sha512-UJeU4SBrx3hqULNzJ3oC0kgJ5miIAg+FwomxMTlQNxob6ppTInifANHd9ukETvzdzxr6zt3CjQ0rttQpVjbt6Q==}
+  '@tanstack/virtual-core@3.10.4':
+    resolution: {integrity: sha512-yHyli4RHVsI+eJ0RjmOsjA9RpHp3/Zah9t+iRjmFa72dq00TeG/NwuLYuCV6CB4RkWD4i5RD421j1eb6BdKgvQ==}
 
-  '@tanstack/vue-virtual@3.8.6':
-    resolution: {integrity: sha512-nWwmlFuxChPM6bWEwKOyBBYVrQmvSKSArXhbvX2IyVTpuif9UZiBEvIXnftpCEGRvAGSe7lE1coXHk8g2qmwtQ==}
+  '@tanstack/vue-virtual@3.10.4':
+    resolution: {integrity: sha512-oikrjnC7BnUCmqh5ptemclUK6EtJj48AdLcJx1t2fTLQyu+60Alo6gPGC3cANgmbEP/1C9DptbeMcm5AAjyBVg==}
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
 
@@ -4981,8 +4981,8 @@ packages:
   queue@6.0.2:
     resolution: {integrity: sha512-iHZWu+q3IdFZFX36ro/lKBkSvfkztY5Y7HMiPlOUjhupPcG2JMfst2KKEpu5XndviX/3UhFbRngUPNKtgvtZiA==}
 
-  radix-vue@1.9.4:
-    resolution: {integrity: sha512-d950wxB+MVVU6L9h39OsNzAdk2BiGDDfhXJiHsksPAIK5pCR8W4U0RB0WLQEdjmmL9p1aXOYm4FBDq0oIo2G/w==}
+  radix-vue@1.9.5:
+    resolution: {integrity: sha512-vtCq+WDAZj5BQtJiChGf/oC7w3y7jaod3agcntgph7fD6aqdcghLZYcUWdgT/XNJs2bEsk+3cjK3ONPRNeFcuQ==}
     peerDependencies:
       vue: '>= 3.2.0'
 
@@ -5592,6 +5592,9 @@ packages:
 
   tslib@2.6.3:
     resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
+
+  tslib@2.7.0:
+    resolution: {integrity: sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==}
 
   tsscmp@1.0.6:
     resolution: {integrity: sha512-LxhtAkPDTkVCMQjt2h6eBVY28KCjikZqZfMcC15YBeNjkgUpdCfBu5HoiOTDu86v6smE8yOjyEktJ8hlbANHQA==}
@@ -7805,7 +7808,7 @@ snapshots:
 
   '@swc/helpers@0.5.12':
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@tailwindcss/typography@0.5.13(tailwindcss@3.4.10)':
     dependencies:
@@ -7815,11 +7818,11 @@ snapshots:
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.4.10
 
-  '@tanstack/virtual-core@3.8.6': {}
+  '@tanstack/virtual-core@3.10.4': {}
 
-  '@tanstack/vue-virtual@3.8.6(vue@3.4.38(typescript@5.5.4))':
+  '@tanstack/vue-virtual@3.10.4(vue@3.4.38(typescript@5.5.4))':
     dependencies:
-      '@tanstack/virtual-core': 3.8.6
+      '@tanstack/virtual-core': 3.10.4
       vue: 3.4.38(typescript@5.5.4)
 
   '@trysound/sax@0.2.0': {}
@@ -8428,7 +8431,7 @@ snapshots:
 
   aria-hidden@1.2.4:
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   aria-query@5.3.0:
     dependencies:
@@ -11765,13 +11768,13 @@ snapshots:
     dependencies:
       inherits: 2.0.4
 
-  radix-vue@1.9.4(vue@3.4.38(typescript@5.5.4)):
+  radix-vue@1.9.5(vue@3.4.38(typescript@5.5.4)):
     dependencies:
       '@floating-ui/dom': 1.6.10
       '@floating-ui/vue': 1.1.4(vue@3.4.38(typescript@5.5.4))
       '@internationalized/date': 3.5.5
       '@internationalized/number': 3.5.3
-      '@tanstack/vue-virtual': 3.8.6(vue@3.4.38(typescript@5.5.4))
+      '@tanstack/vue-virtual': 3.10.4(vue@3.4.38(typescript@5.5.4))
       '@vueuse/core': 10.11.1(vue@3.4.38(typescript@5.5.4))
       '@vueuse/shared': 10.11.1(vue@3.4.38(typescript@5.5.4))
       aria-hidden: 1.2.4
@@ -12577,6 +12580,8 @@ snapshots:
 
   tslib@2.6.3: {}
 
+  tslib@2.7.0: {}
+
   tsscmp@1.0.6: {}
 
   tunnel-agent@0.6.0:
@@ -12844,10 +12849,10 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vaul-vue@0.2.0(radix-vue@1.9.4(vue@3.4.38(typescript@5.5.4)))(vue@3.4.38(typescript@5.5.4)):
+  vaul-vue@0.2.0(radix-vue@1.9.5(vue@3.4.38(typescript@5.5.4)))(vue@3.4.38(typescript@5.5.4)):
     dependencies:
       '@vueuse/core': 10.11.1(vue@3.4.38(typescript@5.5.4))
-      radix-vue: 1.9.4(vue@3.4.38(typescript@5.5.4))
+      radix-vue: 1.9.5(vue@3.4.38(typescript@5.5.4))
       vue: 3.4.38(typescript@5.5.4)
     transitivePeerDependencies:
       - '@vue/composition-api'
