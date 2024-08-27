@@ -173,26 +173,6 @@ watch(headerNavigationElement, (newHeaderNavigationElement) => {
         <div class="flex items-center gap-2">
           <h1 class="text-xl font-semibold truncate">Chat</h1>
         </div>
-        <div class="flex gap-2 pr-5">
-          <ShadcnButton
-            variant="outline"
-            size="sm"
-            class="ml-auto gap-1.5 text-sm truncate"
-            disabled
-          >
-            <Import class="size-3.5" />
-            <!-- Import Code Repository To Analyze -->
-          </ShadcnButton>
-          <ShadcnButton
-            variant="outline"
-            size="sm"
-            class="ml-auto gap-1.5 text-sm truncate"
-            disabled
-          >
-            <Share class="size-3.5" />
-            <!-- Share -->
-          </ShadcnButton>
-        </div>
       </header>
       <Dashboard />
     </div>

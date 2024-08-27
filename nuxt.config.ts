@@ -180,7 +180,7 @@ export default defineNuxtConfig({
     'nuxt-security',
     // "nuxt-og-image"
     '@nuxtjs/robots',
-    "nuxt-monaco-editor"
+    'nuxt-monaco-editor',
   ],
 
   mdc: {
