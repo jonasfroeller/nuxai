@@ -61,7 +61,7 @@ importers:
         version: 3.13.0(@parcel/watcher@2.4.1)(@types/node@22.5.0)(drizzle-orm@0.33.0(@neondatabase/serverless@0.9.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.21.0)(terser@5.31.6)(typescript@5.5.4)(vite@5.4.2(@types/node@22.5.0)(terser@5.31.6))(vue-tsc@2.0.29(typescript@5.5.4))
       nuxt-auth-utils:
         specifier: ^0.3.0
-        version: 0.3.4(magicast@0.3.4)(rollup@4.21.0)
+        version: 0.3.5(magicast@0.3.4)(rollup@4.21.0)
       nuxt-monaco-editor:
         specifier: ^1.2.9
         version: 1.2.9(magicast@0.3.4)(monaco-editor@0.50.0)(rollup@4.21.0)(vite@5.4.2(@types/node@22.5.0)(terser@5.31.6))
@@ -4361,8 +4361,8 @@ packages:
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
 
-  nuxt-auth-utils@0.3.4:
-    resolution: {integrity: sha512-0CNREFADCyZtyAusV3n27y1jnvt2KjrZI2boaMbKPDWiyI8AcV1jESG1aBFOxyViKsF4YnXRY8QN3EJKYvxMjA==}
+  nuxt-auth-utils@0.3.5:
+    resolution: {integrity: sha512-lEjfYNsEZiHAHpEFS/5sWOPojYtvvYjsap8U+UyLuzv8Q+5OYbwGtW1DwSo9kbep5gzRTKXzrX/LiPXlX1Tlkg==}
 
   nuxt-csurf@1.6.1:
     resolution: {integrity: sha512-my7jXM4bzIoDQMaJD0a4ZT6bRISrTotxv0W+W+2Omn1CywQX2ikGeOnwnoBdit61Lr2bKIDPUdAjLHlXSZtCRg==}
@@ -10912,14 +10912,15 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  nuxt-auth-utils@0.3.4(magicast@0.3.4)(rollup@4.21.0):
+  nuxt-auth-utils@0.3.5(magicast@0.3.4)(rollup@4.21.0):
     dependencies:
-      '@nuxt/kit': 3.12.4(magicast@0.3.4)(rollup@4.21.0)
+      '@nuxt/kit': 3.13.0(magicast@0.3.4)(rollup@4.21.0)
       defu: 6.1.4
       hookable: 5.5.3
       ofetch: 1.3.4
       ohash: 1.1.3
       pathe: 1.1.2
+      scule: 1.3.0
       uncrypto: 0.1.3
     transitivePeerDependencies:
       - magicast
