@@ -32,7 +32,7 @@ const isInfoHidden = ref(false);
           class="px-2"
         >
           <AiChat :key="selectedAiChatKey" />
-          <!-- MESSAGES OF CHAT (needs key, to rerender chat, so that useChat gets a new ID, useChat can not be put anywhere als then the setup script, because some functionality depends on that environment) -->
+          <!-- MESSAGES OF CHAT (needs key, to rerender chat, so that useChat gets a new ID, useChat can not be put anywhere else than the setup script, because some functionality depends on that environment) -->
         </ShadcnResizablePanel>
       </ShadcnResizablePanelGroup>
 
@@ -52,24 +52,24 @@ const isInfoHidden = ref(false);
 
 <style scoped>
 .panel-group {
-  display: flex;
+  display: flex !important;
 }
 
 /* Hide the panel group on screens smaller than 1024px */
 @media (max-width: 1023px) {
   .panel-group {
-    display: none;
+    display: none !important;
   }
 }
 
 /* Show the single panel only on screens smaller than 1024px */
 .single-panel {
-  display: none;
+  display: none !important;
 }
 
 @media (max-width: 1023px) {
   .single-panel {
-    display: block;
+    display: block !important;
     padding-top: 0.5rem;
     padding-right: 0.5rem;
   }
