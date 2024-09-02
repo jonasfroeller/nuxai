@@ -38,7 +38,7 @@
     "nuxt": "^3.12.3",
     "nuxt-auth-utils": "^0.3.0",
     "nuxt-monaco-editor": "^1.2.9",
-    "nuxt-og-image": "3.0.0-rc.65",
+    "nuxt-og-image": "3.0.0-rc.66",
     "nuxt-posthog": "^1.5.0",
     "nuxt-security": "2.0.0-rc.9",
     "nuxt-time": "^0.1.3",
