@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:16.4
+    image: postgres:17.0
     restart: unless-stopped
     volumes:
       - nuxai_postgres_data:/var/lib/postgresql/data
