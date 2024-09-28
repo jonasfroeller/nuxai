@@ -26,7 +26,6 @@ const visibleRoutes = computed(() => {
 });
 
 const { width: windowWidth } = useWindowSize();
-const useSsrSaveId = () => useId();
 </script>
 
 <template>
@@ -37,7 +36,7 @@ const useSsrSaveId = () => useId();
         <ShadcnDropdownMenuContent>
           <ShadcnDropdownMenuItem v-for="route in visibleRoutes">
             <NuxtLink :to="route.path" activeClass="underline">
-              <p :key="useSsrSaveId">{{ route.name }}</p>
+              <p :key="route.path">{{ route.name }}</p>
             </NuxtLink>
           </ShadcnDropdownMenuItem>
         </ShadcnDropdownMenuContent>
@@ -53,7 +52,7 @@ const useSsrSaveId = () => useId();
         :to="route.path"
         activeClass="active-link"
       >
-        <li :key="useSsrSaveId">{{ route.name }}</li>
+        <li :key="route.path">{{ route.name }}</li>
       </NuxtLink>
     </ul>
   </div>
