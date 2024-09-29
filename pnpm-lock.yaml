@@ -53,7 +53,7 @@ importers:
         version: 0.5.1(drizzle-orm@0.33.0(@neondatabase/serverless@0.9.5)(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(postgres@3.4.4)(react@18.3.1))(zod@3.23.8)
       es-toolkit:
         specifier: ^1.21.0
-        version: 1.21.0
+        version: 1.22.0
       lucide-vue-next:
         specifier: ^0.446.0
         version: 0.446.0(vue@3.5.10(typescript@5.6.2))
@@ -2845,8 +2845,8 @@ packages:
   es-module-lexer@1.5.4:
     resolution: {integrity: sha512-MVNK56NiMrOwitFB7cqDwq0CQutbw+0BvLshJSse0MUNU+y1FC3bUS/AQg7oUng+/wKrrki7JfmwtVHkVfPLlw==}
 
-  es-toolkit@1.21.0:
-    resolution: {integrity: sha512-d1T3yyOBPYVbmLtjxsuzuIInuJaw7kcbtu/7sQyfM04hT98X8Z0bLKhYYYePdCBYH4GoA5AnWUyodV5xDcdrOw==}
+  es-toolkit@1.22.0:
+    resolution: {integrity: sha512-0mvZ7as1Irwi+i5BNTM4Lrt5NnZGz4TcMIG8FTUuqI6GswziFGPHrmVlK+kkafSqhofKKVs6gn0GSGZiWVxAHw==}
 
   esbuild-register@3.6.0:
     resolution: {integrity: sha512-H2/S7Pm8a9CL1uhp9OvjwrBh5Pvx0H8qVOxNu8Wed9Y7qv56MPtq+GGM8RJpq6glYJn9Wspr8uw7l55uyinNeg==}
@@ -8566,7 +8566,7 @@ snapshots:
 
   es-module-lexer@1.5.4: {}
 
-  es-toolkit@1.21.0: {}
+  es-toolkit@1.22.0: {}
 
   esbuild-register@3.6.0(esbuild@0.19.12):
     dependencies:
